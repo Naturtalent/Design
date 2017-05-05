@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_JrqR0F6qEeSW56bf4fNm-w">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_MvvG0F6qEeSW56bf4fNm-w" featurename="commands" parentElementId="it.naturtalent.e4.application">
+    <elements xsi:type="commands:Command" xmi:id="_VynckF6qEeSW56bf4fNm-w" elementId="it.naturtalent.libreoffice.command.unocommands" commandName="unocommands"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_byc4EF6qEeSW56bf4fNm-w" featurename="handlers" parentElementId="it.naturtalent.e4.application">
+    <elements xsi:type="commands:Handler" xmi:id="_i3LfEF6qEeSW56bf4fNm-w" elementId="it.naturtalent.libreoffice.handler.0" contributionURI="bundleclass://it.naturtalent.libreoffice/it.naturtalent.libreoffice.handlers.TestGenerateTargetPlugins" command="_VynckF6qEeSW56bf4fNm-w"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_3UYjEF6qEeSW56bf4fNm-w" featurename="children" parentElementId="it.naturtalent.e4.application.menu.tools">
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_-Uo5wF6qEeSW56bf4fNm-w" elementId="it.naturtalent.libreoffice.handledmenuitem.testUno" label="Test UNO" command="_VynckF6qEeSW56bf4fNm-w"/>
+  </fragments>
+</fragment:ModelFragments>

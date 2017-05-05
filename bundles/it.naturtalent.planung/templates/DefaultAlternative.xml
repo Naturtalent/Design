@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Alternative>
+    <designs>       
+        <items>
+            <contentClass>ShapeTypes</contentClass>           
+            <layer>Ebene</layer>
+            <name>Ebene</name>            
+        </items>
+        <name>DrawDokument</name>
+        <pages>
+            <name>Seite 1</name>
+        </pages>
+    </designs>
+    <name>DefaultAlternative</name>
+</Alternative>
