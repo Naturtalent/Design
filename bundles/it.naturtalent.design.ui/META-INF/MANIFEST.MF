@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ui
+Bundle-SymbolicName: it.naturtalent.design.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Dieter Apel
+Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.2.0.v20160229-1459",
+ org.eclipse.swt,
+ it.naturtalent.design.model,
+ org.eclipse.emf.ecp.core,
+ it.naturtalent.emf.model,
+ org.eclipse.emf.ecp.ui.view.swt
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
+ javax.inject;version="1.0.0"

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_JlcpsDKSEeeS3tZw3STCXg">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_hemQIDKSEeeS3tZw3STCXg" featurename="children" parentElementId="it.naturtalent.e4.project.ui.partstack.1">
+    <elements xsi:type="basic:Part" xmi:id="_lyH60DKSEeeS3tZw3STCXg" elementId="it.naturtalent.design.ui.part.designs" contributionURI="bundleclass://it.naturtalent.design.ui/it.naturtalent.design.ui.DesignsView" label="Zeichnungen" iconURI="icon://ICON_PROJECT"/>
+  </fragments>
+</fragment:ModelFragments>

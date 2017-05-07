@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated design -->
+      <package
+            uri="http://it.naturtalent/design"
+            class="it.naturtalent.design.model.design.DesignsPackage"
+            genModel="model/design.genmodel"/>
+   </extension>
+
+</plugin>

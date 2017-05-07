@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/it.naturtalent.design.model/src" modelPluginID="it.naturtalent.design.model"
+    modelName="Design" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>model/design.ecore</foreignModel>
+  <genPackages prefix="Designs" basePackage="it.naturtalent.design.model" disposableProviderFactory="true"
+      ecorePackage="design.ecore#/">
+    <genClasses ecoreClass="design.ecore#//Design">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute design.ecore#//Design/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute design.ecore#//Design/scaleDenominator"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute design.ecore#//Design/designURL"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference design.ecore#//Design/pages"/>
+    </genClasses>
+    <genClasses ecoreClass="design.ecore#//Page">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute design.ecore#//Page/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute design.ecore#//Page/scaleDenominator"/>
+    </genClasses>
+    <genClasses ecoreClass="design.ecore#//Ebene">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute design.ecore#//Ebene/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute design.ecore#//Ebene/shapeName"/>
+    </genClasses>
+    <genClasses ecoreClass="design.ecore#//Item">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute design.ecore#//Item/name"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

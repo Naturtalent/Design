@@ -24,20 +24,28 @@
          version="0.0.0"/>
 
    <plugin
-         id="it.naturtalent.planning.ui"
+         id="it.naturtalent.design.model"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="it.naturtalent.planung"
+         id="it.naturtalent.design.model.edit"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="it.naturtalent.planung.service"
+         id="it.naturtalent.design.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="it.naturtalent.design.viewmodel"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
