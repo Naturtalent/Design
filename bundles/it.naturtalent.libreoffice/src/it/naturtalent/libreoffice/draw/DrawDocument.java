@@ -2,6 +2,7 @@ package it.naturtalent.libreoffice.draw;
 
 
 import it.naturtalent.libreoffice.Bootstrap;
+import it.naturtalent.libreoffice.DesignHelper;
 import it.naturtalent.libreoffice.DrawDocumentEvent;
 import it.naturtalent.libreoffice.PageHelper;
 import it.naturtalent.libreoffice.Utils;
@@ -18,9 +19,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.swt.graphics.Rectangle;
 
 import com.sun.star.awt.Size;
+import com.sun.star.awt.XWindow;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
@@ -34,8 +39,11 @@ import com.sun.star.drawing.XLayerSupplier;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDesktop;
+import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
+import com.sun.star.io.IOException;
 import com.sun.star.lang.EventObject;
+import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
@@ -56,6 +64,7 @@ public class DrawDocument
 	private XDesktop xDesktop;
 	
 	private static boolean atWork = false;
+	
 	
 	// die aktuelle Seite
 	//protected int drawPageIndex = 0;
@@ -80,11 +89,17 @@ public class DrawDocument
 	public PolyPolygonBezierCoords aCoords; 
 	
 	// Map beinhaltet das momentan geoffente Dokument (@see TerminateListener) 
-	public static Map<TerminateListener, String>openDocumentsMap = new HashMap<TerminateListener, String>();
+	public static Map<TerminateListener, String>openDocumentsMap = new HashMap<TerminateListener, String>();	
+
 	
-	public void setEventBroker(IEventBroker eventBroker)
+	
+	
+	public DrawDocument()
 	{
-		this.eventBroker = eventBroker;
+		MApplication currentApplication = E4Workbench.getServiceContext()
+				.get(IWorkbench.class).getApplication();
+		eventBroker = currentApplication.getContext()
+				.get(IEventBroker.class);
 	}
 
 	private void loadDocument(String documentPath) throws Exception
@@ -148,9 +163,9 @@ public class DrawDocument
 			{				
 				@Override
 				public void disposing(EventObject arg0)
-				{
-					if(eventBroker != null)
-						eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE, this);					
+				{		
+					// EventHander informiert ueber das Schliessen des Dokuments
+					eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE, DrawDocument.this);					
 				}
 			});
 			
@@ -160,9 +175,8 @@ public class DrawDocument
 			xDesktop.addTerminateListener(terminateListener);
 			terminateListener.setEventBroker(eventBroker);
 			
-			if(eventBroker != null)
-				eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN, this);
-			
+			// EventHandler informieren, dass Ladevorgang abgeschlossen ist
+			eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN, this);
 			
 			//
 			//
@@ -242,7 +256,16 @@ public class DrawDocument
 		j.schedule();		
 	}
 	
-	public void getAllDesign()
+	/**
+	 * Setzt den Focus auf diese Zeichnung.
+	 * Sind mehrere Zeichnungen geoffnet, wird diese Zeichnung bearbeitbar sichtbar im Desktop gezeigt.
+	 */
+	public void setFocus()
+	{		
+		DesignHelper.setFocus(xComponent);
+	}
+	
+	public void getAllPages()
 	{
 		int count = PageHelper.getDrawPageCount(xComponent);
 		for(int i = 0;i < count;i++)

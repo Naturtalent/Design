@@ -176,9 +176,19 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getDesignGroup_IProjectID()
+	{
+		return (EAttribute)designGroupEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EReference getDesignGroup_Designs()
 	{
-		return (EReference)designGroupEClass.getEStructuralFeatures().get(1);
+		return (EReference)designGroupEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -346,6 +356,7 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 
 		designGroupEClass = createEClass(DESIGN_GROUP);
 		createEAttribute(designGroupEClass, DESIGN_GROUP__NAME);
+		createEAttribute(designGroupEClass, DESIGN_GROUP__IPROJECT_ID);
 		createEReference(designGroupEClass, DESIGN_GROUP__DESIGNS);
 
 		designEClass = createEClass(DESIGN);
@@ -402,6 +413,7 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 
 		initEClass(designGroupEClass, DesignGroup.class, "DesignGroup", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getDesignGroup_Name(), ecorePackage.getEString(), "name", null, 0, 1, DesignGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getDesignGroup_IProjectID(), ecorePackage.getEString(), "iProjectID", null, 0, 1, DesignGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getDesignGroup_Designs(), this.getDesign(), null, "designs", null, 0, -1, DesignGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(designEClass, Design.class, "Design", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

@@ -84,8 +84,7 @@ public class DesignURLComposite extends Composite
 			@Override
 			public void widgetSelected(SelectionEvent e)
 			{
-				DrawDocument drawDocument = new DrawDocument();
-				drawDocument.setEventBroker(eventBroker);
+				DrawDocument drawDocument = new DrawDocument();				
 				drawDocument.loadPage(drawPath);
 			}
 		});

@@ -38,15 +38,7 @@ package it.naturtalent.libreoffice;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.sun.star.uno.UnoRuntime;
-import com.sun.star.lang.IllegalArgumentException;
-import com.sun.star.lang.IndexOutOfBoundsException;
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XServiceInfo;
 import com.sun.star.awt.Size;
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XNamed;
 import com.sun.star.drawing.XDrawPage;
@@ -56,8 +48,11 @@ import com.sun.star.drawing.XMasterPageTarget;
 import com.sun.star.drawing.XMasterPagesSupplier;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XModel;
-import com.sun.star.presentation.XPresentationPage;
+import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XServiceInfo;
 import com.sun.star.presentation.XHandoutMasterSupplier;
+import com.sun.star.presentation.XPresentationPage;
+import com.sun.star.uno.UnoRuntime;
 
 
 public class PageHelper

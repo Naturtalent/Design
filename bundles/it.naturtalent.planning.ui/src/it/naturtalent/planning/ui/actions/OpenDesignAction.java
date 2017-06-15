@@ -56,8 +56,7 @@ public class OpenDesignAction extends AbstractPlanungAction
 			if (design != null)
 			{
 				// das dem Design zugeordnete Dokument wird geoffnet
-				DrawDocument drawDocument = new DrawDocument();
-				drawDocument.setEventBroker(eventBroker);
+				DrawDocument drawDocument = new DrawDocument();				
 				Page page = design.getPages()[0];				
 				drawDocument.setPageName(page.getName());
 				drawDocument.loadPage(design.getDesignURL());

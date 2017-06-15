@@ -114,13 +114,22 @@ public interface DesignsPackage extends EPackage
 	int DESIGN_GROUP__NAME = 0;
 
 	/**
+	 * The feature id for the '<em><b>IProject ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DESIGN_GROUP__IPROJECT_ID = 1;
+
+	/**
 	 * The feature id for the '<em><b>Designs</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DESIGN_GROUP__DESIGNS = 1;
+	int DESIGN_GROUP__DESIGNS = 2;
 
 	/**
 	 * The number of structural features of the '<em>Design Group</em>' class.
@@ -129,7 +138,7 @@ public interface DesignsPackage extends EPackage
 	 * @generated
 	 * @ordered
 	 */
-	int DESIGN_GROUP_FEATURE_COUNT = 2;
+	int DESIGN_GROUP_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Design Group</em>' class.
@@ -377,6 +386,17 @@ public interface DesignsPackage extends EPackage
 	EAttribute getDesignGroup_Name();
 
 	/**
+	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.DesignGroup#getIProjectID <em>IProject ID</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>IProject ID</em>'.
+	 * @see it.naturtalent.design.model.design.DesignGroup#getIProjectID()
+	 * @see #getDesignGroup()
+	 * @generated
+	 */
+	EAttribute getDesignGroup_IProjectID();
+
+	/**
 	 * Returns the meta object for the containment reference list '{@link it.naturtalent.design.model.design.DesignGroup#getDesigns <em>Designs</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -585,6 +605,14 @@ public interface DesignsPackage extends EPackage
 		 * @generated
 		 */
 		EAttribute DESIGN_GROUP__NAME = eINSTANCE.getDesignGroup_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>IProject ID</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute DESIGN_GROUP__IPROJECT_ID = eINSTANCE.getDesignGroup_IProjectID();
 
 		/**
 		 * The meta object literal for the '<em><b>Designs</b></em>' containment reference list feature.

@@ -68,6 +68,7 @@ public class DesignGroupItemProvider
 			super.getPropertyDescriptors(object);
 
 			addNamePropertyDescriptor(object);
+			addIProjectIDPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -87,6 +88,29 @@ public class DesignGroupItemProvider
 				 getString("_UI_DesignGroup_name_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_DesignGroup_name_feature", "_UI_DesignGroup_type"),
 				 DesignsPackage.Literals.DESIGN_GROUP__NAME,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the IProject ID feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addIProjectIDPropertyDescriptor(Object object)
+	{
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_DesignGroup_iProjectID_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_DesignGroup_iProjectID_feature", "_UI_DesignGroup_type"),
+				 DesignsPackage.Literals.DESIGN_GROUP__IPROJECT_ID,
 				 true,
 				 false,
 				 false,
@@ -144,15 +168,14 @@ public class DesignGroupItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object)
 	{
 		String label = ((DesignGroup)object).getName();
 		return label == null || label.length() == 0 ?
-			getString("_UI_DesignGroup_type") :
-			getString("_UI_DesignGroup_type") + " " + label;
+			getString("_UI_DesignGroup_type") : label;			
 	}
 	
 
@@ -171,6 +194,7 @@ public class DesignGroupItemProvider
 		switch (notification.getFeatureID(DesignGroup.class))
 		{
 			case DesignsPackage.DESIGN_GROUP__NAME:
+			case DesignsPackage.DESIGN_GROUP__IPROJECT_ID:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case DesignsPackage.DESIGN_GROUP__DESIGNS:

@@ -5,11 +5,34 @@ Bundle-SymbolicName: it.naturtalent.design.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Dieter Apel
 Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.2.0.v20160229-1459",
- org.eclipse.swt,
- it.naturtalent.design.model,
+ org.eclipse.emf.ecp.view.treemasterdetail.ui.swt,
+ org.eclipse.emf.ecp.view.treemasterdetail.model;bundle-version="1.12.0",
  org.eclipse.emf.ecp.core,
+ org.eclipse.emf.ecp.ui.view.swt,
+ org.eclipse.e4.core.di,
+ org.eclipse.swt,
+ org.eclipse.core.runtime,
+ org.eclipse.e4.ui.services,
+ org.eclipse.core.resources,
+ org.eclipse.emfforms.swt.core.di,
+ it.naturtalent.design.model,
  it.naturtalent.emf.model,
- org.eclipse.emf.ecp.ui.view.swt
+ it.naturtalent.e4.project,
+ org.eclipse.jface,
+ org.eclipse.e4.ui.workbench,
+ it.wp.common.io,
+ it.wp.common.logger,
+ it.naturtalent.libreoffice,
+ org.eclipse.e4.core.contexts;bundle-version="1.5.0",
+ it.naturtalent.e4.project.ui,
+ org.eclipse.ui.workbench,
+ org.eclipse.e4.core.services,
+ org.eclipse.osgi.services,
+ org.eclipse.e4.core.di.extensions,
+ org.eclipse.e4.ui.di
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Service-Component: OSGI-INF/designmasterrenderer.xml
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: it.naturtalent.design.ui.Activator

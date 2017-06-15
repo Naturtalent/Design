@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="it.naturtalent.design.ui.masterrenderer">
+   <implementation class="it.naturtalent.design.ui.renderer.DesignMasterDetailRendererService"/>
+    <service>
+      <provide interface="org.eclipse.emfforms.spi.swt.core.di.EMFFormsDIRendererService"/> 
+   </service>
+</scr:component>

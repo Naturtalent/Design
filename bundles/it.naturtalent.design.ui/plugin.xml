@@ -8,5 +8,20 @@
             uri="fragment.e4xmi">
       </fragment>
    </extension>
+   <extension
+         point="org.eclipse.emf.ecp.view.treemasterdetail.ui.swt.masterDetailActions">
+      <MasterDetailAction
+            command="it.naturtalent.design.ui.actions.OpenDesignAction"
+            imagePath="icon://ICON_PROJECT"
+            label="Zeichnung öffnen"
+            location="menu">
+      </MasterDetailAction>
+      <MasterDetailAction
+            command="it.naturtalent.design.ui.actions.CloseDesignAction"
+            imagePath="icon://ICON_PROJECT"
+            label="Zeichnung schließen"
+            location="menu">
+      </MasterDetailAction>
+   </extension>
 
 </plugin>

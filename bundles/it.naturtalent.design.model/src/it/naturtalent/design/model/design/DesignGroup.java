@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link it.naturtalent.design.model.design.DesignGroup#getName <em>Name</em>}</li>
+ *   <li>{@link it.naturtalent.design.model.design.DesignGroup#getIProjectID <em>IProject ID</em>}</li>
  *   <li>{@link it.naturtalent.design.model.design.DesignGroup#getDesigns <em>Designs</em>}</li>
  * </ul>
  *
@@ -50,6 +51,32 @@ public interface DesignGroup extends EObject
 	 * @generated
 	 */
 	void setName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>IProject ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>IProject ID</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>IProject ID</em>' attribute.
+	 * @see #setIProjectID(String)
+	 * @see it.naturtalent.design.model.design.DesignsPackage#getDesignGroup_IProjectID()
+	 * @model
+	 * @generated
+	 */
+	String getIProjectID();
+
+	/**
+	 * Sets the value of the '{@link it.naturtalent.design.model.design.DesignGroup#getIProjectID <em>IProject ID</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>IProject ID</em>' attribute.
+	 * @see #getIProjectID()
+	 * @generated
+	 */
+	void setIProjectID(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Designs</b></em>' containment reference list.
