@@ -4,6 +4,7 @@ package it.naturtalent.libreoffice.draw;
 import it.naturtalent.libreoffice.Bootstrap;
 import it.naturtalent.libreoffice.DesignHelper;
 import it.naturtalent.libreoffice.DrawDocumentEvent;
+import it.naturtalent.libreoffice.DrawPagePropertyListener;
 import it.naturtalent.libreoffice.PageHelper;
 import it.naturtalent.libreoffice.Utils;
 
@@ -26,13 +27,16 @@ import org.eclipse.swt.graphics.Rectangle;
 
 import com.sun.star.awt.Size;
 import com.sun.star.awt.XWindow;
+import com.sun.star.beans.PropertyChangeEvent;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.UnknownPropertyException;
+import com.sun.star.beans.XPropertyChangeListener;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.drawing.HomogenMatrixLine3;
 import com.sun.star.drawing.PolyPolygonBezierCoords;
 import com.sun.star.drawing.XDrawPage;
+import com.sun.star.drawing.XDrawPagesSupplier;
 import com.sun.star.drawing.XLayer;
 import com.sun.star.drawing.XLayerManager;
 import com.sun.star.drawing.XLayerSupplier;
@@ -91,7 +95,7 @@ public class DrawDocument
 	// Map beinhaltet das momentan geoffente Dokument (@see TerminateListener) 
 	public static Map<TerminateListener, String>openDocumentsMap = new HashMap<TerminateListener, String>();	
 
-	
+	private DrawPagePropertyListener drawPagePropertyListener;
 	
 	
 	public DrawDocument()
@@ -168,7 +172,7 @@ public class DrawDocument
 					eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE, DrawDocument.this);					
 				}
 			});
-			
+						
 			// TerminateListener installieren
 			xDesktop = UnoRuntime.queryInterface(XDesktop.class,desktop);
 			TerminateListener terminateListener = new TerminateListener();
@@ -178,14 +182,18 @@ public class DrawDocument
 			// EventHandler informieren, dass Ladevorgang abgeschlossen ist
 			eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN, this);
 			
-			//
-			//
-			//
+			// PageListener installieren und aktivierten
+			drawPagePropertyListener = new DrawPagePropertyListener(xComponent);
+			drawPagePropertyListener.activatePageListener();
+			
+			//drawPagePropertyListener.activatePageListener(xComponent);
 			
 			
+			/*
+			 * Ueberwachung Shapeselections 
+			 */			
 			XModel xModel = UnoRuntime.queryInterface(XModel.class,xComponent);
 			XController xController = xModel.getCurrentController();
-			
 			XSelectionSupplier selectionSupplier = UnoRuntime.queryInterface(
 					XSelectionSupplier.class, xController);
 			
@@ -196,36 +204,33 @@ public class DrawDocument
 				public void disposing(EventObject arg0)
 				{
 					// TODO Auto-generated method stub
-					
+					System.out.println("selection");
 				}
 				
 				@Override
 				public void selectionChanged(EventObject arg0)
 				{
-					/*
+					
+					//System.out.println("selection");
+										
 					Object obj = arg0.Source;
+					
+					/*
 					if (obj instanceof XPropertySet)
 					{
 						XPropertySet selectedPropertySet = (XPropertySet) obj;
 						Utils.printPropertyValues(selectedPropertySet);
 					}
+					*/
 					
 					System.out.println("Selection: "+obj);
-					*/
+					
 				
 					
 				}
 			});
 			
 		
-			
-			//
-			//
-			//
-			
-			
-			
-			
 			// das geoeffnete Dokument mit Listener als Key speichern
 			openDocumentsMap.put(terminateListener, documentPath);	
 		}
@@ -263,6 +268,7 @@ public class DrawDocument
 	public void setFocus()
 	{		
 		DesignHelper.setFocus(xComponent);
+		
 	}
 	
 	public void getAllPages()
