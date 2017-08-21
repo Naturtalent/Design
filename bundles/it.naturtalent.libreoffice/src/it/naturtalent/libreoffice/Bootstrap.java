@@ -1,5 +1,6 @@
 package it.naturtalent.libreoffice;
 
+import it.naturtalent.e4.office.OfficeConstants;
 import it.naturtalent.e4.office.odf.ODFOfficeDocumentHandler;
 
 import java.io.BufferedReader;
@@ -45,14 +46,14 @@ public class Bootstrap
 		try
 		{			
 			IEclipsePreferences preferences = InstanceScope.INSTANCE
-					.getNode(it.naturtalent.e4.office.Activator.ROOT_OFFICE_PREFERENCES_NODE);
-			String officApplicationPath = preferences.get(ODFOfficeDocumentHandler.OFFICE_APPLICATION_PREF, null);
+					.getNode(OfficeConstants.ROOT_OFFICE_PREFERENCES_NODE);
+			String officApplicationPath = preferences.get(OfficeConstants.OFFICE_APPLICATION_PREF, null);
 			
 			if(StringUtils.isEmpty(officApplicationPath))
 			{
 				preferences = DefaultScope.INSTANCE
-						.getNode(it.naturtalent.e4.office.Activator.ROOT_OFFICE_PREFERENCES_NODE);
-				officApplicationPath = preferences.get(ODFOfficeDocumentHandler.OFFICE_APPLICATION_PREF, null);
+						.getNode(OfficeConstants.ROOT_OFFICE_PREFERENCES_NODE);
+				officApplicationPath = preferences.get(OfficeConstants.OFFICE_APPLICATION_PREF, null);
 			}
 			
 			// create default local component context

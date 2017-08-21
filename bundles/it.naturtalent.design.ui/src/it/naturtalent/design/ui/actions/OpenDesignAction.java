@@ -41,6 +41,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
+import it.naturtalent.application.ChooseWorkspaceData;
 import it.naturtalent.design.model.design.Design;
 import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.ui.DesignUtils;
@@ -428,6 +429,4 @@ public class OpenDesignAction extends MasterDetailAction
 		return openDrawDocumentMap;
 	}
 	
-	
-
 }

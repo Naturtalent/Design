@@ -106,6 +106,30 @@ public class DrawDocument
 				.get(IEventBroker.class);
 	}
 
+	public void loadPage(final String documentPath)
+	{
+		Job j = new Job("Load Job") //$NON-NLS-1$
+		{
+			@Override
+			protected IStatus run(final IProgressMonitor monitor)
+			{
+				try
+				{
+					loadDocument(documentPath);
+					//setDocumentProperties();
+				}
+				catch (Exception e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				return Status.OK_STATUS;
+			}
+		};
+		j.schedule();		
+	}
+	
 	private void loadDocument(String documentPath) throws Exception
 	{
 		this.documentPath = documentPath;
@@ -139,14 +163,14 @@ public class DrawDocument
 		        XFilter               xfilter = (XFilter) UnoRuntime.queryInterface( XFilter.class, svgfilter );
 		        XImporter             ximporter = (XImporter) UnoRuntime.queryInterface( XExporter.class, svgfilter );
 		        System.out.println("Inserting image...");
-
+	
 			} catch (com.sun.star.uno.Exception e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			*/
-
+	
 			
 			//
 			//
@@ -236,31 +260,6 @@ public class DrawDocument
 		}
 	}
 
-
-	public void loadPage(final String documentPath)
-	{
-		Job j = new Job("Load Job") //$NON-NLS-1$
-		{
-			@Override
-			protected IStatus run(final IProgressMonitor monitor)
-			{
-				try
-				{
-					loadDocument(documentPath);
-					//setDocumentProperties();
-				}
-				catch (Exception e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				return Status.OK_STATUS;
-			}
-		};
-		j.schedule();		
-	}
-	
 	/**
 	 * Setzt den Focus auf diese Zeichnung.
 	 * Sind mehrere Zeichnungen geoffnet, wird diese Zeichnung bearbeitbar sichtbar im Desktop gezeigt.

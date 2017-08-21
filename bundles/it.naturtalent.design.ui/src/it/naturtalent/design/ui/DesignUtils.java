@@ -26,7 +26,7 @@ import it.naturtalent.design.model.design.Designs;
 import it.naturtalent.design.model.design.DesignsPackage;
 import it.naturtalent.design.ui.parts.DesignsView;
 import it.naturtalent.e4.project.IProjectData;
-import it.naturtalent.emf.model.EMFModelUtils;
+
 
 public class DesignUtils
 {
@@ -49,7 +49,7 @@ public class DesignUtils
 		
 		// ggf. Projekt 'DESIGNPROJECT' erzeugen
 		if(designsProject == null)
-			designsProject = new EMFModelUtils().createProject(DesignsView.DESIGNPROJECTNAME);
+			designsProject = Activator.createProject(DesignsView.DESIGNPROJECTNAME);
 
 		return designsProject;
 	}
@@ -68,7 +68,7 @@ public class DesignUtils
 		
 		// ggf. Projekt 'DESIGNPROJECT' erzeugen
 		if(designsProject == null)
-			designsProject = new EMFModelUtils().createProject(DesignsView.DESIGNPROJECTNAME);
+			designsProject = Activator.createProject(DesignsView.DESIGNPROJECTNAME);
 		
 		// im ECPProject das Modell Archives suchen 
 		EList<Object>projectContents = designsProject.getContents();

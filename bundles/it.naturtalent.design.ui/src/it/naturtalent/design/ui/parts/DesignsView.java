@@ -1,6 +1,7 @@
  
 package it.naturtalent.design.ui.parts;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
@@ -10,6 +11,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -23,11 +26,12 @@ import org.eclipse.emf.ecp.ui.view.ECPRendererException;
 import org.eclipse.emf.ecp.ui.view.swt.ECPSWTViewRenderer;
 import org.eclipse.swt.widgets.Composite;
 
+import it.naturtalent.application.ChooseWorkspaceData;
 import it.naturtalent.design.model.design.Design;
 import it.naturtalent.design.model.design.Designs;
 import it.naturtalent.design.model.design.DesignsPackage;
+import it.naturtalent.design.ui.Activator;
 import it.naturtalent.design.ui.actions.OpenDesignAction;
-import it.naturtalent.emf.model.EMFModelUtils;
 import it.naturtalent.libreoffice.draw.DrawDocument;
 
 public class DesignsView
@@ -39,6 +43,10 @@ public class DesignsView
 	public final static String DESIGNPROJECTNAME = "DesignsEMFProject";
 	
 	private IResource selectedResource;
+	
+	
+	Log log = LogFactory.getLog(this.getClass());
+	
 	
 	/*
 	 * 'ECPProjectContentChangedObserver' Überwacht Aenderungen im Modell
@@ -68,7 +76,6 @@ public class DesignsView
 				System.out.println(project.getName());
 				
 			}
-			
 			
 			return null;
 		}
@@ -102,6 +109,12 @@ public class DesignsView
 		
 		projectModelChangedObserver = new ProjectModelChangeObserver();
 		ECPUtil.getECPObserverBus().register(projectModelChangedObserver);
+		
+		boolean check = Activator.checkLibraryPath("jurt");
+		System.out.println(check);
+		
+		//Activator.setLibraryPath("/usr/lib/libreoffice/program/classes");
+		
 	}
 	
 	@PreDestroy
@@ -136,7 +149,7 @@ public class DesignsView
 		
 		// ggf. Projekt 'DESIGNPROJECT' erzeugen
 		if(designsProject == null)
-			designsProject = new EMFModelUtils().createProject(DESIGNPROJECTNAME);
+			designsProject = Activator.createProject(DESIGNPROJECTNAME);
 		
 		// im ECPProject das Modell Archives suchen 
 		EList<Object>projectContents = designsProject.getContents();
@@ -162,5 +175,9 @@ public class DesignsView
 		
 		return designs;
 	}
+	
+	
+
+	
 	
 }

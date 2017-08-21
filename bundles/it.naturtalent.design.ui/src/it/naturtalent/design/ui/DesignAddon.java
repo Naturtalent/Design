@@ -13,8 +13,6 @@ import org.osgi.service.event.Event;
 import it.naturtalent.e4.project.INtProjectPropertyFactory;
 import it.naturtalent.e4.project.INtProjectPropertyFactoryRepository;
 
-import org.eclipse.e4.core.services.events.IEventBroker;
-
 public class DesignAddon
 {
 
@@ -32,7 +30,7 @@ public class DesignAddon
 			List<INtProjectPropertyFactory>ntDataFactories = ntProjektDataFactoryRepository.getAllProjektDataFactories();
 			ntDataFactories.add(new DesignProjectPropertyFactory());
 		}
-			
 	}
+	
 
 }

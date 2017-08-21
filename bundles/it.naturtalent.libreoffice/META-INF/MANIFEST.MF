@@ -10,12 +10,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.e4.ui.model.workbench;bundle-version="1.1.0.v20140512-1820",
  org.eclipse.e4.core.di,
  javax.inject,
- it.naturtalent.e4.office.odf,
- it.naturtalent.e4.office;bundle-version="1.0.0",
+ it.naturtalent.e4.office,
  org.eclipse.e4.core.services,
  it.wp.common.io,
  org.eclipse.e4.ui.workbench,
- org.eclipse.e4.core.contexts;bundle-version="1.5.0"
+ org.eclipse.e4.core.contexts;bundle-version="1.5.0",
+ it.naturtalent.e4.office.odf;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/java_uno_accessbridge.jar,
