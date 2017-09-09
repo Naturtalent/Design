@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_JlcpsDKSEeeS3tZw3STCXg">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_hemQIDKSEeeS3tZw3STCXg" featurename="children" parentElementId="it.naturtalent.e4.project.ui.partstack.1">
-    <elements xsi:type="basic:Part" xmi:id="_lyH60DKSEeeS3tZw3STCXg" elementId="it.naturtalent.design.ui.part.designs" contributionURI="bundleclass://it.naturtalent.design.ui/it.naturtalent.design.ui.parts.DesignsView" label="Zeichnungen" iconURI="icon://ICON_PROJECT">
+    <elements xsi:type="basic:Part" xmi:id="_lyH60DKSEeeS3tZw3STCXg" elementId="it.naturtalent.design.ui.part.designs" contributionURI="bundleclass://it.naturtalent.design.ui/it.naturtalent.design.ui.parts.DesignsView" label="Zeichnungen" iconURI="icon://ICON_PROJECT" closeable="true">
       <toolbar xmi:id="_ftPi8DQhEeeLAtvrqaA0jA" elementId="it.naturtalent.design.ui.toolbar.0">
         <children xsi:type="menu:DirectToolItem" xmi:id="_g9tFQDQhEeeLAtvrqaA0jA" elementId="it.naturtalent.design.ui.directtoolitem.opendesign" label="OpenDesign" iconURI="icon://ICON_PROJECT" contributionURI="bundleclass://it.naturtalent.design.ui/it.naturtalent.design.ui.actions.OpenDesign"/>
       </toolbar>

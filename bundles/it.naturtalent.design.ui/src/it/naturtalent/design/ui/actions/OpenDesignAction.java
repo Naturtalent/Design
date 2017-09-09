@@ -107,11 +107,21 @@ public class OpenDesignAction extends MasterDetailAction
 				}				
 				return;
 			}
-					
-			cancel = true;
-			openDrawDocumentMap.put(design, drawDocument);			
 			
-			
+			// Abbruch des Ladevorgangs (z.B. keine JPIPE Library gefunden)
+			if(StringUtils.equals(event.getTopic(),DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN_CANCEL))
+			{
+				cancel = true;
+				return;
+			}
+				
+			// Ladevorgang beendent, das geoeffnete DrawDocument im 'openDrawDocumentMap' speichern 
+			if(StringUtils.equals(event.getTopic(),DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN))
+			{
+				cancel = true;
+				openDrawDocumentMap.put(design, drawDocument);
+				return;
+			}
 		}
 	};
 	
@@ -127,6 +137,8 @@ public class OpenDesignAction extends MasterDetailAction
 		eventBroker = currentApplication.getContext().get(IEventBroker.class);
 		//eventBroker.subscribe(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN, openDocumentEventHandler);
 		eventBroker.subscribe(DrawDocumentEvent.DRAWDOCUMENT_EVENT+"*", openDocumentEventHandler);
+		
+		
 	}
 
 	
@@ -155,6 +167,8 @@ public class OpenDesignAction extends MasterDetailAction
 		eventBroker.unsubscribe(openDocumentEventHandler);
 		super.dispose();
 	}
+	
+	
 
 
 	/*
@@ -240,7 +254,7 @@ public class OpenDesignAction extends MasterDetailAction
 
 
 	/*
-	 * Meuepunkt 'Zeichnung oeffnen' zeigen/nicht zeigen
+	 * Soll der Menuepunkt 'Zeichnung oeffnen' sichtbar oder unsichtbar sein
 	 * 
 	 */
 	@Override

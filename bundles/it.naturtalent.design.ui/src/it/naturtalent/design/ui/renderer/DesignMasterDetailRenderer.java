@@ -1,23 +1,31 @@
 package it.naturtalent.design.ui.renderer;
 
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecp.view.spi.context.ViewModelContext;
+import org.eclipse.emf.ecp.view.spi.treemasterdetail.ui.swt.MasterDetailAction;
 import org.eclipse.emf.ecp.view.spi.treemasterdetail.ui.swt.TreeMasterDetailSWTRenderer;
 import org.eclipse.emf.ecp.view.treemasterdetail.model.VTreeMasterDetail;
 import org.eclipse.emfforms.spi.common.report.ReportService;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.osgi.service.event.Event;
 
 import it.naturtalent.design.model.design.Design;
+import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.ui.actions.OpenDesignAction;
+import it.naturtalent.design.ui.parts.DesignsView;
 import it.naturtalent.libreoffice.draw.DrawDocument;
 
 
@@ -76,5 +84,18 @@ public class DesignMasterDetailRenderer extends TreeMasterDetailSWTRenderer
 		
 		return treeViewer;
 	}
+	
+	@Inject
+	@Optional
+	public void handleSelectGroupEvent(@UIEventTopic(DesignsView.DESIGN_SELECTGROUP_EVENT) Event event)
+	{		
+		DesignGroup designGroup = (DesignGroup) event.getProperty("DESIGNGROUP");
+		treeViewer.setSelection(new StructuredSelection(designGroup));
+		System.out.println(designGroup);
+	}
+
+
+
+	
 
 }

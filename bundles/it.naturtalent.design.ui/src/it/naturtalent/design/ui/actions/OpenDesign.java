@@ -15,6 +15,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 
+/**
+ * Wird ueber die Toolbar aufgerufen
+ * 
+ * @author dieter
+ *
+ */
 public class OpenDesign
 {
 	@Execute

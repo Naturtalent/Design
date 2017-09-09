@@ -1,8 +1,5 @@
 package it.naturtalent.libreoffice;
 
-import it.naturtalent.e4.office.OfficeConstants;
-import it.naturtalent.e4.office.odf.ODFOfficeDocumentHandler;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -13,9 +10,15 @@ import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
@@ -31,11 +34,13 @@ import com.sun.star.loader.XImplementationLoader;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
+import it.naturtalent.e4.office.OfficeConstants;
+
 public class Bootstrap
 {
 
-	static String OFFICE = "C:\\Users\\A682055\\Daten\\Naturtalent4\\programme\\Office\\LibreOfficeProtable4\\App\\libreoffice\\program";
-	static String LINUX_OFFICE = "/usr/lib/libreoffice/program/";
+	//static String OFFICE = "C:\\Users\\A682055\\Daten\\Naturtalent4\\programme\\Office\\LibreOfficeProtable4\\App\\libreoffice\\program";
+	//static String LINUX_OFFICE = "/usr/lib/libreoffice/program/";
 	
 	public static final XComponentContext bootstrap() throws BootstrapException
 	{
@@ -66,7 +71,7 @@ public class Bootstrap
 				sOffice = officApplicationPath +File.separator+"soffice.exe";
 			else
 			{
-				officApplicationPath = (StringUtils.isEmpty(officApplicationPath)) ? LINUX_OFFICE : officApplicationPath; 					
+				//officApplicationPath = (StringUtils.isEmpty(officApplicationPath)) ? LINUX_OFFICE : officApplicationPath; 					
 				sOffice = officApplicationPath +File.separator+"soffice";
 			}
 			
@@ -123,12 +128,19 @@ public class Bootstrap
 					Thread.sleep(500);
 				}
 			}
-		} catch (Exception e)
+		} catch (final Exception e)
 		{
 			Display.getDefault().syncExec(new Runnable()
 			{
 				public void run()
 				{
+					LogFactory.getLog(this.getClass()).equals(e);
+					
+					// Watchdog (@see OpenDesignAction) abschalten
+					MApplication currentApplication = E4Workbench.getServiceContext().get(IWorkbench.class).getApplication();
+					IEventBroker eventBroker = currentApplication.getContext().get(IEventBroker.class);
+					eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN_CANCEL, null);
+					
 					MessageDialog
 							.openError(
 									Display.getDefault()

@@ -11,6 +11,8 @@ public class DrawDocumentEvent
 	
 	public static final String DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE = DRAWDOCUMENT_EVENT+"drawDocumentClose"; //$NON-NLS-N$
 	
+	public static final String DRAWDOCUMENT_EVENT_DOCUMENT_OPEN_CANCEL = DRAWDOCUMENT_EVENT+"drawDocumentOpenCancel"; //$NON-NLS-N$
+	
 	//public static final String DRAWDOCUMENT_EVENT_DOCUMENT_ADDED = DRAWDOCUMENT_EVENT+"drawDocumentAdded"; //$NON-NLS-N$
 	
 	//public static final String DRAWDOCUMENT_EVENT_DOCUMENT_MODIFIED = DRAWDOCUMENT_EVENT+"drawDocumentModified"; //$NON-NLS-N$

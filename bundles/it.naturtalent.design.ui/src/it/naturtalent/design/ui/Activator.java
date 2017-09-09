@@ -1,6 +1,8 @@
 package it.naturtalent.design.ui;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +22,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import it.naturtalent.application.ChooseWorkspaceData;
+import it.naturtalent.icons.core.Icon;
+import it.naturtalent.icons.core.IconSize;
 
 
 
@@ -33,7 +37,8 @@ public class Activator implements BundleActivator
 	@Override
 	public void start(BundleContext context) throws Exception
 	{
-		Activator.context = context;		
+		Activator.context = context;	
+		//copyIcon();
 	}
 
 	@Override
@@ -45,6 +50,22 @@ public class Activator implements BundleActivator
 	static BundleContext getContext()
 	{		
 		return context;
+	}
+	
+	private void copyIcon()
+	{
+		try
+		{
+			InputStream is = Icon.ICON_PROJECT.getImageAsInputStream(IconSize._16x16_DefaultIconSize);
+		
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		//System.out.println(iconUri);
 	}
 	
 	/**
@@ -114,29 +135,4 @@ public class Activator implements BundleActivator
 		return false;
 	}
 
-	/**
-	 * Traegt den LibraryPath 'libPath' in die Konfigurationsinifile ein
-	 * 
-	 * @param libName
-	 * @return
-	 */
-	public static void setLibraryPath(String libPath)
-	{		
-		ChooseWorkspaceData wd = new ChooseWorkspaceData();		
-		String contentConfig = wd.getConfigFileContentAsString();
-		if(contentConfig != null)
-		{
-			StringBuilder sb = new StringBuilder(contentConfig);
-			
-			if(!StringUtils.endsWith(contentConfig, "\n"))
-				contentConfig = contentConfig+"\n"; 
-			
-			sb.append("-vmargs\n");
-			sb.append("-Djava.library.path=");
-			sb.append(libPath+"\n");
-			
-			wd.setConfigContent(sb.toString());
-		}
-	}
-	
 }

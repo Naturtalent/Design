@@ -1,5 +1,8 @@
 package it.naturtalent.design.ui;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +13,11 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.emf.ecp.core.ECPProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -17,6 +25,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.model.design.Designs;
 import it.naturtalent.design.model.design.DesignsFactory;
+import it.naturtalent.design.ui.parts.DesignsView;
 import it.naturtalent.e4.project.INtProject;
 import it.naturtalent.e4.project.INtProjectProperty;
 
@@ -164,6 +173,10 @@ public class DesignProjectProperty implements INtProjectProperty
 		return null;
 	}
 
+	/* Definiert die Aktion, die durch Aktivierung des Hyperlinks im NtProjekt-Details ausgeloest wird.
+	 * 
+	 * @see it.naturtalent.e4.project.INtProjectProperty#createAction()
+	 */
 	@Override
 	public Action createAction()
 	{
@@ -175,6 +188,17 @@ public class DesignProjectProperty implements INtProjectProperty
 			@Override
 			public void run()
 			{
+				// ViewDesign offnen
+				MApplication currentApplication = E4Workbench.getServiceContext().get(IWorkbench.class).getApplication();
+				EPartService partService = currentApplication.getContext().get(EPartService.class);
+				MPart part = partService.findPart(DesignsView.DESIGNSVIEW_ID);
+				part.setVisible(true);
+				partService.activate(part);
+				
+				Map<String, DesignGroup>map = new HashMap<String, DesignGroup>();
+				map.put("DESIGNGROUP", designGroup);
+				eventBroker.send(DesignsView.DESIGN_SELECTGROUP_EVENT, map);
+				
 				System.out.println("DesingProperty: "+designGroup);
 				super.run();
 			}			

@@ -1,7 +1,6 @@
  
 package it.naturtalent.design.ui.parts;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
@@ -15,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -25,13 +25,15 @@ import org.eclipse.emf.ecp.core.util.observer.ECPProjectContentChangedObserver;
 import org.eclipse.emf.ecp.ui.view.ECPRendererException;
 import org.eclipse.emf.ecp.ui.view.swt.ECPSWTViewRenderer;
 import org.eclipse.swt.widgets.Composite;
+import org.osgi.service.event.Event;
 
-import it.naturtalent.application.ChooseWorkspaceData;
 import it.naturtalent.design.model.design.Design;
+import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.model.design.Designs;
 import it.naturtalent.design.model.design.DesignsPackage;
 import it.naturtalent.design.ui.Activator;
 import it.naturtalent.design.ui.actions.OpenDesignAction;
+import it.naturtalent.icons.core.Icon;
 import it.naturtalent.libreoffice.draw.DrawDocument;
 
 public class DesignsView
@@ -42,10 +44,10 @@ public class DesignsView
 	// Name des ECP Projekts indem alle Zeichnungen gespeichert werden
 	public final static String DESIGNPROJECTNAME = "DesignsEMFProject";
 	
+	// Eventkey zur Selektion einer DesignGroup (@see DesignMasterDetailRenderer)
+	public final static String DESIGN_SELECTGROUP_EVENT = "designselectgroupevent";
+	
 	private IResource selectedResource;
-	
-	
-	Log log = LogFactory.getLog(this.getClass());
 	
 	
 	/*
@@ -123,7 +125,10 @@ public class DesignsView
 		Map<Design, DrawDocument>openDrawDocumentMap = OpenDesignAction.getOpenDrawDocumentMap();
 		for(DrawDocument drawDocument : openDrawDocumentMap.values())
 			drawDocument.closeDocument();
-
+		
+		if((openDrawDocumentMap != null) && (!openDrawDocumentMap.isEmpty()))
+			openDrawDocumentMap.values().iterator().next().closeDesktop();
+		
 		ECPUtil.getECPObserverBus().unregister(projectModelChangedObserver);
 	}
 	

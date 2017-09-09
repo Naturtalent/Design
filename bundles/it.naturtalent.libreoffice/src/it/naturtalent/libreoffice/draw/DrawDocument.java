@@ -1,13 +1,6 @@
 package it.naturtalent.libreoffice.draw;
 
 
-import it.naturtalent.libreoffice.Bootstrap;
-import it.naturtalent.libreoffice.DesignHelper;
-import it.naturtalent.libreoffice.DrawDocumentEvent;
-import it.naturtalent.libreoffice.DrawPagePropertyListener;
-import it.naturtalent.libreoffice.PageHelper;
-import it.naturtalent.libreoffice.Utils;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,36 +11,33 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 
 import com.sun.star.awt.Size;
-import com.sun.star.awt.XWindow;
-import com.sun.star.beans.PropertyChangeEvent;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.beans.XPropertyChangeListener;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.drawing.HomogenMatrixLine3;
 import com.sun.star.drawing.PolyPolygonBezierCoords;
 import com.sun.star.drawing.XDrawPage;
-import com.sun.star.drawing.XDrawPagesSupplier;
 import com.sun.star.drawing.XLayer;
 import com.sun.star.drawing.XLayerManager;
 import com.sun.star.drawing.XLayerSupplier;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDesktop;
-import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
-import com.sun.star.io.IOException;
 import com.sun.star.lang.EventObject;
-import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
@@ -59,6 +49,13 @@ import com.sun.star.uno.XComponentContext;
 import com.sun.star.uno.XInterface;
 import com.sun.star.view.XSelectionChangeListener;
 import com.sun.star.view.XSelectionSupplier;
+
+import it.naturtalent.libreoffice.Bootstrap;
+import it.naturtalent.libreoffice.DesignHelper;
+import it.naturtalent.libreoffice.DrawDocumentEvent;
+import it.naturtalent.libreoffice.DrawPagePropertyListener;
+import it.naturtalent.libreoffice.PageHelper;
+import it.naturtalent.libreoffice.Utils;
 
  
 public class DrawDocument
@@ -108,7 +105,7 @@ public class DrawDocument
 
 	public void loadPage(final String documentPath)
 	{
-		Job j = new Job("Load Job") //$NON-NLS-1$
+		final Job j = new Job("Load Job") //$NON-NLS-1$
 		{
 			@Override
 			protected IStatus run(final IProgressMonitor monitor)
@@ -127,6 +124,43 @@ public class DrawDocument
 				return Status.OK_STATUS;
 			}
 		};
+		
+			
+		/*
+		j.addJobChangeListener(new JobChangeAdapter() 
+		{
+
+			@Override
+			public void done(IJobChangeEvent event)
+			{				
+				if(!event.getResult().isOK())
+				{
+					// Fehler (wahrscheinlich keine 'JPIPE' - LibraryPath) 
+					IStatus status = event.getResult();
+					final String message = status.toString();
+					
+					Display.getDefault().syncExec(new Runnable()
+					{
+						public void run()
+						{
+							// Watchdog (@see OpenDesignAction) abschalten
+							eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN_CANCEL, null);
+							
+							MessageDialog
+									.openError(
+											Display.getDefault().getActiveShell(),
+											"Error Load Dokument",message);
+							j.cancel();
+						}
+					});
+				}
+				super.done(event);
+			}
+		
+		});
+		*/
+	
+		
 		j.schedule();		
 	}
 	
@@ -296,18 +330,15 @@ public class DrawDocument
 			
 		}
 	}
-	
+
+	public void closeDesktop()
+	{
+		xDesktop.terminate();	
+	}
+
 	public void closeDocument()
 	{
-		if(xDesktop != null)
-			try
-			{
-				xDesktop.terminate();
-			} catch (Exception e)
-			{
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-			}
+		xComponent.dispose();		
 	}
 	
 	public void pullScaleData()
