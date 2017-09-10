@@ -37,8 +37,7 @@ public class Activator implements BundleActivator
 	@Override
 	public void start(BundleContext context) throws Exception
 	{
-		Activator.context = context;	
-		//copyIcon();
+		Activator.context = context;			
 	}
 
 	@Override
@@ -50,22 +49,6 @@ public class Activator implements BundleActivator
 	static BundleContext getContext()
 	{		
 		return context;
-	}
-	
-	private void copyIcon()
-	{
-		try
-		{
-			InputStream is = Icon.ICON_PROJECT.getImageAsInputStream(IconSize._16x16_DefaultIconSize);
-		
-		} catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		//System.out.println(iconUri);
 	}
 	
 	/**

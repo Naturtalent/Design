@@ -134,7 +134,7 @@ public class Bootstrap
 			{
 				public void run()
 				{
-					LogFactory.getLog(this.getClass()).equals(e);
+					LogFactory.getLog(this.getClass()).error(e);
 					
 					// Watchdog (@see OpenDesignAction) abschalten
 					MApplication currentApplication = E4Workbench.getServiceContext().get(IWorkbench.class).getApplication();

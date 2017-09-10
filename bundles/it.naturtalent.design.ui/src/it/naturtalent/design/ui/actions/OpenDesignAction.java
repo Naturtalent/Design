@@ -7,6 +7,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +24,9 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -33,6 +38,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecp.view.spi.treemasterdetail.ui.swt.MasterDetailAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.osgi.framework.Bundle;
@@ -42,6 +48,7 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 import it.naturtalent.application.ChooseWorkspaceData;
+import it.naturtalent.application.IPreferenceAdapter;
 import it.naturtalent.design.model.design.Design;
 import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.ui.DesignUtils;
@@ -78,6 +85,9 @@ public class OpenDesignAction extends MasterDetailAction
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
+	@Inject
+	@Preference(nodePath = IPreferenceAdapter.PREFERENCE_APPLICATION_TEMPDIR_KEY)
+	private IEclipsePreferences preferences;
 	
 	/*
 	 * Wenn der Dokumentladevorgang abgeschlossen wurde, kann der Watchdog beedent werden.
@@ -304,16 +314,22 @@ public class OpenDesignAction extends MasterDetailAction
 			}
 			
 			// eine Designdatei manuell anlegen
-			FileDialog dlg = new FileDialog(Display.getDefault().getActiveShell());
+			FileDialog dlg = new FileDialog(Display.getDefault().getActiveShell(), SWT.SAVE);
 
 			// Change the title bar text
 			dlg.setText("Importverzeichnis");
 			dlg.setFilterExtensions(new String[]{ ".odg" });
-			dlg.setFilterPath(FilenameUtils.getFullPath("/home/dieter/temp/"));
 			
+			// temporaere Verzeichnis vorauswaehlen
+			IEclipsePreferences instancePreferenceNode = InstanceScope.INSTANCE.getNode(IPreferenceAdapter.ROOT_APPLICATION_PREFERENCES_NODE);
+			String tempPath = instancePreferenceNode.get(IPreferenceAdapter.PREFERENCE_APPLICATION_TEMPDIR_KEY,null);
+			dlg.setFilterPath(tempPath);
+			
+			// Filedialog oeffnen
 			String drawFile = dlg.open();
 			if (drawFile != null)
 			{		
+				drawFile = FilenameUtils.removeExtension(drawFile)+"."+"odg";
 				design.setDesignURL(drawFile);				
 				DesignUtils.createDesignFile(drawFile);				
 				return true;	

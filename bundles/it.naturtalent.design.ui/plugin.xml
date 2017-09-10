@@ -12,13 +12,13 @@
          point="org.eclipse.emf.ecp.view.treemasterdetail.ui.swt.masterDetailActions">
       <MasterDetailAction
             command="it.naturtalent.design.ui.actions.OpenDesignAction"
-            imagePath="platform:/plugin/it.naturtalent.design.ui/icons/close_view.gif"
+            imagePath="icons/project_open.gif"
             label="Zeichnung öffnen"
             location="menu">
       </MasterDetailAction>
       <MasterDetailAction
             command="it.naturtalent.design.ui.actions.CloseDesignAction"
-            imagePath="icon://ICON_PROJECT"
+            imagePath="icons/project_close.gif"
             label="Zeichnung schließen"
             location="menu">
       </MasterDetailAction>
