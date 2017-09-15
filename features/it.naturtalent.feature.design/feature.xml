@@ -2,7 +2,7 @@
 <feature
       id="it.naturtalent.feature.design"
       label="Design"
-      version="3.0.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="Dieter Apel">
 
    <description url="http://www.example.com/description">
@@ -17,15 +17,12 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="it.naturtalent.features.office"
-         version="0.0.0"/>
-
    <plugin
-         id="it.naturtalent.libreoffice"
+         id="it.naturtalent.design.model.edit"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="it.naturtalent.design.model"
@@ -35,7 +32,7 @@
          unpack="false"/>
 
    <plugin
-         id="it.naturtalent.design.model.edit"
+         id="it.naturtalent.design.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -48,7 +45,7 @@
          version="0.0.0"/>
 
    <plugin
-         id="it.naturtalent.design.ui"
+         id="it.naturtalent.libreoffice"
          download-size="0"
          install-size="0"
          version="0.0.0"

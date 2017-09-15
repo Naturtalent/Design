@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/it.naturtalent.feature.design_3.0.0.qualifier.jar" id="it.naturtalent.feature.design" version="3.0.0.qualifier">
+   <feature url="features/it.naturtalent.feature.design_1.0.0.qualifier.jar" id="it.naturtalent.feature.design" version="1.0.0.qualifier">
       <category name="design"/>
    </feature>
    <category-def name="design" label="Design"/>
