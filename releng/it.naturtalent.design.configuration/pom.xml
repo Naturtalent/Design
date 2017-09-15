@@ -9,7 +9,7 @@
 	<properties>
 		<tycho.version>0.26.0</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<repo.url>http://download.eclipse.org/releases/neon</repo.url>
+		<repo.url>http://download.eclipse.org/releases/oxygen</repo.url>
 	</properties>
 	
 	<!-- Repositories should be commented out to only use the target definition 
