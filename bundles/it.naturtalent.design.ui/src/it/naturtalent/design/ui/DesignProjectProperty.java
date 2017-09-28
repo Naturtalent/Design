@@ -30,6 +30,12 @@ import it.naturtalent.e4.project.INtProject;
 import it.naturtalent.e4.project.INtProjectProperty;
 
 
+/**
+ * Realisierung der Designeigenschaft des NtProjects.
+ * 
+ * @author dieter
+ *
+ */
 public class DesignProjectProperty implements INtProjectProperty
 {
 	
@@ -174,6 +180,8 @@ public class DesignProjectProperty implements INtProjectProperty
 	}
 
 	/* Definiert die Aktion, die durch Aktivierung des Hyperlinks im NtProjekt-Details ausgeloest wird.
+	 * Die Aktion oeffnet DesignView (falls erforderlich) und sendet ein Map-Event mit der dort zu selektierenden
+	 * DesignGroup.
 	 * 
 	 * @see it.naturtalent.e4.project.INtProjectProperty#createAction()
 	 */
@@ -195,11 +203,11 @@ public class DesignProjectProperty implements INtProjectProperty
 				part.setVisible(true);
 				partService.activate(part);
 				
-				Map<String, DesignGroup>map = new HashMap<String, DesignGroup>();
-				map.put("DESIGNGROUP", designGroup);
-				eventBroker.send(DesignsView.DESIGN_SELECTGROUP_EVENT, map);
+				// Event senden
+				//Map<String, DesignGroup>map = new HashMap<String, DesignGroup>();
+			//	map.put("DESIGNGROUP", designGroup);
+				eventBroker.send(DesignsView.DESIGN_SELECTGROUP_EVENT, designGroup);
 				
-				System.out.println("DesingProperty: "+designGroup);
 				super.run();
 			}			
 		};

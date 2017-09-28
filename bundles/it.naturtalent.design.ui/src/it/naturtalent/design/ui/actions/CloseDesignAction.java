@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecp.view.spi.treemasterdetail.ui.swt.MasterDetailAction;
 
 import it.naturtalent.design.model.design.Design;
+import it.naturtalent.design.ui.DesignUtils;
 import it.naturtalent.libreoffice.draw.DrawDocument;
 
 public class CloseDesignAction  extends MasterDetailAction
@@ -53,6 +54,9 @@ public class CloseDesignAction  extends MasterDetailAction
 			DrawDocument drawDocument = openDrawDocumentMap.get(design);
 			if(drawDocument != null)
 				drawDocument.closeDocument();
+			
+			// ToolItem 'OpenDesignAction' wieder auf enable
+			DesignUtils.getToolItem(DesignUtils.TOOLBAR_OPENDESIGN_ID).setEnabled(true);
 		}
 	}
 

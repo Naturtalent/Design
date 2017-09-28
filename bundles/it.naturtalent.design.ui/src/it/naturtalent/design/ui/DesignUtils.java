@@ -3,6 +3,8 @@ package it.naturtalent.design.ui;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -15,12 +17,35 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
+import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecp.core.ECPProject;
+import org.eclipse.emf.ecp.core.ECPProvider;
+import org.eclipse.emf.ecp.core.exceptions.ECPProjectWithNameExistsException;
 import org.eclipse.emf.ecp.core.util.ECPUtil;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolItem;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.prefs.Preferences;
 
+import it.naturtalent.application.IPreferenceAdapter;
+import it.naturtalent.design.model.design.Design;
 import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.model.design.Designs;
 import it.naturtalent.design.model.design.DesignsPackage;
@@ -28,31 +53,115 @@ import it.naturtalent.design.ui.parts.DesignsView;
 import it.naturtalent.e4.project.IProjectData;
 
 
+/**
+ * @author dieter
+ *
+ */
 public class DesignUtils
 {
+	// ToolbarItem IDs @see getToolItem(String toolitemID)
+	public final static String TOOLBAR_OPENDESIGN_ID = "it.naturtalent.design.ui.directtoolitem.opendesign"; //$NON-NLS-1$
+	public final static String TOOLBAR_CLOSEDESIGN_ID = "it.naturtalent.design.ui.directtoolitem.closedesign"; //$NON-NLS-1$
+	public final static String TOOLBAR_LINKPROJECT_ID = "it.naturtalent.design.ui.directtoolitem.syncProject"; //$NON-NLS-1$
+	public final static String TOOLBAR_UNDO_ID = "it.naturtalent.design.ui.directtoolitem.undo"; //$NON-NLS-1$
+	public final static String TOOLBAR_SAVE_ID = "it.naturtalent.design.ui.directtoolitem.save"; //$NON-NLS-1$
 	
 	// 'Quelle' der fuer eine Zeichnung benutze Vorlage 
-	private static final String DESIGN_TEMPLATE = "/templates/draw.odg";
+	private static final String DESIGN_TEMPLATE = "/templates/draw.odg"; //$NON-NLS-1$
 	
 	// 'Ziel' im Projeckdatabereich wird die Vorlage unter diesem Namen abeglegt (ggf. erweitert mit counter)
-	private static final String DEFAULT_DESIGNNAME = "zeichnung.odg";
+	private static final String DEFAULT_DESIGNNAME = "zeichnung.odg"; //$NON-NLS-1$
 
 	
 	private static Log log = LogFactory.getLog(DesignUtils.class);
+	
+	private static ECPProject designsProject;
+	private static Designs designs;
+	
+	
+	/**
+	 * Ein bestimmtes ToolItem (OpenAction, LinkProject, ...) der ToolBar im DesignView ermitteln.
+	 * Uebergeben wird die ID mit der das ToolItem in der fragment.e4xmi definiert ist. 
+	 *  
+	 * @param toolitemID
+	 * @return
+	 */
+	public static ToolItem getToolItem(String toolitemID)
+	{
+		// Parenfenster 'DesignView' ermitteln
+		MApplication currentApplication = E4Workbench.getServiceContext().get(IWorkbench.class).getApplication();
+		EPartService partService = currentApplication.getContext().get(EPartService.class);
+		MPart part = partService.findPart(DesignsView.DESIGNSVIEW_ID);
+
+		// ToolItem ueber ID filtern
+		MToolBar designToolbar = part.getToolbar();
+		return getToolItem(toolitemID, part);
+	}
+	
+	public static ToolItem getToolItem(String toolitemID, MPart part)
+	{
+		// ToolItem ueber ID filtern
+		MToolBar designToolbar = part.getToolbar();
+		for(MToolBarElement elem : designToolbar.getChildren())
+		{			
+			if(StringUtils.equals(elem.getElementId(), toolitemID))
+			{
+				MToolItem mToolItem = (MToolItem) elem; 				
+				Object obj = mToolItem.getWidget();
+				
+				if(obj instanceof ToolItem)
+					return (ToolItem) obj;
+			}			
+		}
+		
+		return null;
+	}
 
 	/*
 	 * Das Modell, indem die Designdaten gespeichert werden. wird zurueckgegeben (ggf. neu erzeugt) 
 	 */
 	public static ECPProject getDesignProject()
 	{
-		ECPProject designsProject = ECPUtil.getECPProjectManager().getProject(DesignsView.DESIGNPROJECTNAME);	
-		
-		// ggf. Projekt 'DESIGNPROJECT' erzeugen
 		if(designsProject == null)
-			designsProject = Activator.createProject(DesignsView.DESIGNPROJECTNAME);
+			designsProject = ECPUtil.getECPProjectManager().getProject(DesignsView.DESIGNPROJECTNAME);			
+		
+		// ggf. Projekt 'DESIGNPROJECT' erzeugen (bei Erstaufruf)	
+		if(designsProject == null)
+			designsProject = createProject(DesignsView.DESIGNPROJECTNAME);			
 
 		return designsProject;
 	}
+	
+	public static ECPProject createProject(String projectName)
+	{
+		ECPProject project = null;
+		
+		final List<ECPProvider> providers = new ArrayList<ECPProvider>();
+		
+		for (final ECPProvider provider : ECPUtil.getECPProviderRegistry().getProviders())
+		{
+			if (provider.hasCreateProjectWithoutRepositorySupport())			
+				providers.add(provider);			
+		}
+		
+		if (providers.size() == 0)
+		{
+			log.error(Messages.DesignUtils_NoEMFProvider); 
+			return null;
+		}
+
+		try
+		{
+			project = ECPUtil.getECPProjectManager()
+					.createProject(providers.get(0), projectName, ECPUtil.createProperties());
+		} catch (ECPProjectWithNameExistsException e)
+		{
+			log.error(Messages.DesignUtils_NoEĆPProjectinstalled); 
+		}
+		
+		return project;
+	}
+
 	
 	/**
 	 * Designs ist Root aller Designdaten (Container aller DesignGroup's).
@@ -62,16 +171,11 @@ public class DesignUtils
 	 */
 	public static Designs getDesigns()
 	{
-		Designs designs = null;
+		if(designs != null)
+			return designs;
 		
-		ECPProject designsProject = ECPUtil.getECPProjectManager().getProject(DesignsView.DESIGNPROJECTNAME);	
-		
-		// ggf. Projekt 'DESIGNPROJECT' erzeugen
-		if(designsProject == null)
-			designsProject = Activator.createProject(DesignsView.DESIGNPROJECTNAME);
-		
-		// im ECPProject das Modell Archives suchen 
-		EList<Object>projectContents = designsProject.getContents();
+		// im ECPProject 'designsProject'  das Modell Archives suchen 		
+		EList<Object>projectContents = getDesignProject().getContents();
 		if(!projectContents.isEmpty())
 		{
 			for(Object projectContent : projectContents)
@@ -113,6 +217,31 @@ public class DesignUtils
 			{
 				if(StringUtils.equals(ntProjectID, designGroup.getIProjectID()))
 					return designGroup;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Rueckgabe der Gruppe in der die Zeichnung 'design' gespeichert ist.
+	 * 
+	 * @param design
+	 * @return
+	 */
+	public static DesignGroup findDesignGroup(Design design)
+	{
+		Designs designs = DesignUtils.getDesigns();
+		EList<DesignGroup>designGroups = designs.getDesigns();
+		if(designGroups != null)
+		{
+			for(DesignGroup designGroup : designGroups)
+			{
+				for(Design groupedDesign : designGroup.getDesigns())
+				{
+					if(groupedDesign.equals(design))
+						return designGroup;
+				}
 			}
 		}
 		
@@ -207,30 +336,31 @@ public class DesignUtils
 			try
 			{
 				// Master-DesignTamplate in den Projektdatabereich 'projectData' kopieren
-				FileUtils.copyURLToFile(urlTemplate, designFile);
+				FileUtils.copyURLToFile(urlTemplate, designFile, 3000, 3000);
 				
-				// Pfad zum neuen Design im Modell speichern
+				// Pfad zum neuen Design 
 				path = path.removeFirstSegments(path.segmentCount() - 3);
 				return(path.toPortableString());				
 			} catch (IOException e)
 			{
-				log.error("Error create ProjectDesignFile");
+				log.error(Messages.DesignUtils_ErrorCreateProjectDrawFile); 
 			}
 		}
+		
+		log.error(Messages.DesignUtils_NoTemplateFounded); 
 		return null;
 	}
 	
 	/**
 	 * Generiert eine neue Designdatei durch kopieren des DesingTemplates.
+	 * Eine neue Datei 'drawFilePath' wird erzeugt und das Template hierher kopiert.
 	 *  
-	 * Erfolgsfall den relativen Pfad zurueck.
-	 * 
 	 * @param iProject
 	 * @return
 	 */
-	public static void createDesignFile(String drawFile)
+	public static void createDesignFile(String drawFilePath)
 	{
-		File designFile = new File(drawFile);		
+		File designFile = new File(drawFilePath);		
 		if (!designFile.exists())
 		{
 			// URL des im PlugIn gespeicherten DesingTemplates
@@ -239,13 +369,135 @@ public class DesignUtils
 			{
 				try
 				{
-					FileUtils.copyURLToFile(urlTemplate, designFile);
+					FileUtils.copyURLToFile(urlTemplate, designFile, 3000, 3000);
 				} catch (IOException e)
 				{
-					log.error("Error create DesignFile");
+					log.error(Messages.DesignUtils_ErrorCreateDrawFile);
 				}
 			}
 		}
+		else
+		{
+			log.error(Messages.DesignUtils_NoTemplateFounded); 
+		}
+	}
+
+	/**
+	 * Das dem Design zugeordnete File wird zurueckgegeben.
+	 * Existiert die Datei nicht, wird der URL-Eintrag im Design zurueckgesetzt.
+	 * 
+	 * @param design
+	 * @return
+	 */
+	public static File getDesignFile(Design design)
+	{
+		String desingnFilePath = getDesignFilePath(design);
+		
+		if(desingnFilePath != null)
+		{
+			File desingFile = new File(desingnFilePath);
+			if(desingFile.exists())
+				return desingFile;
+			
+			log.error(NLS.bind(Messages.DesignUtils_IvalidDrawFilePath, desingnFilePath));
+		}
+		
+		MApplication currentApplication = E4Workbench.getServiceContext().get(IWorkbench.class).getApplication();
+		IEventBroker eventBroker = currentApplication.getContext().get(IEventBroker.class);
+		
+		// es wird automatisch eine neue Datei erzeugt
+		DesignGroup group = findDesignGroup(design);
+		if((group != null) && (StringUtils.isNotEmpty(group.getIProjectID())))
+		{
+			// Datei wird im Projectdatenbereich angelegt
+			String projectID = group.getIProjectID();
+			IProject iProject = ResourcesPlugin.getWorkspace().getRoot().getProject(projectID);
+				
+			// existiert ein NtProjekt mit der extrahierten ID
+			if (iProject.exists())
+			{
+				String drawFilePath = createProjectDesignFile(iProject);
+				design.setDesignURL(drawFilePath);		
+				DesignUtils.getDesignProject().saveContents();		
+				eventBroker.send(DesignsView.DESIGNPROJECTSAVED_MODELEVENT, "Model saved");	
+			}
+		}
+		
+		// eine Datei wird im temporaeren Verzeichnis angelegt
+		IEclipsePreferences instancePreferenceNode = InstanceScope.INSTANCE.getNode(IPreferenceAdapter.ROOT_APPLICATION_PREFERENCES_NODE);
+		String drawFile = instancePreferenceNode.get(IPreferenceAdapter.PREFERENCE_APPLICATION_TEMPDIR_KEY,null);
+		String drawFilePath = getAutoFileName(new File(drawFile),DEFAULT_DESIGNNAME);
+		
+		drawFilePath = drawFile + File.separator+drawFilePath;
+		createDesignFile(drawFilePath);
+		design.setDesignURL(drawFilePath);		
+		DesignUtils.getDesignProject().saveContents();		
+		eventBroker.send(DesignsView.DESIGNPROJECTSAVED_MODELEVENT, "Model saved");	
+		
+		return null;
+	}
+	
+	public static String getDesignFilePath(Design design)
+	{
+		if((design != null) && (StringUtils.isNotEmpty(design.getDesignURL())))
+		{
+			// ist Zeichnung ein Projektdesign
+			DesignGroup group = findDesignGroup(design);
+			
+			if(group != null)
+			{
+				if (StringUtils.isNotEmpty(group.getIProjectID()))
+				{
+					IProject iProject = ResourcesPlugin.getWorkspace().getRoot().getProject(group.getIProjectID());
+					if (iProject.exists())
+					{
+						// die DesignURL ist relativ zum NtProjekt
+						IFolder folder = iProject.getFolder(IProjectData.PROJECTDATA_FOLDER);
+						IPath path = folder.getLocation();
+						String designFileName = FilenameUtils.getName(design.getDesignURL());
+						path = path.append(designFileName);
+						return path.toPortableString();
+					}
+					else
+					{
+						log.error(Messages.DesignUtils_NoNtProjektFound); //$NON-NLS-N$
+					}
+				}
+				else
+				{
+					// die DesignURL ist absolut im FileSystem
+					return design.getDesignURL();
+				}
+			}
+		}
+								
+		return null;
+	}
+	
+	public static void createDrawFile(File destDrawFile)
+	{
+		Bundle bundle = FrameworkUtil.getBundle(DesignUtils.class);
+		BundleContext bundleContext = bundle.getBundleContext();
+		URL urlTemplate = FileLocator.find(bundleContext.getBundle(),new Path(DESIGN_TEMPLATE), null);
+		try
+		{
+			urlTemplate = FileLocator.resolve(urlTemplate);
+			try
+			{
+				// DesingTamplate in den Projekt-Databereich 'projectData' kopieren
+				FileUtils.copyURLToFile(urlTemplate, destDrawFile);				
+			} catch (IOException e)
+			{							
+				log.error(Messages.DesignUtils_ErrorCreateDrawFile);
+				e.printStackTrace();
+			}
+			
+		} catch (IOException e1)
+		{						
+			log.error(Messages.DesignUtils_ErrorCreateDrawFile);
+			e1.printStackTrace();
+		}
+
 	}
 
 	/*
@@ -263,7 +515,7 @@ public class DesignUtils
 		}
 		catch (IOException e1)
 		{
-			log.error("Error access DesignTemplate");
+			log.error(Messages.DesignUtils_NoTemplateFounded); 
 		}	
 		
 		return null;

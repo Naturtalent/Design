@@ -46,10 +46,16 @@ public class TerminateListener implements XTerminateListener
 
 	private IEventBroker eventBroker;
 	
+	/* 
+	 * Eine durch Libreoffice ausgelöste Close-Aktion wird hier empfangen
+	 * 
+	 * (non-Javadoc)
+	 * @see com.sun.star.frame.XTerminateListener#notifyTermination(com.sun.star.lang.EventObject)
+	 */
 	public void notifyTermination(com.sun.star.lang.EventObject eventObject)
 	{		
-		String path = DrawDocument.openDocumentsMap.get(this);	
-		DrawDocument.openDocumentsMap.remove(this);
+		String path = DrawDocument.openTerminateDocumentMap.get(this);	
+		DrawDocument.openTerminateDocumentMap.remove(this);
 		if(eventBroker != null)
 			eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE, path);		
 	}
@@ -60,8 +66,7 @@ public class TerminateListener implements XTerminateListener
 		// test if we can terminate now
 		if (DrawDocument.isAtWork() == true)
 		{
-			System.out
-					.println("Terminate while we are at work? You can't mean it serious ;-)!");
+			System.out.println("Terminate while we are at work? You can't mean it serious ;-)!");
 			throw new TerminationVetoException();
 		}
 	}

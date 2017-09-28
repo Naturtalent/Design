@@ -3,6 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Ui
 Bundle-SymbolicName: it.naturtalent.design.ui;singleton:=true
 Bundle-Version: 3.0.0.qualifier
+Bundle-ClassPath: .
+Bundle-Activator: it.naturtalent.design.ui.Activator
 Bundle-Vendor: Dieter Apel
 Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.2.0.v20160229-1459",
  org.eclipse.emf.ecp.view.treemasterdetail.ui.swt,
@@ -30,11 +32,13 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.2.0.v2016022
  org.eclipse.e4.ui.di,
  it.naturtalent.e4.project,
  it.naturtalent.application,
- it.naturtalent.icons;bundle-version="1.0.0"
+ it.naturtalent.icons;bundle-version="1.0.0",
+ org.eclipse.e4.ui.workbench.renderers.swt,
+ org.eclipse.emf.emfstore.client,
+ it.naturtalent.emf.model,
+ org.eclipse.emf.ecp.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/designmasterrenderer.xml
-Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
- javax.inject;version="1.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: it.naturtalent.design.ui.Activator
-Bundle-ClassPath: .
+Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
+  javax.inject;version="1.0.0"

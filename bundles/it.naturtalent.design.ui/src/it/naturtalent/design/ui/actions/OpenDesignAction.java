@@ -60,6 +60,8 @@ import it.naturtalent.libreoffice.draw.DrawDocument;
 
 
 /**
+ * Wird ueber KontextMenue aufgerufen
+ * 
  * Diese Aktion wird mit dem ExtensionPoint "org.eclipse.emf.ecp.view.treemasterdetail.ui.swt.masterDetailActions"
  * dem EMF TreeMasterRednerer Menue zugeordnet und wird auch von diesem aufgerufen.
  * 
@@ -107,11 +109,14 @@ public class OpenDesignAction extends MasterDetailAction
 					DrawDocument closedDrawDocument = (DrawDocument) obj;
 					for(Design design : openDrawDocumentMap.keySet())
 					{
-						DrawDocument openDrawDocument = openDrawDocumentMap.get(design);
-						if(openDrawDocument.equals(closedDrawDocument))
+						if (design != null)
 						{
-							openDrawDocumentMap.remove(design);
-							break;
+							DrawDocument openDrawDocument = openDrawDocumentMap.get(design);
+							if (openDrawDocument.equals(closedDrawDocument))
+							{
+								openDrawDocumentMap.remove(design);
+								break;
+							}
 						}
 					}
 				}				
@@ -128,7 +133,7 @@ public class OpenDesignAction extends MasterDetailAction
 			// Ladevorgang beendent, das geoeffnete DrawDocument im 'openDrawDocumentMap' speichern 
 			if(StringUtils.equals(event.getTopic(),DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN))
 			{
-				cancel = true;
+				cancel = true; // Watchdog ausschalten
 				openDrawDocumentMap.put(design, drawDocument);
 				return;
 			}
@@ -167,7 +172,8 @@ public class OpenDesignAction extends MasterDetailAction
 			design = (Design) eObject;
 			
 			if(!openDrawDocumentMap.containsKey(design))			
-				runOpen();
+				//runOpen();
+				doOpen();
 		}
 	}
 	
@@ -178,7 +184,18 @@ public class OpenDesignAction extends MasterDetailAction
 		super.dispose();
 	}
 	
-	
+	private void doOpen()
+	{
+		File file = DesignUtils.getDesignFile(design);
+		if((file != null) && file.exists())
+		{
+			drawDocument = new DrawDocument();
+			drawDocument.loadPage(file.toString());
+			runWatchdog();
+			return;
+		}
+
+	}
 
 
 	/*
@@ -214,6 +231,8 @@ public class OpenDesignAction extends MasterDetailAction
 			//drawDocument.setPageName(page.getName());
 			drawDocument.loadPage(path.toString());
 			
+			//DesignUtils.getToolItem(DesignUtils.TOOLBAR_OPENDESIGN_ID).setEnabled(false);
+			
 			runWatchdog();
 		}
 	}
@@ -231,9 +250,7 @@ public class OpenDesignAction extends MasterDetailAction
 						throws InvocationTargetException,
 						InterruptedException
 				{
-					monitor.beginTask(
-							"Zeichnung wird geöffnet",
-							IProgressMonitor.UNKNOWN);
+					monitor.beginTask("Zeichnung wird geöffnet",IProgressMonitor.UNKNOWN);
 					for (int i = 0;; ++i)
 					{
 						if (monitor.isCanceled())
@@ -261,196 +278,34 @@ public class OpenDesignAction extends MasterDetailAction
 			log.error("Abbruch Zeichnung laden", e);
 		}
 	}
-
-
-	/*
-	 * Soll der Menuepunkt 'Zeichnung oeffnen' sichtbar oder unsichtbar sein
-	 * 
-	 */
+	
 	@Override
 	public boolean shouldShow(EObject eObject)
 	{
 		if (eObject instanceof Design)
 		{
 			Design design = (Design) eObject;
-			String designFilePath = design.getDesignURL();
 			
 			// nicht sichtbar, wenn Design bereits geoffnet
 			if(openDrawDocumentMap.containsKey(design))
 				return false;
-						
-			// sichtbar, wenn eine Projektdesigndatei existiert  
+			
+			// sichtbar, wenn ein zuoeffnender DrawFile existiert  
+			String designFilePath = design.getDesignURL();
+			
 			if(DesignUtils.existProjectDesignFile(designFilePath))
 				return true;
 			
-			// neue Projektdesigndatei anlegen, wenn im Parent 'DesignGroup' eine iProject-ID definiert ist
-			EObject check = eObject.eContainer();
-			if (check instanceof DesignGroup)
+			if(StringUtils.isEmpty(design.getDesignURL()))
 			{
-				DesignGroup designGroup = (DesignGroup) check;
-				String projectID = designGroup.getIProjectID();				
-				if (StringUtils.isNotEmpty(projectID))
-				{
-					IProject iProject = ResourcesPlugin.getWorkspace().getRoot()
-							.getProject(designGroup.getIProjectID());
-					if (iProject.exists())
-					{
-						// neue Projektdesigndatei anlegen und Pfad im
-						// Designobjekt festhalten
-						design.setDesignURL(DesignUtils.createProjectDesignFile(iProject));
-						DesignUtils.getDesignProject().saveContents();
-
-						return true;
-					}
-				}
+				log.error("kein DrawDateiVerzeichnis definiert");
+				return false;
 			}
 			
-			// keine Projectdesingdatei, ist ein Pfad definiert und existiert die Datei
-			if (StringUtils.isNotEmpty(designFilePath))
-			{
-				File file = new File(designFilePath);
-				if(file.exists())
-					return true;
-			}
-			
-			// eine Designdatei manuell anlegen
-			FileDialog dlg = new FileDialog(Display.getDefault().getActiveShell(), SWT.SAVE);
-
-			// Change the title bar text
-			dlg.setText("Importverzeichnis");
-			dlg.setFilterExtensions(new String[]{ ".odg" });
-			
-			// temporaere Verzeichnis vorauswaehlen
-			IEclipsePreferences instancePreferenceNode = InstanceScope.INSTANCE.getNode(IPreferenceAdapter.ROOT_APPLICATION_PREFERENCES_NODE);
-			String tempPath = instancePreferenceNode.get(IPreferenceAdapter.PREFERENCE_APPLICATION_TEMPDIR_KEY,null);
-			dlg.setFilterPath(tempPath);
-			
-			// Filedialog oeffnen
-			String drawFile = dlg.open();
-			if (drawFile != null)
-			{		
-				drawFile = FilenameUtils.removeExtension(drawFile)+"."+"odg";
-				design.setDesignURL(drawFile);				
-				DesignUtils.createDesignFile(drawFile);				
-				return true;	
-			}
-			
+			return true;
 		}
-		
+
 		return false;
-	}
-	
-	public boolean shouldShowOLD(EObject eObject)
-	{
-		if (eObject instanceof Design)
-		{
-			Design design = (Design) eObject;
-			String stgURL = design.getDesignURL();
-			if (!StringUtils.isEmpty(stgURL))
-			{
-				File file = new File(design.getDesignURL());
-				String projectName = new Path(file.getPath()).segment(0);				
-				IProject iProject = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-				if(iProject.exists())
-				{
-					// DesignURL mit Projectdata-Path zusammenfassen
-					IFolder folder = iProject.getFolder(IProjectData.PROJECTDATA_FOLDER);
-					IPath path = folder.getLocation();					
-					File designFile = new File(design.getDesignURL());
-					String designName = designFile.getName(); 
-					path = path.append(designName);
-					designFile = path.toFile();
-					return (designFile.exists());	
-				}
-			}
-			else
-			{
-				// das vom ResourceNavigator selektierte IProject ermitteln
-				MApplication currentApplication = E4Workbench
-						.getServiceContext().get(IWorkbench.class)
-						.getApplication();
-				EPartService partService = currentApplication.getContext()
-						.get(EPartService.class);
-				MPart part = partService
-						.findPart(ResourceNavigator.RESOURCE_NAVIGATOR_ID);
-				ESelectionService selectionService = part.getContext()
-						.get(ESelectionService.class);
-				Object selObj = selectionService.getSelection();
-				if (selObj instanceof IResource)
-				{
-					IProject iProject = ((IResource) selObj).getProject();
-
-					// im 'templates' Pfad dieses PlugIns ist das Drawtemplate gespeichert
-					Bundle bundle = FrameworkUtil.getBundle(this.getClass());
-					BundleContext bundleContext = bundle.getBundleContext();
-					URL urlTemplate = FileLocator.find(bundleContext.getBundle(),new Path(DESIGN_TEMPLATE), null);
-					try
-					{
-						urlTemplate = FileLocator.resolve(urlTemplate);
-						IFolder folder = iProject.getFolder(IProjectData.PROJECTDATA_FOLDER);
-						IPath path = folder.getLocation();
-
-						// Defaultdesignname hinzufuegen
-						String fileName = getAutoFileName(path.toFile(),DEFAULT_DESIGNNAME);
-						path = path.append(fileName);
-						File designFile = path.toFile();
-						try
-						{
-							// DesingTamplate in den Projekt-Databereich 'projectData' kopieren
-							FileUtils.copyURLToFile(urlTemplate, designFile);
-							
-							// Projectdatapath im Design speichern
-							path = path.removeFirstSegments(path.segmentCount() - 3);						
-							design.setDesignURL(path.toPortableString());
-						} catch (IOException e)
-						{							
-							log.error("Fehler beim Erzeugen einer Zeichnung");
-							e.printStackTrace();
-						}
-						
-					} catch (IOException e1)
-					{						
-						log.error("Fehler beim Zugriff auf die Zeichnungsvorlage");
-						e1.printStackTrace();
-					}
-				}
-				
-				return true;
-			}			
-		}
-		
-		return false;	
-	}
-	
-	private static String getAutoFileName(File dir, String originalFileName)
-	{
-		String autoFileName;
-
-		if (dir == null)
-			return ""; //$NON-NLS-1$
-
-		int counter = 1;
-		while (true)
-		{
-			if (counter > 1)
-			{
-				autoFileName = FilenameUtils.getBaseName(originalFileName)
-						+ new Integer(counter) + "." //$NON-NLS-1$
-						+ FilenameUtils.getExtension(originalFileName);
-			}
-			else
-			{
-				autoFileName = originalFileName;
-			}
-
-			//IResource res = dir.findMember(autoFileName);
-			
-			File res = new File(dir, autoFileName);
-			if (!res.exists())
-				return autoFileName;
-
-			counter++;
-		}
 	}
 
 

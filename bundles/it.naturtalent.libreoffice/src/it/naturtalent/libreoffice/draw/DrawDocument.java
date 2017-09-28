@@ -89,8 +89,8 @@ public class DrawDocument
 	
 	public PolyPolygonBezierCoords aCoords; 
 	
-	// Map beinhaltet das momentan geoffente Dokument (@see TerminateListener) 
-	public static Map<TerminateListener, String>openDocumentsMap = new HashMap<TerminateListener, String>();	
+	// Map<TerminateListener, DrawPagePath> (@see TerminateListener) 
+	public static Map<TerminateListener, String>openTerminateDocumentMap = new HashMap<TerminateListener, String>();	
 
 	private DrawPagePropertyListener drawPagePropertyListener;
 	
@@ -231,11 +231,12 @@ public class DrawDocument
 				}
 			});
 						
-			// TerminateListener installieren
-			xDesktop = UnoRuntime.queryInterface(XDesktop.class,desktop);
+			// TerminateListener (registriert durch Libreoffice ausgeloeste Close-Aktionen)
 			TerminateListener terminateListener = new TerminateListener();
-			xDesktop.addTerminateListener(terminateListener);
 			terminateListener.setEventBroker(eventBroker);
+			xDesktop = UnoRuntime.queryInterface(XDesktop.class,desktop);
+			xDesktop.addTerminateListener(terminateListener);
+			
 			
 			// EventHandler informieren, dass Ladevorgang abgeschlossen ist
 			eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN, this);
@@ -281,16 +282,15 @@ public class DrawDocument
 					}
 					*/
 					
-					System.out.println("Selection: "+obj);
+					System.out.println("DrawDokument 285 - Selection: "+obj);
 					
 				
 					
 				}
 			});
-			
-		
+					
 			// das geoeffnete Dokument mit Listener als Key speichern
-			openDocumentsMap.put(terminateListener, documentPath);	
+			openTerminateDocumentMap.put(terminateListener, documentPath);	
 		}
 	}
 
@@ -336,9 +336,20 @@ public class DrawDocument
 		xDesktop.terminate();	
 	}
 
+	/**
+	 * Schliesst DrawDocument ausgelöst durch eine CloseAktion (Kontext-/Toolaction).
+	 * Close durch LibroOffice-Aktion wird hier nicht registriert, @see it.naturtalent.libreoffice.draw.TerminateListener
+	 */
 	public void closeDocument()
 	{
-		xComponent.dispose();		
+		try
+		{
+			xComponent.dispose();
+		} catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 	
 	public void pullScaleData()
