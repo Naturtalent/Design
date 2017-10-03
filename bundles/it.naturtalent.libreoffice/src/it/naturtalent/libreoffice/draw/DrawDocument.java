@@ -2,8 +2,10 @@ package it.naturtalent.libreoffice.draw;
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -11,22 +13,19 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.IWorkbench;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 
 import com.sun.star.awt.Size;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XNameAccess;
+import com.sun.star.container.XNamed;
 import com.sun.star.drawing.HomogenMatrixLine3;
 import com.sun.star.drawing.PolyPolygonBezierCoords;
 import com.sun.star.drawing.XDrawPage;
@@ -36,6 +35,7 @@ import com.sun.star.drawing.XLayerSupplier;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDesktop;
+import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.WrappedTargetException;
@@ -53,7 +53,9 @@ import com.sun.star.view.XSelectionSupplier;
 import it.naturtalent.libreoffice.Bootstrap;
 import it.naturtalent.libreoffice.DesignHelper;
 import it.naturtalent.libreoffice.DrawDocumentEvent;
+import it.naturtalent.libreoffice.DrawPageNamePropertyListener;
 import it.naturtalent.libreoffice.DrawPagePropertyListener;
+import it.naturtalent.libreoffice.FrameActionListener;
 import it.naturtalent.libreoffice.PageHelper;
 import it.naturtalent.libreoffice.Utils;
 
@@ -63,10 +65,10 @@ public class DrawDocument
 	protected XComponent xComponent;
 	private XComponentContext xContext;
 	private XDesktop xDesktop;
+	private XFrame xframe;
 	
 	private static boolean atWork = false;
-	
-	
+		
 	// die aktuelle Seite
 	//protected int drawPageIndex = 0;
 	protected XDrawPage drawPage;
@@ -87,7 +89,10 @@ public class DrawDocument
 	// der zuletzt selektierte Layer
 	private Layer lastSelectedLayer;
 	
-	public PolyPolygonBezierCoords aCoords; 
+	public PolyPolygonBezierCoords aCoords;
+	
+	// Listener informiert, wenn DrawDocument extern (LibreOffice) geschlossen wurde
+	private TerminateListener terminateListener;
 	
 	// Map<TerminateListener, DrawPagePath> (@see TerminateListener) 
 	public static Map<TerminateListener, String>openTerminateDocumentMap = new HashMap<TerminateListener, String>();	
@@ -218,7 +223,7 @@ public class DrawDocument
 			
 			
 			// empirisch ermittelt
-						Thread.sleep(500);
+			Thread.sleep(500);
 						
 			
 			xComponent.addEventListener(new XEventListener()
@@ -226,20 +231,20 @@ public class DrawDocument
 				@Override
 				public void disposing(EventObject arg0)
 				{		
-					// EventHander informiert ueber das Schliessen des Dokuments
+					// EventBroker informiert ueber das Schliessen des Dokuments
 					eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE, DrawDocument.this);					
 				}
 			});
 						
-			// TerminateListener (registriert durch Libreoffice ausgeloeste Close-Aktionen)
-			TerminateListener terminateListener = new TerminateListener();
+			// TerminateListener (registriert eine durch Libreoffice ausgeloeste Close-Aktionen)
+			terminateListener = new TerminateListener();
 			terminateListener.setEventBroker(eventBroker);
 			xDesktop = UnoRuntime.queryInterface(XDesktop.class,desktop);
 			xDesktop.addTerminateListener(terminateListener);
 			
 			
-			// EventHandler informieren, dass Ladevorgang abgeschlossen ist
-			eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN, this);
+			// EventBroker informiert, dass Ladevorgang abgeschlossen ist
+			eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_JUSTOPENED, this);
 			
 			// PageListener installieren und aktivierten
 			drawPagePropertyListener = new DrawPagePropertyListener(xComponent);
@@ -263,8 +268,10 @@ public class DrawDocument
 				public void disposing(EventObject arg0)
 				{
 					// TODO Auto-generated method stub
-					System.out.println("selection");
+					System.out.println("disposing");
 				}
+
+				
 				
 				@Override
 				public void selectionChanged(EventObject arg0)
@@ -283,16 +290,68 @@ public class DrawDocument
 					*/
 					
 					System.out.println("DrawDokument 285 - Selection: "+obj);
-					
-				
-					
 				}
 			});
-					
+			
+			// Listener ueberwacht die Frameaktivitaeten (z.B. Frame wird aktiviert)
+			xframe = xController.getFrame();
+			xframe.addFrameActionListener(new FrameActionListener());
+			
 			// das geoeffnete Dokument mit Listener als Key speichern
 			openTerminateDocumentMap.put(terminateListener, documentPath);	
+			
+			//getAllPages();
 		}
 	}
+	
+	/*
+	 * In XComponent hat sich die Eigenschaft "CurrentPage" geandert (entspricht > andere Page wurde selektiert)
+	 *  
+	 *  
+	 */
+	/*
+	public void handleDrawPageChangeProperty(Object xDrawPage)
+	{
+		XNamed xNamed = UnoRuntime.queryInterface(XNamed.class, xDrawPage);		
+		
+		
+		
+		
+		//XPropertySet xPageProperties = UnoRuntime.queryInterface(XPropertySet.class, xNamed);
+		//Utils.printPropertyValues(xPageProperties);
+
+		DrawPageNamePropertyListener drawPageNamePropertyListener = new DrawPageNamePropertyListener(xComponent);
+		drawPageNamePropertyListener.activatePageListener((XDrawPage) xDrawPage);
+
+
+	}
+	*/
+	
+	/*
+	 * 
+	 *  
+	 */
+	public boolean isChildPage(Object xDrawPage)
+	{
+		int count = PageHelper.getDrawPageCount(xComponent);
+		for(int i = 0;i < count;i++)
+		{
+			try
+			{
+				XDrawPage xPage = PageHelper.getDrawPageByIndex(xComponent, i);				
+				if(xPage.equals(xDrawPage))
+					return true;
+				
+			} catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+		}
+
+		return false;
+	}
+
 
 	/**
 	 * Setzt den Focus auf diese Zeichnung.
@@ -300,35 +359,35 @@ public class DrawDocument
 	 */
 	public void setFocus()
 	{		
-		DesignHelper.setFocus(xComponent);
-		
+		DesignHelper.setFocus(xComponent);		
 	}
 	
-	public void getAllPages()
+	
+	/**
+	 * Die Namen aller Pages in einer Liste zurueckgeben
+	 * 
+	 * @return
+	 */
+	public List<String> getAllPages()
 	{
+		List<String>allPages = new ArrayList<>();
+		
 		int count = PageHelper.getDrawPageCount(xComponent);
 		for(int i = 0;i < count;i++)
 		{
 			XDrawPage page;
 			try
 			{
-				page = PageHelper.getDrawPageByIndex(xComponent, i);
-				
-				/*
-				XPropertySet xPropertySet =  UnoRuntime.queryInterface(
-						XPropertySet.class, page);
-				Utils.printPropertyValues(xPropertySet);
-				*/
-				
-				//System.out.println(page);
-				
+				page = PageHelper.getDrawPageByIndex(xComponent, i);				
+				allPages.add(PageHelper.getPageName(page));
 			} catch (Exception e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			
+			}			
 		}
+		
+		return allPages;
 	}
 
 	public void closeDesktop()
@@ -452,7 +511,10 @@ public class DrawDocument
 		return PageHelper.getDrawPageByName(xComponent, pageName);
 	}
 
-
+	public XFrame getXframe()
+	{
+		return xframe;
+	}
 
 	/**
 	 * Die aktuelle Seite einstellen einstellen

@@ -6,7 +6,10 @@ public class DrawDocumentEvent
 
 	public static final String DRAWDOCUMENT_EVENT = "drawEvent/"; //$NON-NLS-N$
 	
-	// eine Zeichnung wurde geoffnet
+	// der Ladeprozess ist abgeschlossen (vor Speichern in OpenDocument Tabelle  @see OpenDesignAction)	
+	public static final String DRAWDOCUMENT_EVENT_DOCUMENT_JUSTOPENED = DRAWDOCUMENT_EVENT+"drawDocumentJustOpened"; //$NON-NLS-N$
+	
+	// ein DrawDocument wurde geoffnet (nach dem Speichern in OpenDocument Tabelle @see OpenDesignAction)
 	public static final String DRAWDOCUMENT_EVENT_DOCUMENT_OPEN = DRAWDOCUMENT_EVENT+"drawDocumentOpen"; //$NON-NLS-N$
 	
 	public static final String DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE = DRAWDOCUMENT_EVENT+"drawDocumentClose"; //$NON-NLS-N$
@@ -24,4 +27,10 @@ public class DrawDocumentEvent
 	public static final String DRAWDOCUMENT_EVENT_SHAPE_SELECTED = DRAWDOCUMENT_EVENT+"drawDocumentshapeselected"; //$NON-NLS-N$
 	
 	public static final String DRAWDOCUMENT_EVENT_DOCUMENT_CHANGEREQUEST = DRAWDOCUMENT_EVENT+"drawDocumentchangerequest"; //$NON-NLS-N$
+	
+	public static final String DRAWDOCUMENT_EVENT_DOCUMENT_ACTIVATE = DRAWDOCUMENT_EVENT+"drawDocumentActivate"; //$NON-NLS-N$
+	
+	
+	
+	public static final String DRAWDOCUMENT_PAGECHANGE_PROPERTY = "pagechangeproperty"; //$NON-NLS-N$
 }

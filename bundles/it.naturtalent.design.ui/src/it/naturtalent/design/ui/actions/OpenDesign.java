@@ -34,35 +34,19 @@ public class OpenDesign
 	@Execute
 	public void execute(@Optional EPartService partService)
 	{
-		
+				
 		MPart part = partService.findPart(DesignsView.DESIGNSVIEW_ID);
 		DesignsView designView = (DesignsView) part.getObject();
 		Object selObj = designView.getSelection();
 
 		if(selObj instanceof Design)
-		{
-			
+		{			
 			OpenDesignAction openAction = new OpenDesignAction();
 			openAction.execute((Design)selObj);
 			
-			/*
-			Design design = (Design)selObj;
-			String url = design.getDesignURL();
-			
-			if(StringUtils.isNotEmpty(url))
-			{
-				File file = new File(url);
-				if(file.exists() && file.isFile())
-				{
-					
-				}
-			}
-			*/
-			
-			
+			// DesignView aktivieren (verhindert No Active Window Error)
+			partService.activate(part);
 		}
-		
-		
 	}
 
 

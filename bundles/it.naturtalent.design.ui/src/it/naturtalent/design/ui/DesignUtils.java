@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -51,6 +53,7 @@ import it.naturtalent.design.model.design.Designs;
 import it.naturtalent.design.model.design.DesignsPackage;
 import it.naturtalent.design.ui.parts.DesignsView;
 import it.naturtalent.e4.project.IProjectData;
+import it.naturtalent.libreoffice.draw.DrawDocument;
 
 
 /**
@@ -72,7 +75,6 @@ public class DesignUtils
 	// 'Ziel' im Projeckdatabereich wird die Vorlage unter diesem Namen abeglegt (ggf. erweitert mit counter)
 	private static final String DEFAULT_DESIGNNAME = "zeichnung.odg"; //$NON-NLS-1$
 
-	
 	private static Log log = LogFactory.getLog(DesignUtils.class);
 	
 	private static ECPProject designsProject;
@@ -90,8 +92,10 @@ public class DesignUtils
 	{
 		// Parenfenster 'DesignView' ermitteln
 		MApplication currentApplication = E4Workbench.getServiceContext().get(IWorkbench.class).getApplication();
-		EPartService partService = currentApplication.getContext().get(EPartService.class);
+		EPartService partService = currentApplication.getContext().get(EPartService.class);		
 		MPart part = partService.findPart(DesignsView.DESIGNSVIEW_ID);
+		
+		partService.activate(part);
 
 		// ToolItem ueber ID filtern
 		MToolBar designToolbar = part.getToolbar();
@@ -420,21 +424,37 @@ public class DesignUtils
 				design.setDesignURL(drawFilePath);		
 				DesignUtils.getDesignProject().saveContents();		
 				eventBroker.send(DesignsView.DESIGNPROJECTSAVED_MODELEVENT, "Model saved");	
+				return null;
 			}
 		}
 		
 		// eine Datei wird im temporaeren Verzeichnis angelegt
 		IEclipsePreferences instancePreferenceNode = InstanceScope.INSTANCE.getNode(IPreferenceAdapter.ROOT_APPLICATION_PREFERENCES_NODE);
 		String drawFile = instancePreferenceNode.get(IPreferenceAdapter.PREFERENCE_APPLICATION_TEMPDIR_KEY,null);
-		String drawFilePath = getAutoFileName(new File(drawFile),DEFAULT_DESIGNNAME);
-		
+		String drawFilePath = getAutoFileName(new File(drawFile),DEFAULT_DESIGNNAME);		
 		drawFilePath = drawFile + File.separator+drawFilePath;
 		createDesignFile(drawFilePath);
+		
+		
 		design.setDesignURL(drawFilePath);		
 		DesignUtils.getDesignProject().saveContents();		
 		eventBroker.send(DesignsView.DESIGNPROJECTSAVED_MODELEVENT, "Model saved");	
 		
 		return null;
+	}
+	
+	/*
+	 * Erzeugt ein DrawDocument im Temporaeren Verzeichnis und vergibt automatisch einen Namen.
+	 * 
+	 */
+	public static String autoCreateDrawFile()
+	{
+		IEclipsePreferences instancePreferenceNode = InstanceScope.INSTANCE.getNode(IPreferenceAdapter.ROOT_APPLICATION_PREFERENCES_NODE);
+		String drawFile = instancePreferenceNode.get(IPreferenceAdapter.PREFERENCE_APPLICATION_TEMPDIR_KEY,null);
+		String drawFilePath = getAutoFileName(new File(drawFile),DEFAULT_DESIGNNAME);		
+		drawFilePath = drawFile + File.separator+drawFilePath;
+		createDesignFile(drawFilePath);		
+		return drawFilePath;
 	}
 	
 	public static String getDesignFilePath(Design design)

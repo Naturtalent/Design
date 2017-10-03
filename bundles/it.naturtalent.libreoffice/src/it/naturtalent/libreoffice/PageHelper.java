@@ -104,6 +104,17 @@ public class PageHelper
         return null;
     }
 
+    static public String getPageName(Object drawPage)
+    {
+    	if (drawPage instanceof XDrawPage)
+		{
+			XDrawPage xDrawPage = (XDrawPage) drawPage;
+			return getPageName(xDrawPage);			
+		}
+    	
+        return null;        
+    }
+
     static public String getPageName(XDrawPage drawPage)
     {
     	 // each drawpage is supporting an XNamed interface

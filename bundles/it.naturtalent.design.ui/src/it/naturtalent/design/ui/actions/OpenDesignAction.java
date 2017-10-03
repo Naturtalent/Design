@@ -80,7 +80,7 @@ public class OpenDesignAction extends MasterDetailAction
 	private DrawDocument drawDocument;	
 	
 	// Zuordnungstabelle Desing und geoffnetes DrawDocument
-	private static Map<Design,DrawDocument> openDrawDocumentMap = new HashMap<Design,DrawDocument>();
+	public static Map<Design,DrawDocument> openDrawDocumentMap = new HashMap<Design,DrawDocument>();
 
 	// kill Watchdog
 	private boolean cancel = false;
@@ -92,10 +92,10 @@ public class OpenDesignAction extends MasterDetailAction
 	private IEclipsePreferences preferences;
 	
 	/*
-	 * Wenn der Dokumentladevorgang abgeschlossen wurde, kann der Watchdog beedent werden.
+	 * 
 	 */
 	private IEventBroker eventBroker;
-	private EventHandler openDocumentEventHandler = new EventHandler()
+	private EventHandler documentEventHandler = new EventHandler()
 	{
 		@Override
 		public void handleEvent(Event event)
@@ -114,6 +114,7 @@ public class OpenDesignAction extends MasterDetailAction
 							DrawDocument openDrawDocument = openDrawDocumentMap.get(design);
 							if (openDrawDocument.equals(closedDrawDocument))
 							{
+								// das geschlossene DrawDocument aus 'openDrawDocumentMap'
 								openDrawDocumentMap.remove(design);
 								break;
 							}
@@ -130,11 +131,18 @@ public class OpenDesignAction extends MasterDetailAction
 				return;
 			}
 				
-			// Ladevorgang beendent, das geoeffnete DrawDocument im 'openDrawDocumentMap' speichern 
-			if(StringUtils.equals(event.getTopic(),DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN))
+			// Ladevorgang beendet, das geoeffnete DrawDocument im 'openDrawDocumentMap' speichern 
+			if(StringUtils.equals(event.getTopic(),DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_JUSTOPENED))
 			{
 				cancel = true; // Watchdog ausschalten
-				openDrawDocumentMap.put(design, drawDocument);
+				if((design != null) && (!openDrawDocumentMap.containsKey(design)))
+				{
+					// das geoffnete Dokument wird 'openDrawDocumentMap' gespeichert  
+					openDrawDocumentMap.put(design, drawDocument);
+					
+					// erst danach wird ueber ein geoffnetes Dokument informiert
+					eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN, this);
+				}
 				return;
 			}
 		}
@@ -148,12 +156,9 @@ public class OpenDesignAction extends MasterDetailAction
 		MApplication currentApplication = E4Workbench.getServiceContext()
 				.get(IWorkbench.class).getApplication();
 		
-		// im EventBus anmelden
-		eventBroker = currentApplication.getContext().get(IEventBroker.class);
-		//eventBroker.subscribe(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN, openDocumentEventHandler);
-		eventBroker.subscribe(DrawDocumentEvent.DRAWDOCUMENT_EVENT+"*", openDocumentEventHandler);
-		
-		
+		// Handler 'documentEventHandler' hoert auf alle 'DrawDocumentEvent.DRAWDOCUMENT_EVENT' Events
+		eventBroker = currentApplication.getContext().get(IEventBroker.class);		
+		eventBroker.subscribe(DrawDocumentEvent.DRAWDOCUMENT_EVENT+"*", documentEventHandler);
 	}
 
 	
@@ -180,7 +185,8 @@ public class OpenDesignAction extends MasterDetailAction
 	@Override
 	public void dispose()
 	{
-		eventBroker.unsubscribe(openDocumentEventHandler);
+		// Handler 'documentEventHandler' beim EventBroker abmelden
+		eventBroker.unsubscribe(documentEventHandler);
 		super.dispose();
 	}
 	

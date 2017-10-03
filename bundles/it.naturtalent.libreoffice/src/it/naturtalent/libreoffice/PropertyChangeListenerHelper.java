@@ -46,16 +46,27 @@ import com.sun.star.uno.XInterface;
 
 import java.util.ArrayList;
 
-public class PropChgHelper implements XPropertyChangeListener, XLinguServiceEventBroadcaster
+/**
+ * Jedem XPropertySet kann ein Listener zugeordnet werden, der Aenderungen an den Properties meldet. Die zu ueberwachenden
+ * Properties koennen mit ihrem Namen in einem Array 'aPropNames' definiert werden.
+ * 
+ * @author dieter
+ *
+ */
+public class PropertyChangeListenerHelper implements XPropertyChangeListener, XLinguServiceEventBroadcaster
 {
     private final XInterface    xEvtSource;
     private final String[]      aPropNames;
     private XPropertySet        xPropSet;
     private final ArrayList<XLinguServiceEventListener> aLngSvcEvtListeners;
 
-    public PropChgHelper(
-            XInterface      xEvtSource,
-            String[]        aPropNames )
+    /**
+     * Konstruktion
+     * 
+     * @param xEvtSource
+     * @param aPropNames
+     */
+    public PropertyChangeListenerHelper(XInterface xEvtSource, String[] aPropNames )
     {
         this.xEvtSource = xEvtSource;
         this.aPropNames = aPropNames;

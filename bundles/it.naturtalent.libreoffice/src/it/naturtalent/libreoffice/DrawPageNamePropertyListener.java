@@ -24,11 +24,11 @@ import com.sun.star.uno.XInterface;
  * @author dieter
  *
  */
-public class DrawPagePropertyListener extends PropertyChangeListenerHelper
+public class DrawPageNamePropertyListener extends PropertyChangeListenerHelper
 {
 	
 	// relevante Propterynamen
-	private static String [] propertyNames = { "CurrentPage" };
+	private static String [] propertyNames = { "UserDefinedAttributes" };
 	
 	
 	/**
@@ -36,7 +36,7 @@ public class DrawPagePropertyListener extends PropertyChangeListenerHelper
 	 * 
 	 * @param xEvtSource (XComponent = DrawCoument)
 	 */
-	public DrawPagePropertyListener(XInterface xEvtSource)
+	public DrawPageNamePropertyListener(XInterface xEvtSource)
 	{
 		super(xEvtSource, propertyNames);		
 	}
@@ -44,14 +44,11 @@ public class DrawPagePropertyListener extends PropertyChangeListenerHelper
 	/**
 	 * aktiviert den PageListener des DrawDocumets
 	 * 
-	 * 
 	 * @param xComponent
 	 */
-	public void activatePageListener()
-	{
-		XModel xModel = UnoRuntime.queryInterface(XModel.class,GetEvtSource());
-		XController xController = xModel.getCurrentController();
-		XPropertySet xPageProperties = UnoRuntime.queryInterface(XPropertySet.class, xController);
+	public void activatePageListener(XDrawPage xDrawPage)
+	{		
+		XPropertySet xPageProperties = UnoRuntime.queryInterface(XPropertySet.class, xDrawPage);
 		AddAsListenerTo(xPageProperties);
 	}
 
@@ -68,17 +65,17 @@ public class DrawPagePropertyListener extends PropertyChangeListenerHelper
 	@Override
 	public void propertyChange(PropertyChangeEvent aEvt) throws RuntimeException
 	{
-		Object obj = aEvt.NewValue;
-		if(obj instanceof Any)
-		{		
-			Any any = (Any) aEvt.NewValue;
-			XDrawPage xDrawPage = UnoRuntime.queryInterface(XDrawPage.class, any);
-			if (xDrawPage != null)
-			{
-				MApplication currentApplication = E4Workbench.getServiceContext().get(IWorkbench.class).getApplication();
-				IEventBroker eventBroker = currentApplication.getContext().get(IEventBroker.class);
-				eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_PAGECHANGE_PROPERTY,xDrawPage);
-			}
+		System.out.println("ProNameChange: change: ");
+		Any any = (Any) aEvt.NewValue;
+		XDrawPage xDrawPage = UnoRuntime.queryInterface(XDrawPage.class, any);					
+		if(xDrawPage != null )
+		{						
+			//MApplication currentApplication = E4Workbench.getServiceContext().get(IWorkbench.class).getApplication();
+			//IEventBroker eventBroker = currentApplication.getContext().get(IEventBroker.class);
+			//eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_PAGECHANGE_PROPERTY, xDrawPage);
+			
+			//XNamed xNamed = UnoRuntime.queryInterface(XNamed.class, xDrawPage);			
+			//System.out.println("ProNameChange: change: ");
 		}
 	}
 	
