@@ -36,7 +36,8 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.2.0.v2016022
  org.eclipse.e4.ui.workbench.renderers.swt,
  org.eclipse.emf.emfstore.client,
  it.naturtalent.emf.model,
- org.eclipse.emf.ecp.ui
+ org.eclipse.emf.ecp.ui,
+ it.naturtalent.design.model.edit
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/designmasterrenderer.xml
 Bundle-ActivationPolicy: lazy

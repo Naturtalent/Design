@@ -52,6 +52,7 @@ import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.presentation.XHandoutMasterSupplier;
 import com.sun.star.presentation.XPresentationPage;
+import com.sun.star.uno.Any;
 import com.sun.star.uno.UnoRuntime;
 
 
@@ -130,6 +131,32 @@ public class PageHelper
         // beware, the page must have an unique name
         xNamed.setName(pageName);        
     }
+
+     static public String getCurrentPage(XComponent xComponent)
+     {
+ 		try
+ 		{
+ 			XModel xModel = UnoRuntime.queryInterface(XModel.class,xComponent);
+ 			XController xController = xModel.getCurrentController();
+ 			XPropertySet xPageProperties = UnoRuntime.queryInterface(
+ 					XPropertySet.class, xController);
+ 			
+ 			//Utils.printPropertyValues(xPageProperties);
+ 			
+ 			Any any = (Any) xPageProperties.getPropertyValue("CurrentPage");
+ 			XDrawPage xDrawPage = UnoRuntime.queryInterface(
+ 					XDrawPage.class, any);
+ 			
+ 			return getPageName(xDrawPage);		
+ 			
+ 		} catch (Exception e)
+ 		{
+ 			// TODO Auto-generated catch block
+ 			e.printStackTrace();
+ 		}
+ 		
+ 		return null;
+ 	}
 
     static public void setCurrentPage(XComponent xComponent, XDrawPage currentPage)
     {

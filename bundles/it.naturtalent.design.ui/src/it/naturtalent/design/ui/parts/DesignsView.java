@@ -148,6 +148,7 @@ public class DesignsView
 						Object obj = design.eContainer();
 						if(obj instanceof DesignGroup)
 						{
+							// in DesignGroup nachschauen ob ein NtProjekt zugordnet ist (DrawFile wird dann im NtProjekt-Datenbereich estellt)
 							DesignGroup desingGroup = (DesignGroup) obj;
 							String projectID = desingGroup.getIProjectID();
 							if (StringUtils.isNotEmpty(projectID))
@@ -202,6 +203,25 @@ public class DesignsView
 						
 						// das neue Design selektieren
 						treeViewer.setSelection(new StructuredSelection(design));
+					}
+					else
+					{
+						// neue Page
+						if(createObj instanceof Page)
+						{
+							Page page = (Page) createObj;
+
+							// automatisch einen Pagenamen generieren
+							Design design = (Design) page.eContainer();
+							EList<Page>pages = design.getPages();
+							String pageName = DesignUtils.getAutoPageName(pages);
+							page.setName(pageName);
+							
+							Map<Design, DrawDocument>openDrawMap = OpenDesignAction.getOpenDrawDocumentMap();
+							DrawDocument drawDocument = openDrawMap.get(activeDesign);
+							drawDocument.addDrawPage(page.getName());
+
+						}
 					}
 				}
 			}
@@ -286,6 +306,7 @@ public class DesignsView
 				ToolItem syncToolitem = DesignUtils.getToolItem(DesignUtils.TOOLBAR_LINKPROJECT_ID);
 				syncToolitem.setEnabled(false);
 				
+				// Design selektiert
 				if(treeSelected instanceof Design)
 				{
 					Design selectedDesign = (Design) treeSelected;
@@ -318,6 +339,7 @@ public class DesignsView
 				}
 				else
 				{
+					// DesignGroup selektiert
 					if(treeSelected instanceof DesignGroup)
 					{
 						// ein NtProject ist definiert > 'syncToolitem' enablen   
@@ -326,9 +348,39 @@ public class DesignsView
 					}
 					else
 					{
+						// Page selektiert
 						if(treeSelected instanceof Page)
 						{							
 							Page page = (Page) treeSelected;
+							Design parentDesign = (Design) page.eContainer();
+							if(!parentDesign.equals(activeDesign))
+							{								
+								//System.out.println("nicht synchron");
+								
+								// Pageselektion erfolgte in einer anderen als der aktuellen Zeichnung
+								treeViewer.removeSelectionChangedListener(treeMasterViewSelectionListener);
+								
+								// die 'andere' Zeichnung wird zur aktiven, deren Pages werden neu eingelesen
+								activeDesign = parentDesign;								
+								readDesignPages();
+								treeViewer.refresh(activeDesign);
+								
+								// gibt es bei den neu eingelesenen Pages eines mit dem urspruenglichen Namen,
+								// wird dieses selektiert
+								String pageName = page.getName();
+								EList<Page>activePages = activeDesign.getPages();
+								for(Page activePage : activePages)
+								{
+									if(StringUtils.equals(pageName, activePage.getName()))
+									{
+										treeViewer.setSelection(new StructuredSelection(activePage));
+										break;
+									}
+								}
+								
+								treeViewer.addSelectionChangedListener(treeMasterViewSelectionListener);
+							}
+							
 							
 							Map<Design,DrawDocument> openDrawDocumentMap = OpenDesignAction.getOpenDrawDocumentMap();
 							DrawDocument selectedDrawDocument = openDrawDocumentMap.get(activeDesign);
@@ -344,6 +396,7 @@ public class DesignsView
 			}
 		}
 	}
+	private TreeMasterViewSelectionListener treeMasterViewSelectionListener = new TreeMasterViewSelectionListener();
 	
 	private TreeViewer treeViewer;
 
@@ -489,13 +542,16 @@ public class DesignsView
 		return  null;
 	}
 
+	/*
+	 * TreeViewer wurde generiert (vom Renderer)
+	 */
 	@Inject
 	@Optional
 	public void handleEvent(@UIEventTopic(DESIGN_TREEVIEWER_EVENT) TreeViewer treeViewer)
 	{
 		// den vom Reenderer installierten TreeViewer (DetailMasterView) zur Verfuegung stellen
 		this.treeViewer = treeViewer;		
-		this.treeViewer.addSelectionChangedListener(new TreeMasterViewSelectionListener());	
+		this.treeViewer.addSelectionChangedListener(treeMasterViewSelectionListener);	
 		
 		if(selectedProject != null)
 		{			
@@ -537,11 +593,11 @@ public class DesignsView
 		DesignUtils.getToolItem(DesignUtils.TOOLBAR_OPENDESIGN_ID, part).setEnabled(false);
 		DesignUtils.getToolItem(DesignUtils.TOOLBAR_CLOSEDESIGN_ID, part).setEnabled(true);	
 		
-		// alle pages der Zeichung lesen 
+		// Modell auf den neuesten Stand bringen
 		readDesignPages();
 		
-		// synchronisiert Modell mit Dokument
-		removeObsoleteDesignPages();
+		// nach dem Oeffnen wird die aktuelle Page des DrawDocuments auch entsprechend im TreeViewer selektiert
+		selectCurrentPage();
 	}
 	
 	/*
@@ -585,7 +641,10 @@ public class DesignsView
 		// alle pages der geoffneten Zeichung lesen 
 		readDesignPages();
 		
-		
+		// selektiert bei geoffneten DrawDocumenten die dort vorhandene Page auf im Modell
+		// verhindert somit aber auch die Selektion des Designs im Modell
+		//selectCurrentPage();
+		//System.out.println("Design selected");
 		
 		//System.out.println("Design selected: "+design+"  |  "+drawDocument);	
 	}
@@ -602,19 +661,33 @@ public class DesignsView
 	@Inject
 	@Optional
 	public void handleSelectDesignEvent(@UIEventTopic(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_ACTIVATE) Object xFrame)
-	{				
-		Map<Design, DrawDocument>openDrawMap = OpenDesignAction.getOpenDrawDocumentMap();		
+	{		
+		Map<Design, DrawDocument>openDrawMap = OpenDesignAction.getOpenDrawDocumentMap();	
 		Set<Design>designs = openDrawMap.keySet();
+		
 		for(Design design : designs)
 		{
 			DrawDocument drawDocument = openDrawMap.get(design);			
 			Object openXFrame = drawDocument.getXframe();
 			if(openXFrame.equals(xFrame))
 			{
-				treeViewer.setSelection(new StructuredSelection(design));	
+				if (!design.equals(activeDesign))
+				{					
+					//System.out.println("no sync");
+					
+					treeViewer.removeSelectionChangedListener(treeMasterViewSelectionListener);
+					
+					activeDesign = design;	
+					readDesignPages();
+					treeViewer.refresh(activeDesign);
+					treeViewer.setSelection(new StructuredSelection(design));
+					
+					treeViewer.addSelectionChangedListener(treeMasterViewSelectionListener);
+				}
+				
 				break;
 			}
-		}		
+		}
 	}
 	
 	/*
@@ -628,13 +701,9 @@ public class DesignsView
 	@Inject
 	@Optional
 	public void handleDrawPageChangeProperty(@UIEventTopic(DrawDocumentEvent.DRAWDOCUMENT_PAGECHANGE_PROPERTY) Object xDrawPage)
-	{
+	{		
 		Map<Design, DrawDocument>openDrawMap = OpenDesignAction.getOpenDrawDocumentMap();
 		DrawDocument drawDocument = openDrawMap.get(activeDesign);
-		
-		// Medell auf den neuesten Stand bringen
-		readDesignPages();
-		removeObsoleteDesignPages();
 		
 		// Page im Viewer selektieren
 		String pageName = PageHelper.getPageName(xDrawPage);
@@ -650,8 +719,32 @@ public class DesignsView
 					return;
 				}
 			}
-		}
+		}		
+	}
+	
+	/*
+	 * Selektiert die Page des DrawDocuments im Modell
+	 */
+	private void selectCurrentPage()
+	{
+		Map<Design, DrawDocument>openDrawMap = OpenDesignAction.getOpenDrawDocumentMap();	
+		DrawDocument openDrawDocument = openDrawMap.get(activeDesign);
 		
+		// macht nur Sinn bei geoffneten Dokumenten
+		if (openDrawDocument != null)
+		{
+			String pageName = openDrawDocument.getCurrentPage();
+			EList<Page> pages = activeDesign.getPages();
+			for (Page page : pages)
+			{
+				if (StringUtils.equals(page.getName(), pageName))
+				{
+					treeViewer.refresh(activeDesign);
+					treeViewer.setSelection(new StructuredSelection(page));
+					break;
+				}
+			}
+		}
 	}
 	
 	/*
@@ -671,8 +764,10 @@ public class DesignsView
 	}
 
 	/*
+	 * Modelldaten auf den neusten Stand bringen
+	 * 
 	 * Alle Pages der Zeichnung einlesen.
-	 * Die Zeichnung muss geoffnet sein.
+	 * Die Modelldaten entsprechen anpassen.
 	 */
 	private void readDesignPages()
 	{
@@ -683,55 +778,57 @@ public class DesignsView
 			DrawDocument drawDocument = openDrawMap.get(activeDesign);
 			if(drawDocument != null)
 			{
-				EList<Page>designPages = activeDesign.getPages();
+				// Namen aller im DrawDocument enthaltenen Pages
+				List<String> drawPageNames = drawDocument.getAllPages();
 				
-				// alle vorhandenen Pages loeschen
-				designPages.clear();
-				
-				List<String> pageNames = drawDocument.getAllPages();
-				for (String pageName : pageNames)
+				// die momentan im Modell gespeicherten Pages
+				EList<Page>modelPages = activeDesign.getPages();
+
+				// Hilfsliste sammelt alle ModelPages ohne Entsprechung im DrawDocument
+				List<Page>obsoletModelPages = new ArrayList<Page>();
+
+				// Abgleich ModelPage zur DrawDocumentPage
+				for(Page modelPage : modelPages)
 				{
-					EClass pageClass = DesignsPackage.eINSTANCE.getPage();
-					Page page = (Page) EcoreUtil.create(pageClass);
-					page.setName(pageName);
-					designPages.add(page);					
+					String modelPageName = modelPage.getName();
+					if(!drawPageNames.contains(modelPageName))
+					{
+						// ModellPage hat keine Entsprechung im DrawDocument 
+						obsoletModelPages.add(modelPage);
+					}
+					else
+					{
+						// ModellPage hat eine Entsprechung im DrawDocument
+						drawPageNames.remove(modelPageName);
+					}
 				}
+				
+				// Verbliebene DrawDocumentPages in das Modell uebernehme
+				for(String drawPageName : drawPageNames)
+				{
+					Page page;
+					
+					// ein Obsoletes wiederverwenden 
+					if (!obsoletModelPages.isEmpty())
+					{
+						page = obsoletModelPages.get(0);
+						page.setName(drawPageName);
+						obsoletModelPages.remove(0);
+					}
+					else
+					{
+						// neues ModelPage erzeugen
+						EClass pageClass = DesignsPackage.eINSTANCE.getPage();
+						page = (Page) EcoreUtil.create(pageClass);
+						page.setName(drawPageName);
+						modelPages.add(page);		
+					}
+				}
+				
+				// die uebriggebliebenen ModelPages loeschen
+				modelPages.removeAll(obsoletModelPages);					
 			}
 		}		
 	}
 	
-	/*
-	 * Pages eines Design die keine Entsprechung im DrawDocument haben werden aus dem Modell entfernt:
-	 * 
-	 */
-	private void removeObsoleteDesignPages()
-	{		
-		if (activeDesign != null)
-		{			
-			Map<Design, DrawDocument> openDrawMap = OpenDesignAction
-					.getOpenDrawDocumentMap();
-			DrawDocument drawDocument = openDrawMap.get(activeDesign);
-			if(drawDocument != null)
-			{
-				// alle Pages des geoeffneten DrawDocuments einlesen
-				List<String> documentPages = drawDocument.getAllPages();
-				
-				// alle Pages des Modells
-				EList<Page>designPages = activeDesign.getPages();
-				
-				// sammelt alle obsoleten Eintraege
-				List<Page> obsoleteList = new ArrayList<Page>();				
-				for (Page designPage : designPages)
-				{					
-					if(!documentPages.contains(designPage.getName()))
-						obsoleteList.add(designPage);
-				}
-				
-				//Pages im Modell und Document sind wieder synchron
-				designPages.removeAll(obsoleteList);			
-			}
-		}		
-	}
-
-
 }

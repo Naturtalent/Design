@@ -51,6 +51,7 @@ import it.naturtalent.design.model.design.Design;
 import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.model.design.Designs;
 import it.naturtalent.design.model.design.DesignsPackage;
+import it.naturtalent.design.model.design.Page;
 import it.naturtalent.design.ui.parts.DesignsView;
 import it.naturtalent.e4.project.IProjectData;
 import it.naturtalent.libreoffice.draw.DrawDocument;
@@ -571,5 +572,37 @@ public class DesignUtils
 			counter++;
 		}
 	}
+
+	/*
+	 * Gibt es bereits eine Datei mit diesem Name wird ein zaehlerbasierende Erweiterung hinzugefuegt.
+	 */
+	public static String getAutoPageName(EList<Page>pages)
+	{
+		String autoPageName;
+		String pageName = "page";
+		
+		List<String>pageNames = new ArrayList<String>();
+		for(Page page : pages)
+		{
+			String name = page.getName();
+			if(StringUtils.isNotEmpty(name))
+				pageNames.add(name);
+		}
+		
+		int counter = 1;
+		while (true)
+		{
+			if (counter > 1)
+				autoPageName = pageName + new Integer(counter);
+			else
+				autoPageName = pageName;
+			
+			if(!pageNames.contains(autoPageName))
+				return autoPageName;
+			
+			counter++;
+		}
+	}
+	
 	
 }

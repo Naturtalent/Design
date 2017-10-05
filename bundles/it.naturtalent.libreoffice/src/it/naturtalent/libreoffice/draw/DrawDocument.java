@@ -38,6 +38,7 @@ import com.sun.star.frame.XDesktop;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.EventObject;
+import com.sun.star.lang.IndexOutOfBoundsException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
@@ -71,7 +72,7 @@ public class DrawDocument
 		
 	// die aktuelle Seite
 	//protected int drawPageIndex = 0;
-	protected XDrawPage drawPage;
+	//protected XDrawPage drawPage;
 	
 	protected String documentPath;
 	
@@ -327,6 +328,21 @@ public class DrawDocument
 	}
 	*/
 	
+	public String getCurrentPage()
+	{	
+		return PageHelper.getCurrentPage(xComponent);		
+	}
+	
+	/*
+	 * 
+	 *  
+	 */
+	public boolean isChildPageByFrame(Object xFrame)
+	{
+		return (xFrame.equals(xFrame));
+	}
+
+	
 	/*
 	 * 
 	 *  
@@ -501,11 +517,6 @@ public class DrawDocument
 		return xContext;
 	}
 
-	public XDrawPage getDrawPage()
-	{
-		return drawPage;
-	}
-	
 	public XDrawPage getXDrawPage()
 	{
 		return PageHelper.getDrawPageByName(xComponent, pageName);
