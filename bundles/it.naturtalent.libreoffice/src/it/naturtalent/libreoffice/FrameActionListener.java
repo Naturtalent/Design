@@ -12,12 +12,9 @@ import com.sun.star.lang.EventObject;
 
 public class FrameActionListener implements XFrameActionListener
 {
-
 	@Override
 	public void disposing(EventObject arg0)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

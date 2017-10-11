@@ -10,7 +10,8 @@
       <!-- @generated design -->
       <package
             uri="http://it.naturtalent/design"
-            class="it.naturtalent.design.model.design.DesignsPackage"/>
+            class="it.naturtalent.design.model.design.DesignsPackage"
+            genModel="model/design.genmodel"/>
    </extension>
 
 </plugin>

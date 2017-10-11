@@ -224,6 +224,56 @@ public class DesignsItemProviderAdapterFactory extends DesignsAdapterFactory imp
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link it.naturtalent.design.model.design.Layer} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected LayerItemProvider layerItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link it.naturtalent.design.model.design.Layer}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createLayerAdapter()
+	{
+		if (layerItemProvider == null)
+		{
+			layerItemProvider = new LayerItemProvider(this);
+		}
+
+		return layerItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link it.naturtalent.design.model.design.LayerSet} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected LayerSetItemProvider layerSetItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link it.naturtalent.design.model.design.LayerSet}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createLayerSetAdapter()
+	{
+		if (layerSetItemProvider == null)
+		{
+			layerSetItemProvider = new LayerSetItemProvider(this);
+		}
+
+		return layerSetItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -340,6 +390,8 @@ public class DesignsItemProviderAdapterFactory extends DesignsAdapterFactory imp
 		if (pageItemProvider != null) pageItemProvider.dispose();
 		if (ebeneItemProvider != null) ebeneItemProvider.dispose();
 		if (itemItemProvider != null) itemItemProvider.dispose();
+		if (layerItemProvider != null) layerItemProvider.dispose();
+		if (layerSetItemProvider != null) layerSetItemProvider.dispose();
 	}
 
 }

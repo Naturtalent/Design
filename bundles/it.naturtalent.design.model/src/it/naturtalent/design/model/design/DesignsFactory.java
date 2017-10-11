@@ -77,6 +77,24 @@ public interface DesignsFactory extends EFactory
 	Item createItem();
 
 	/**
+	 * Returns a new object of class '<em>Layer</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Layer</em>'.
+	 * @generated
+	 */
+	Layer createLayer();
+
+	/**
+	 * Returns a new object of class '<em>Layer Set</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Layer Set</em>'.
+	 * @generated
+	 */
+	LayerSet createLayerSet();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

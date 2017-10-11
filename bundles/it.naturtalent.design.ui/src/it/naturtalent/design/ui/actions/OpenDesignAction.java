@@ -52,6 +52,7 @@ import it.naturtalent.application.IPreferenceAdapter;
 import it.naturtalent.design.model.design.Design;
 import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.ui.DesignUtils;
+import it.naturtalent.design.ui.parts.DesignsView;
 import it.naturtalent.e4.project.IProjectData;
 import it.naturtalent.e4.project.ui.navigator.ResourceNavigator;
 import it.naturtalent.libreoffice.DrawDocumentEvent;
@@ -70,97 +71,9 @@ import it.naturtalent.libreoffice.draw.DrawDocument;
  */
 public class OpenDesignAction extends MasterDetailAction
 {
-	// 'Quelle' der fuer eine Zeichnung benutze Vorlage 
-	public static final String DESIGN_TEMPLATE = "/templates/draw.odg";
-	
-	// 'Ziel' im Projeckdatabereich wird die Vorlage unter diesem Namen abeglegt (ggf. erweitert mit counter)
-	public static final String DEFAULT_DESIGNNAME = "zeichnung.odg";
-	
-	private Design design;
-	private DrawDocument drawDocument;	
-	
-	// Zuordnungstabelle Desing und geoffnetes DrawDocument
-	public static Map<Design,DrawDocument> openDrawDocumentMap = new HashMap<Design,DrawDocument>();
-
-	// kill Watchdog
-	private boolean cancel = false;
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
-	@Inject
-	@Preference(nodePath = IPreferenceAdapter.PREFERENCE_APPLICATION_TEMPDIR_KEY)
-	private IEclipsePreferences preferences;
-	
-	/*
-	 * 
-	 */
-	private IEventBroker eventBroker;
-	private EventHandler documentEventHandler = new EventHandler()
-	{
-		@Override
-		public void handleEvent(Event event)
-		{			
-			if(StringUtils.equals(event.getTopic(),DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE))
-			{
-				Object obj = event.getProperty(IEventBroker.DATA);
-				
-				if (obj instanceof DrawDocument)
-				{
-					DrawDocument closedDrawDocument = (DrawDocument) obj;
-					for(Design design : openDrawDocumentMap.keySet())
-					{
-						if (design != null)
-						{
-							DrawDocument openDrawDocument = openDrawDocumentMap.get(design);
-							if (openDrawDocument.equals(closedDrawDocument))
-							{
-								// das geschlossene DrawDocument aus 'openDrawDocumentMap'
-								openDrawDocumentMap.remove(design);
-								break;
-							}
-						}
-					}
-				}				
-				return;
-			}
-			
-			// Abbruch des Ladevorgangs (z.B. keine JPIPE Library gefunden)
-			if(StringUtils.equals(event.getTopic(),DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN_CANCEL))
-			{
-				cancel = true;
-				return;
-			}
-				
-			// Ladevorgang beendet, das geoeffnete DrawDocument im 'openDrawDocumentMap' speichern 
-			if(StringUtils.equals(event.getTopic(),DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_JUSTOPENED))
-			{
-				cancel = true; // Watchdog ausschalten
-				if((design != null) && (!openDrawDocumentMap.containsKey(design)))
-				{
-					// das geoffnete Dokument wird 'openDrawDocumentMap' gespeichert  
-					openDrawDocumentMap.put(design, drawDocument);
-					
-					// erst danach wird ueber ein geoffnetes Dokument informiert
-					eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN, this);
-				}
-				return;
-			}
-		}
-	};
-	
-	/**
-	 * Konstruktion
-	 */
-	public OpenDesignAction()
-	{
-		MApplication currentApplication = E4Workbench.getServiceContext()
-				.get(IWorkbench.class).getApplication();
-		
-		// Handler 'documentEventHandler' hoert auf alle 'DrawDocumentEvent.DRAWDOCUMENT_EVENT' Events
-		eventBroker = currentApplication.getContext().get(IEventBroker.class);		
-		eventBroker.subscribe(DrawDocumentEvent.DRAWDOCUMENT_EVENT+"*", documentEventHandler);
-	}
-
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException
@@ -171,118 +84,13 @@ public class OpenDesignAction extends MasterDetailAction
 
 	@Override
 	public void execute(EObject eObject)
-	{
-		if (eObject instanceof Design)			
-		{
-			design = (Design) eObject;
-			
-			if(!openDrawDocumentMap.containsKey(design))			
-				//runOpen();
-				doOpen();
-		}
+	{		
+		new OpenAction((Design) eObject).run();
 	}
 	
 	@Override
 	public void dispose()
 	{
-		// Handler 'documentEventHandler' beim EventBroker abmelden
-		eventBroker.unsubscribe(documentEventHandler);
-		super.dispose();
-	}
-	
-	private void doOpen()
-	{
-		File file = DesignUtils.getDesignFile(design);
-		if((file != null) && file.exists())
-		{
-			drawDocument = new DrawDocument();
-			drawDocument.loadPage(file.toString());
-			runWatchdog();
-			return;
-		}
-
-	}
-
-
-	/*
-	 * Die im Design referenzierte Datei wird geladen und oeoffnet.
-	 * 
-	 */
-	private void runOpen()
-	{		
-		// das dem Design zugeordnete Dokument wird geoffnet
-		File file = new File(design.getDesignURL());
-		if(file.exists())
-		{
-			drawDocument = new DrawDocument();
-			drawDocument.loadPage(file.toString());
-			runWatchdog();
-			return;
-		}
-		
-		String projectName = new Path(file.getPath()).segment(0);				
-		IProject iProject = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		if(iProject.exists())
-		{
-			// DesignURL mit Projectdata-Path zusammenfassen
-			IFolder folder = iProject.getFolder(IProjectData.PROJECTDATA_FOLDER);
-			IPath path = folder.getLocation();
-			File designFile = new File(design.getDesignURL());
-			String designName = designFile.getName(); 
-			path = path.append(designName);
-				
-			drawDocument = new DrawDocument();
-			//drawDocument.setEventBroker(eventBroker);
-			//Page page = design.getPages()[0];				
-			//drawDocument.setPageName(page.getName());
-			drawDocument.loadPage(path.toString());
-			
-			//DesignUtils.getToolItem(DesignUtils.TOOLBAR_OPENDESIGN_ID).setEnabled(false);
-			
-			runWatchdog();
-		}
-	}
-	
-	private void runWatchdog()
-	{
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getDefault().getActiveShell());
-		dialog.open();
-		try
-		{
-			dialog.run(true, true, new IRunnableWithProgress()
-			{
-				@Override
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException,
-						InterruptedException
-				{
-					monitor.beginTask("Zeichnung wird geöffnet",IProgressMonitor.UNKNOWN);
-					for (int i = 0;; ++i)
-					{
-						if (monitor.isCanceled())
-						{
-							throw new InterruptedException();
-						}
-						
-						if (i == 50)
-							break;
-						if (cancel)
-							break;
-						try
-						{
-							Thread.sleep(500);
-						} catch (InterruptedException e)
-						{
-							throw new InterruptedException();
-						}
-					}
-					monitor.done();							
-				}
-			});
-		} catch (Exception e)
-		{
-			log.error("Abbruch Zeichnung laden", e);
-		}
 	}
 	
 	@Override
@@ -293,7 +101,7 @@ public class OpenDesignAction extends MasterDetailAction
 			Design design = (Design) eObject;
 			
 			// nicht sichtbar, wenn Design bereits geoffnet
-			if(openDrawDocumentMap.containsKey(design))
+			if(DesignsView.openDrawDocumentMap.containsKey(design))
 				return false;
 			
 			// sichtbar, wenn ein zuoeffnender DrawFile existiert  
@@ -312,12 +120,6 @@ public class OpenDesignAction extends MasterDetailAction
 		}
 
 		return false;
-	}
-
-
-	public static Map<Design, DrawDocument> getOpenDrawDocumentMap()
-	{
-		return openDrawDocumentMap;
 	}
 	
 }

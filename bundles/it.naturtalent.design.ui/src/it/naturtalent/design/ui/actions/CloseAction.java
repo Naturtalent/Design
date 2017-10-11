@@ -1,30 +1,36 @@
- 
 package it.naturtalent.design.ui.actions;
 
-import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import java.util.Map;
+
+import org.eclipse.jface.action.Action;
 
 import it.naturtalent.design.model.design.Design;
 import it.naturtalent.design.ui.parts.DesignsView;
+import it.naturtalent.libreoffice.draw.DrawDocument;
 
-public class CloseAction
+public class CloseAction extends Action
 {
-	@Execute
-	public void execute(@Optional MPart part, @Optional EPartService partService)
+	private Design design;
+
+	public CloseAction(Design design)
 	{
+		super();
+		this.design = design;
+	}
 
-		//MPart part = partService.findPart(DesignsView.DESIGNSVIEW_ID);
-		DesignsView designView = (DesignsView) part.getObject();
-		Object selObj = designView.getSelection();
-
-		if(selObj instanceof Design)
-		{			
-			CloseDesignAction closeAction = new CloseDesignAction();
-			closeAction.execute((Design)selObj);
+	@Override
+	public void run()
+	{		
+		Map<Design, DrawDocument>openDrawDocumentMap = DesignsView.getDrawDocumentMap();
+		DrawDocument drawDocument = openDrawDocumentMap.get(design);
+		if(drawDocument != null)
+		{
+			// vor dem Schliessen den ShapeListener entfernen
+			drawDocument.deActivateShapeListener();
+			drawDocument.closeDocument();
 		}
 
 	}
-
+	
+	
 }

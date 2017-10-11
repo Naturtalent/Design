@@ -2,6 +2,7 @@
  */
 package it.naturtalent.design.model.design;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -15,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link it.naturtalent.design.model.design.Page#getName <em>Name</em>}</li>
  *   <li>{@link it.naturtalent.design.model.design.Page#getScaleDenominator <em>Scale Denominator</em>}</li>
+ *   <li>{@link it.naturtalent.design.model.design.Page#getLayersets <em>Layersets</em>}</li>
  * </ul>
  *
  * @see it.naturtalent.design.model.design.DesignsPackage#getPage()
@@ -74,5 +76,21 @@ public interface Page extends EObject
 	 * @generated
 	 */
 	void setScaleDenominator(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Layersets</b></em>' containment reference list.
+	 * The list contents are of type {@link it.naturtalent.design.model.design.LayerSet}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Layersets</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Layersets</em>' containment reference list.
+	 * @see it.naturtalent.design.model.design.DesignsPackage#getPage_Layersets()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<LayerSet> getLayersets();
 
 } // Page

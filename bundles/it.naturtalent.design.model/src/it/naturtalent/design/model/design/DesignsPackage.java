@@ -196,13 +196,22 @@ public interface DesignsPackage extends EPackage
 	int DESIGN__PAGES = 3;
 
 	/**
+	 * The feature id for the '<em><b>Layers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DESIGN__LAYERS = 4;
+
+	/**
 	 * The number of structural features of the '<em>Design</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DESIGN_FEATURE_COUNT = 4;
+	int DESIGN_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Design</em>' class.
@@ -242,13 +251,22 @@ public interface DesignsPackage extends EPackage
 	int PAGE__SCALE_DENOMINATOR = 1;
 
 	/**
+	 * The feature id for the '<em><b>Layersets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAGE__LAYERSETS = 2;
+
+	/**
 	 * The number of structural features of the '<em>Page</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PAGE_FEATURE_COUNT = 2;
+	int PAGE_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Page</em>' class.
@@ -341,6 +359,90 @@ public interface DesignsPackage extends EPackage
 	 * @ordered
 	 */
 	int ITEM_OPERATION_COUNT = 0;
+
+
+	/**
+	 * The meta object id for the '{@link it.naturtalent.design.model.design.impl.LayerImpl <em>Layer</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see it.naturtalent.design.model.design.impl.LayerImpl
+	 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getLayer()
+	 * @generated
+	 */
+	int LAYER = 6;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LAYER__NAME = 0;
+
+	/**
+	 * The number of structural features of the '<em>Layer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LAYER_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Layer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LAYER_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link it.naturtalent.design.model.design.impl.LayerSetImpl <em>Layer Set</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see it.naturtalent.design.model.design.impl.LayerSetImpl
+	 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getLayerSet()
+	 * @generated
+	 */
+	int LAYER_SET = 7;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LAYER_SET__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Layers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LAYER_SET__LAYERS = 1;
+
+	/**
+	 * The number of structural features of the '<em>Layer Set</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LAYER_SET_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Layer Set</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LAYER_SET_OPERATION_COUNT = 0;
 
 
 	/**
@@ -462,6 +564,17 @@ public interface DesignsPackage extends EPackage
 	EReference getDesign_Pages();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link it.naturtalent.design.model.design.Design#getLayers <em>Layers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Layers</em>'.
+	 * @see it.naturtalent.design.model.design.Design#getLayers()
+	 * @see #getDesign()
+	 * @generated
+	 */
+	EReference getDesign_Layers();
+
+	/**
 	 * Returns the meta object for class '{@link it.naturtalent.design.model.design.Page <em>Page</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -492,6 +605,17 @@ public interface DesignsPackage extends EPackage
 	 * @generated
 	 */
 	EAttribute getPage_ScaleDenominator();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link it.naturtalent.design.model.design.Page#getLayersets <em>Layersets</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Layersets</em>'.
+	 * @see it.naturtalent.design.model.design.Page#getLayersets()
+	 * @see #getPage()
+	 * @generated
+	 */
+	EReference getPage_Layersets();
 
 	/**
 	 * Returns the meta object for class '{@link it.naturtalent.design.model.design.Ebene <em>Ebene</em>}'.
@@ -545,6 +669,59 @@ public interface DesignsPackage extends EPackage
 	 * @generated
 	 */
 	EAttribute getItem_Name();
+
+	/**
+	 * Returns the meta object for class '{@link it.naturtalent.design.model.design.Layer <em>Layer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Layer</em>'.
+	 * @see it.naturtalent.design.model.design.Layer
+	 * @generated
+	 */
+	EClass getLayer();
+
+	/**
+	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.Layer#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see it.naturtalent.design.model.design.Layer#getName()
+	 * @see #getLayer()
+	 * @generated
+	 */
+	EAttribute getLayer_Name();
+
+	/**
+	 * Returns the meta object for class '{@link it.naturtalent.design.model.design.LayerSet <em>Layer Set</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Layer Set</em>'.
+	 * @see it.naturtalent.design.model.design.LayerSet
+	 * @generated
+	 */
+	EClass getLayerSet();
+
+	/**
+	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.LayerSet#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see it.naturtalent.design.model.design.LayerSet#getName()
+	 * @see #getLayerSet()
+	 * @generated
+	 */
+	EAttribute getLayerSet_Name();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link it.naturtalent.design.model.design.LayerSet#getLayers <em>Layers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Layers</em>'.
+	 * @see it.naturtalent.design.model.design.LayerSet#getLayers()
+	 * @see #getLayerSet()
+	 * @generated
+	 */
+	EReference getLayerSet_Layers();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -665,6 +842,14 @@ public interface DesignsPackage extends EPackage
 		EReference DESIGN__PAGES = eINSTANCE.getDesign_Pages();
 
 		/**
+		 * The meta object literal for the '<em><b>Layers</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference DESIGN__LAYERS = eINSTANCE.getDesign_Layers();
+
+		/**
 		 * The meta object literal for the '{@link it.naturtalent.design.model.design.impl.PageImpl <em>Page</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -689,6 +874,14 @@ public interface DesignsPackage extends EPackage
 		 * @generated
 		 */
 		EAttribute PAGE__SCALE_DENOMINATOR = eINSTANCE.getPage_ScaleDenominator();
+
+		/**
+		 * The meta object literal for the '<em><b>Layersets</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PAGE__LAYERSETS = eINSTANCE.getPage_Layersets();
 
 		/**
 		 * The meta object literal for the '{@link it.naturtalent.design.model.design.impl.EbeneImpl <em>Ebene</em>}' class.
@@ -733,6 +926,50 @@ public interface DesignsPackage extends EPackage
 		 * @generated
 		 */
 		EAttribute ITEM__NAME = eINSTANCE.getItem_Name();
+
+		/**
+		 * The meta object literal for the '{@link it.naturtalent.design.model.design.impl.LayerImpl <em>Layer</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see it.naturtalent.design.model.design.impl.LayerImpl
+		 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getLayer()
+		 * @generated
+		 */
+		EClass LAYER = eINSTANCE.getLayer();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LAYER__NAME = eINSTANCE.getLayer_Name();
+
+		/**
+		 * The meta object literal for the '{@link it.naturtalent.design.model.design.impl.LayerSetImpl <em>Layer Set</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see it.naturtalent.design.model.design.impl.LayerSetImpl
+		 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getLayerSet()
+		 * @generated
+		 */
+		EClass LAYER_SET = eINSTANCE.getLayerSet();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LAYER_SET__NAME = eINSTANCE.getLayerSet_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Layers</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference LAYER_SET__LAYERS = eINSTANCE.getLayerSet_Layers();
 
 	}
 

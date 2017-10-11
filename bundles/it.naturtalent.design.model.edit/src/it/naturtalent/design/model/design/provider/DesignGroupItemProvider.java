@@ -6,6 +6,8 @@ package it.naturtalent.design.model.design.provider;
 import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.model.design.DesignsFactory;
 import it.naturtalent.design.model.design.DesignsPackage;
+import it.naturtalent.icons.core.Icon;
+import it.naturtalent.icons.core.IconSize;
 
 import java.util.Collection;
 import java.util.List;
@@ -156,12 +158,13 @@ public class DesignGroupItemProvider
 	 * This returns DesignGroup.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object)
 	{
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/DesignGroup"));
+		//return overlayImage(object, getResourceLocator().getImage("full/obj16/DesignGroup"));
+		return Icon.ICON_PICTURES.getImage(IconSize._16x16_DefaultIconSize);
 	}
 
 	/**

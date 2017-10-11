@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link it.naturtalent.design.model.design.Design#getScaleDenominator <em>Scale Denominator</em>}</li>
  *   <li>{@link it.naturtalent.design.model.design.Design#getDesignURL <em>Design URL</em>}</li>
  *   <li>{@link it.naturtalent.design.model.design.Design#getPages <em>Pages</em>}</li>
+ *   <li>{@link it.naturtalent.design.model.design.Design#getLayers <em>Layers</em>}</li>
  * </ul>
  *
  * @see it.naturtalent.design.model.design.DesignsPackage#getDesign()
@@ -120,5 +121,21 @@ public interface Design extends EObject
 	 * @generated
 	 */
 	EList<Page> getPages();
+
+	/**
+	 * Returns the value of the '<em><b>Layers</b></em>' containment reference list.
+	 * The list contents are of type {@link it.naturtalent.design.model.design.Layer}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Layers</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Layers</em>' containment reference list.
+	 * @see it.naturtalent.design.model.design.DesignsPackage#getDesign_Layers()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<Layer> getLayers();
 
 } // Design

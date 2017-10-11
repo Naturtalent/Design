@@ -70,6 +70,8 @@ public class DesignsFactoryImpl extends EFactoryImpl implements DesignsFactory
 			case DesignsPackage.PAGE: return createPage();
 			case DesignsPackage.EBENE: return createEbene();
 			case DesignsPackage.ITEM: return createItem();
+			case DesignsPackage.LAYER: return createLayer();
+			case DesignsPackage.LAYER_SET: return createLayerSet();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -139,6 +141,28 @@ public class DesignsFactoryImpl extends EFactoryImpl implements DesignsFactory
 	{
 		ItemImpl item = new ItemImpl();
 		return item;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Layer createLayer()
+	{
+		LayerImpl layer = new LayerImpl();
+		return layer;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LayerSet createLayerSet()
+	{
+		LayerSetImpl layerSet = new LayerSetImpl();
+		return layerSet;
 	}
 
 	/**

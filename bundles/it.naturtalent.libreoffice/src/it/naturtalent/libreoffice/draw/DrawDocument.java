@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -21,22 +24,31 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.swt.graphics.Rectangle;
 
 import com.sun.star.awt.Size;
+import com.sun.star.beans.PropertyChangeEvent;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.UnknownPropertyException;
+import com.sun.star.beans.XMultiPropertySet;
+import com.sun.star.beans.XPropertyChangeListener;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.container.XNamed;
 import com.sun.star.drawing.HomogenMatrixLine3;
 import com.sun.star.drawing.PolyPolygonBezierCoords;
 import com.sun.star.drawing.XDrawPage;
+import com.sun.star.drawing.XDrawPages;
+import com.sun.star.drawing.XDrawPagesSupplier;
 import com.sun.star.drawing.XLayer;
 import com.sun.star.drawing.XLayerManager;
 import com.sun.star.drawing.XLayerSupplier;
+import com.sun.star.drawing.XShape;
+import com.sun.star.drawing.XShapes;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDesktop;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
+import com.sun.star.io.IOException;
+import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.IndexOutOfBoundsException;
 import com.sun.star.lang.WrappedTargetException;
@@ -44,6 +56,7 @@ import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
+import com.sun.star.script.EventListener;
 import com.sun.star.uno.Any;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -51,13 +64,16 @@ import com.sun.star.uno.XInterface;
 import com.sun.star.view.XSelectionChangeListener;
 import com.sun.star.view.XSelectionSupplier;
 
+import it.naturtalent.libreoffice.ActiveLayerPropertyListener;
 import it.naturtalent.libreoffice.Bootstrap;
 import it.naturtalent.libreoffice.DesignHelper;
 import it.naturtalent.libreoffice.DrawDocumentEvent;
+import it.naturtalent.libreoffice.DrawDocumentUtils;
 import it.naturtalent.libreoffice.DrawPageNamePropertyListener;
 import it.naturtalent.libreoffice.DrawPagePropertyListener;
 import it.naturtalent.libreoffice.FrameActionListener;
 import it.naturtalent.libreoffice.PageHelper;
+import it.naturtalent.libreoffice.ShapeSelectionListener;
 import it.naturtalent.libreoffice.Utils;
 
  
@@ -67,6 +83,7 @@ public class DrawDocument
 	private XComponentContext xContext;
 	private XDesktop xDesktop;
 	private XFrame xframe;
+	private XSelectionSupplier selectionSupplier;
 	
 	private static boolean atWork = false;
 		
@@ -96,9 +113,15 @@ public class DrawDocument
 	private TerminateListener terminateListener;
 	
 	// Map<TerminateListener, DrawPagePath> (@see TerminateListener) 
-	public static Map<TerminateListener, String>openTerminateDocumentMap = new HashMap<TerminateListener, String>();	
+	public static Map<TerminateListener, DrawDocument>openTerminateDocumentMap = new HashMap<TerminateListener, DrawDocument>();	
 
 	private DrawPagePropertyListener drawPagePropertyListener;
+	
+	private ShapeSelectionListener shapeSelectionListener;
+	
+	private FrameActionListener frameActionListener;
+	
+	private Log log = LogFactory.getLog(this.getClass());
 	
 	
 	public DrawDocument()
@@ -235,6 +258,8 @@ public class DrawDocument
 					// EventBroker informiert ueber das Schliessen des Dokuments
 					eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE, DrawDocument.this);					
 				}
+				
+				
 			});
 						
 			// TerminateListener (registriert eine durch Libreoffice ausgeloeste Close-Aktionen)
@@ -245,89 +270,72 @@ public class DrawDocument
 			
 			
 			// EventBroker informiert, dass Ladevorgang abgeschlossen ist
-			eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_JUSTOPENED, this);
+			eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_OPEN, this);
 			
 			// PageListener installieren und aktivierten
 			drawPagePropertyListener = new DrawPagePropertyListener(xComponent);
 			drawPagePropertyListener.activatePageListener();
 			
-			//drawPagePropertyListener.activatePageListener(xComponent);
-			
-			
 			/*
-			 * Ueberwachung Shapeselections 
+			 * Shapeselection Listener 
 			 */			
 			XModel xModel = UnoRuntime.queryInterface(XModel.class,xComponent);
 			XController xController = xModel.getCurrentController();
-			XSelectionSupplier selectionSupplier = UnoRuntime.queryInterface(
-					XSelectionSupplier.class, xController);
-			
-			selectionSupplier.addSelectionChangeListener(new XSelectionChangeListener()
-			{
-				
-				@Override
-				public void disposing(EventObject arg0)
-				{
-					// TODO Auto-generated method stub
-					System.out.println("disposing");
-				}
-
-				
-				
-				@Override
-				public void selectionChanged(EventObject arg0)
-				{
-					
-					//System.out.println("selection");
-										
-					Object obj = arg0.Source;
-					
-					/*
-					if (obj instanceof XPropertySet)
-					{
-						XPropertySet selectedPropertySet = (XPropertySet) obj;
-						Utils.printPropertyValues(selectedPropertySet);
-					}
-					*/
-					
-					System.out.println("DrawDokument 285 - Selection: "+obj);
-				}
-			});
+			selectionSupplier = UnoRuntime.queryInterface(XSelectionSupplier.class, xController);
+			shapeSelectionListener = new ShapeSelectionListener();
+			selectionSupplier.addSelectionChangeListener(shapeSelectionListener);
 			
 			// Listener ueberwacht die Frameaktivitaeten (z.B. Frame wird aktiviert)
 			xframe = xController.getFrame();
-			xframe.addFrameActionListener(new FrameActionListener());
+			frameActionListener = new FrameActionListener();
+			xframe.addFrameActionListener(frameActionListener);
 			
 			// das geoeffnete Dokument mit Listener als Key speichern
-			openTerminateDocumentMap.put(terminateListener, documentPath);	
+			openTerminateDocumentMap.put(terminateListener, this);	
 			
 			//getAllPages();
 		}
 	}
 	
+	public void deActivateShapeListener()
+	{
+		selectionSupplier.removeSelectionChangeListener(shapeSelectionListener);
+	}
+
+	
 	/*
-	 * In XComponent hat sich die Eigenschaft "CurrentPage" geandert (entspricht > andere Page wurde selektiert)
-	 *  
+	 * Die Funktion wird u.a. getriggert durch die Selektion eines Shapes im DrawDocument. 
+	 * (@see ShapeSelectionListener) u. (@see handleShapeSelectedEvent())
+	 * 
+	 * !!! Getriggert wird dieser Event aber auch, wenn das DrawDocument extern geschlossen wurde. Hierdurch
+	 * wird eine DisposedException ausgeloest da beim Zugriff durch 'DrawDocumentUtils.getSelectedShapes()'
+	 * sich das XModel bereits im Zustand 'disposed' befindet.
+	 * 
+	 * !!! Moegliche Ursache UI DrawDodument ist zu diesem Zeitpungkt bereits geschlossen 
+	 * 
+	 * Die Funktion sucht den Layer des markierten Shapes und selektiert den Layer.
 	 *  
 	 */
-	/*
-	public void handleDrawPageChangeProperty(Object xDrawPage)
-	{
-		XNamed xNamed = UnoRuntime.queryInterface(XNamed.class, xDrawPage);		
-		
-		
-		
-		
-		//XPropertySet xPageProperties = UnoRuntime.queryInterface(XPropertySet.class, xNamed);
-		//Utils.printPropertyValues(xPageProperties);
-
-		DrawPageNamePropertyListener drawPageNamePropertyListener = new DrawPageNamePropertyListener(xComponent);
-		drawPageNamePropertyListener.activatePageListener((XDrawPage) xDrawPage);
-
-
+	public void doShapeSelection(Object arg0)
+	{	
+		try
+		{
+			List<XShape>shapeList = DrawDocumentUtils.getSelectedShapes(xComponent);
+			if(shapeList.size() > 0)
+			{
+				String pageName = DrawDocumentUtils.getCurrentPageName(xComponent);
+				String layerName = DrawDocumentUtils.findLayer(xComponent, pageName, shapeList.get(0));
+				DrawDocumentUtils.selectLayer(xComponent, layerName);
+			}
+		} catch (DisposedException e)
+		{
+			// DrawDocument wurde wahrscheinlich extern geschlossen - interne Schliessung veranlassen
+			log.error(e);
+			closeDocument();			
+		}
 	}
-	*/
 	
+
 	public String getCurrentPage()
 	{	
 		return PageHelper.getCurrentPage(xComponent);		
@@ -344,28 +352,13 @@ public class DrawDocument
 
 	
 	/*
-	 * 
+	 * Ueberprueft, ob die uebergebene Seite 'xDrawPage' zu diesem DrawDocument gehoert.
 	 *  
 	 */
 	public boolean isChildPage(Object xDrawPage)
 	{
-		int count = PageHelper.getDrawPageCount(xComponent);
-		for(int i = 0;i < count;i++)
-		{
-			try
-			{
-				XDrawPage xPage = PageHelper.getDrawPageByIndex(xComponent, i);				
-				if(xPage.equals(xDrawPage))
-					return true;
-				
-			} catch (Exception e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}			
-		}
-
-		return false;
+		List<XDrawPage>pages = DrawDocumentUtils.getDrawPages(xComponent);
+		return pages.contains(xDrawPage);
 	}
 
 
@@ -408,23 +401,19 @@ public class DrawDocument
 
 	public void closeDesktop()
 	{
-		xDesktop.terminate();	
+		xDesktop.terminate();
 	}
 
 	/**
 	 * Schliesst DrawDocument ausgelöst durch eine CloseAktion (Kontext-/Toolaction).
 	 * Close durch LibroOffice-Aktion wird hier nicht registriert, @see it.naturtalent.libreoffice.draw.TerminateListener
-	 */
+	 */	
 	public void closeDocument()
 	{
-		try
-		{
-			xComponent.dispose();
-		} catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+		// verursacht Exception: Ursache unklar
+		// com.sun.star.lang.DisposedException: java_remote_bridge com.sun.star.lib.uno.bridges.java_remote.java_remote_bridge@1ca8eaf is disposed
+		// !!! Moegliche Ursache UI DrawDodument ist zu diesem Zeitpungkt bereits geschlossen
+		xComponent.dispose();
 	}
 	
 	public void pullScaleData()
@@ -511,7 +500,12 @@ public class DrawDocument
 	{
 		return xComponent;
 	}
-	
+
+	public XDesktop getXDesktop()
+	{
+		return xDesktop;
+	}
+
 	public XComponentContext getxContext()
 	{
 		return xContext;
@@ -711,14 +705,14 @@ public class DrawDocument
 				
 				// alle Layernamen
 				XNameAccess nameAccess = (XNameAccess) UnoRuntime.queryInterface( 
-						XNameAccess.class, xLayerManager);        
+						XNameAccess.class, xLayerManager);			
 				String [] names = nameAccess.getElementNames();
 				
 				layerRegistry.clear();
 				for(String name : names)
 				{
 					Any any = (Any) xNameAccess.getByName(name);
-					XLayer xLayer = (XLayer) UnoRuntime.queryInterface(XLayer.class, any);
+					XLayer xLayer = (XLayer) UnoRuntime.queryInterface(XLayer.class, any);					
 					Layer layer = new Layer(xLayer);
 					layer.setDrawDocument(this);					
 					layerRegistry.put(name, layer);
@@ -825,6 +819,18 @@ public class DrawDocument
 	public Layer getLayer(String layerName)
 	{
 		return layerRegistry.get(layerName);
+	}
+
+	/**
+	 * Alle Layer dieser Seite in einem Array zurueckgeben.
+	 * 
+	 * @return
+	 */
+	public List<String> getLayerNames()
+	{
+		List<String>listLayernames = new ArrayList<String>();
+		listLayernames.addAll(layerRegistry.keySet());
+		return listLayernames;
 	}
 
 	/**

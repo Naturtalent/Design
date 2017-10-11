@@ -4,6 +4,7 @@ package it.naturtalent.design.model.design.impl;
 
 import it.naturtalent.design.model.design.Design;
 import it.naturtalent.design.model.design.DesignsPackage;
+import it.naturtalent.design.model.design.Layer;
 import it.naturtalent.design.model.design.Page;
 
 import java.util.Collection;
@@ -34,6 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link it.naturtalent.design.model.design.impl.DesignImpl#getScaleDenominator <em>Scale Denominator</em>}</li>
  *   <li>{@link it.naturtalent.design.model.design.impl.DesignImpl#getDesignURL <em>Design URL</em>}</li>
  *   <li>{@link it.naturtalent.design.model.design.impl.DesignImpl#getPages <em>Pages</em>}</li>
+ *   <li>{@link it.naturtalent.design.model.design.impl.DesignImpl#getLayers <em>Layers</em>}</li>
  * </ul>
  *
  * @generated
@@ -109,6 +111,16 @@ public class DesignImpl extends MinimalEObjectImpl.Container implements Design
 	 * @ordered
 	 */
 	protected EList<Page> pages;
+
+	/**
+	 * The cached value of the '{@link #getLayers() <em>Layers</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLayers()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Layer> layers;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -219,6 +231,20 @@ public class DesignImpl extends MinimalEObjectImpl.Container implements Design
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<Layer> getLayers()
+	{
+		if (layers == null)
+		{
+			layers = new EObjectContainmentEList<Layer>(Layer.class, this, DesignsPackage.DESIGN__LAYERS);
+		}
+		return layers;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
 	{
@@ -226,6 +252,8 @@ public class DesignImpl extends MinimalEObjectImpl.Container implements Design
 		{
 			case DesignsPackage.DESIGN__PAGES:
 				return ((InternalEList<?>)getPages()).basicRemove(otherEnd, msgs);
+			case DesignsPackage.DESIGN__LAYERS:
+				return ((InternalEList<?>)getLayers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -248,6 +276,8 @@ public class DesignImpl extends MinimalEObjectImpl.Container implements Design
 				return getDesignURL();
 			case DesignsPackage.DESIGN__PAGES:
 				return getPages();
+			case DesignsPackage.DESIGN__LAYERS:
+				return getLayers();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -276,6 +306,10 @@ public class DesignImpl extends MinimalEObjectImpl.Container implements Design
 				getPages().clear();
 				getPages().addAll((Collection<? extends Page>)newValue);
 				return;
+			case DesignsPackage.DESIGN__LAYERS:
+				getLayers().clear();
+				getLayers().addAll((Collection<? extends Layer>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -302,6 +336,9 @@ public class DesignImpl extends MinimalEObjectImpl.Container implements Design
 			case DesignsPackage.DESIGN__PAGES:
 				getPages().clear();
 				return;
+			case DesignsPackage.DESIGN__LAYERS:
+				getLayers().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -324,6 +361,8 @@ public class DesignImpl extends MinimalEObjectImpl.Container implements Design
 				return DESIGN_URL_EDEFAULT == null ? designURL != null : !DESIGN_URL_EDEFAULT.equals(designURL);
 			case DesignsPackage.DESIGN__PAGES:
 				return pages != null && !pages.isEmpty();
+			case DesignsPackage.DESIGN__LAYERS:
+				return layers != null && !layers.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

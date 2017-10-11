@@ -32,5 +32,6 @@ public class DrawDocumentEvent
 	
 	
 	
+	
 	public static final String DRAWDOCUMENT_PAGECHANGE_PROPERTY = "pagechangeproperty"; //$NON-NLS-N$
 }

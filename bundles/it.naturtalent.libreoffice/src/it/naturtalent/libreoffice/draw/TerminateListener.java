@@ -53,11 +53,17 @@ public class TerminateListener implements XTerminateListener
 	 * @see com.sun.star.frame.XTerminateListener#notifyTermination(com.sun.star.lang.EventObject)
 	 */
 	public void notifyTermination(com.sun.star.lang.EventObject eventObject)
-	{		
-		String path = DrawDocument.openTerminateDocumentMap.get(this);	
-		DrawDocument.openTerminateDocumentMap.remove(this);
+	{	
+		/*
+		DrawDocument drawDocument = DrawDocument.openTerminateDocumentMap.get(this);
+		drawDocument.getXDesktop().removeTerminateListener(this);
+		
+		drawDocument.closeDocument();
+		//DrawDocument.openTerminateDocumentMap.remove(this);
+		 
+		 */
 		if(eventBroker != null)
-			eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE, path);		
+			eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE, (Object) eventObject);	
 	}
 
 	public void queryTermination(com.sun.star.lang.EventObject eventObject)
@@ -73,6 +79,7 @@ public class TerminateListener implements XTerminateListener
 
 	public void disposing(com.sun.star.lang.EventObject eventObject)
 	{
+		System.out.println("desposing Terminate");
 	}
 
 	public void setEventBroker(IEventBroker eventBroker)

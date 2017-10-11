@@ -3,8 +3,8 @@
 package it.naturtalent.design.model.design.impl;
 
 import it.naturtalent.design.model.design.DesignsPackage;
+import it.naturtalent.design.model.design.Layer;
 import it.naturtalent.design.model.design.LayerSet;
-import it.naturtalent.design.model.design.Page;
 
 import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
@@ -21,20 +21,19 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Page</b></em>'.
+ * An implementation of the model object '<em><b>Layer Set</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link it.naturtalent.design.model.design.impl.PageImpl#getName <em>Name</em>}</li>
- *   <li>{@link it.naturtalent.design.model.design.impl.PageImpl#getScaleDenominator <em>Scale Denominator</em>}</li>
- *   <li>{@link it.naturtalent.design.model.design.impl.PageImpl#getLayersets <em>Layersets</em>}</li>
+ *   <li>{@link it.naturtalent.design.model.design.impl.LayerSetImpl#getName <em>Name</em>}</li>
+ *   <li>{@link it.naturtalent.design.model.design.impl.LayerSetImpl#getLayers <em>Layers</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class PageImpl extends MinimalEObjectImpl.Container implements Page
+public class LayerSetImpl extends MinimalEObjectImpl.Container implements LayerSet
 {
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -57,41 +56,21 @@ public class PageImpl extends MinimalEObjectImpl.Container implements Page
 	protected String name = NAME_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getScaleDenominator() <em>Scale Denominator</em>}' attribute.
+	 * The cached value of the '{@link #getLayers() <em>Layers</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getScaleDenominator()
+	 * @see #getLayers()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int SCALE_DENOMINATOR_EDEFAULT = 0;
-
-	/**
-	 * The cached value of the '{@link #getScaleDenominator() <em>Scale Denominator</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getScaleDenominator()
-	 * @generated
-	 * @ordered
-	 */
-	protected int scaleDenominator = SCALE_DENOMINATOR_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getLayersets() <em>Layersets</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLayersets()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<LayerSet> layersets;
+	protected EList<Layer> layers;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected PageImpl()
+	protected LayerSetImpl()
 	{
 		super();
 	}
@@ -104,7 +83,7 @@ public class PageImpl extends MinimalEObjectImpl.Container implements Page
 	@Override
 	protected EClass eStaticClass()
 	{
-		return DesignsPackage.Literals.PAGE;
+		return DesignsPackage.Literals.LAYER_SET;
 	}
 
 	/**
@@ -127,7 +106,7 @@ public class PageImpl extends MinimalEObjectImpl.Container implements Page
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, DesignsPackage.PAGE__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, DesignsPackage.LAYER_SET__NAME, oldName, name));
 	}
 
 	/**
@@ -135,36 +114,13 @@ public class PageImpl extends MinimalEObjectImpl.Container implements Page
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public int getScaleDenominator()
+	public EList<Layer> getLayers()
 	{
-		return scaleDenominator;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setScaleDenominator(int newScaleDenominator)
-	{
-		int oldScaleDenominator = scaleDenominator;
-		scaleDenominator = newScaleDenominator;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, DesignsPackage.PAGE__SCALE_DENOMINATOR, oldScaleDenominator, scaleDenominator));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<LayerSet> getLayersets()
-	{
-		if (layersets == null)
+		if (layers == null)
 		{
-			layersets = new EObjectContainmentEList<LayerSet>(LayerSet.class, this, DesignsPackage.PAGE__LAYERSETS);
+			layers = new EObjectContainmentEList<Layer>(Layer.class, this, DesignsPackage.LAYER_SET__LAYERS);
 		}
-		return layersets;
+		return layers;
 	}
 
 	/**
@@ -177,8 +133,8 @@ public class PageImpl extends MinimalEObjectImpl.Container implements Page
 	{
 		switch (featureID)
 		{
-			case DesignsPackage.PAGE__LAYERSETS:
-				return ((InternalEList<?>)getLayersets()).basicRemove(otherEnd, msgs);
+			case DesignsPackage.LAYER_SET__LAYERS:
+				return ((InternalEList<?>)getLayers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -193,12 +149,10 @@ public class PageImpl extends MinimalEObjectImpl.Container implements Page
 	{
 		switch (featureID)
 		{
-			case DesignsPackage.PAGE__NAME:
+			case DesignsPackage.LAYER_SET__NAME:
 				return getName();
-			case DesignsPackage.PAGE__SCALE_DENOMINATOR:
-				return getScaleDenominator();
-			case DesignsPackage.PAGE__LAYERSETS:
-				return getLayersets();
+			case DesignsPackage.LAYER_SET__LAYERS:
+				return getLayers();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -214,15 +168,12 @@ public class PageImpl extends MinimalEObjectImpl.Container implements Page
 	{
 		switch (featureID)
 		{
-			case DesignsPackage.PAGE__NAME:
+			case DesignsPackage.LAYER_SET__NAME:
 				setName((String)newValue);
 				return;
-			case DesignsPackage.PAGE__SCALE_DENOMINATOR:
-				setScaleDenominator((Integer)newValue);
-				return;
-			case DesignsPackage.PAGE__LAYERSETS:
-				getLayersets().clear();
-				getLayersets().addAll((Collection<? extends LayerSet>)newValue);
+			case DesignsPackage.LAYER_SET__LAYERS:
+				getLayers().clear();
+				getLayers().addAll((Collection<? extends Layer>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -238,14 +189,11 @@ public class PageImpl extends MinimalEObjectImpl.Container implements Page
 	{
 		switch (featureID)
 		{
-			case DesignsPackage.PAGE__NAME:
+			case DesignsPackage.LAYER_SET__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case DesignsPackage.PAGE__SCALE_DENOMINATOR:
-				setScaleDenominator(SCALE_DENOMINATOR_EDEFAULT);
-				return;
-			case DesignsPackage.PAGE__LAYERSETS:
-				getLayersets().clear();
+			case DesignsPackage.LAYER_SET__LAYERS:
+				getLayers().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -261,12 +209,10 @@ public class PageImpl extends MinimalEObjectImpl.Container implements Page
 	{
 		switch (featureID)
 		{
-			case DesignsPackage.PAGE__NAME:
+			case DesignsPackage.LAYER_SET__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case DesignsPackage.PAGE__SCALE_DENOMINATOR:
-				return scaleDenominator != SCALE_DENOMINATOR_EDEFAULT;
-			case DesignsPackage.PAGE__LAYERSETS:
-				return layersets != null && !layersets.isEmpty();
+			case DesignsPackage.LAYER_SET__LAYERS:
+				return layers != null && !layers.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -284,10 +230,8 @@ public class PageImpl extends MinimalEObjectImpl.Container implements Page
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (name: ");
 		result.append(name);
-		result.append(", scaleDenominator: ");
-		result.append(scaleDenominator);
 		result.append(')');
 		return result.toString();
 	}
 
-} //PageImpl
+} //LayerSetImpl

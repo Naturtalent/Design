@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecp.core.ECPProject;
 import org.eclipse.emf.ecp.core.ECPProvider;
@@ -251,6 +252,19 @@ public class DesignUtils
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * 
+	 * @param eObject
+	 * @return
+	 */
+	public static EObject rollUpToDesing(EObject eObject)
+	{
+		while ((eObject != null) && (!(eObject instanceof Design)))
+			eObject = eObject.eContainer();
+	
+		return eObject;
 	}
 
 	/**
@@ -579,7 +593,7 @@ public class DesignUtils
 	public static String getAutoPageName(EList<Page>pages)
 	{
 		String autoPageName;
-		String pageName = "page";
+		String baseName = "Seite";
 		
 		List<String>pageNames = new ArrayList<String>();
 		for(Page page : pages)
@@ -593,9 +607,9 @@ public class DesignUtils
 		while (true)
 		{
 			if (counter > 1)
-				autoPageName = pageName + new Integer(counter);
+				autoPageName = baseName + new Integer(counter);
 			else
-				autoPageName = pageName;
+				autoPageName = baseName;
 			
 			if(!pageNames.contains(autoPageName))
 				return autoPageName;

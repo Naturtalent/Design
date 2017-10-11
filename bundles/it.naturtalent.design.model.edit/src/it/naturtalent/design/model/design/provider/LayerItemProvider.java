@@ -3,9 +3,8 @@
 package it.naturtalent.design.model.design.provider;
 
 
-import it.naturtalent.design.model.design.DesignsFactory;
 import it.naturtalent.design.model.design.DesignsPackage;
-import it.naturtalent.design.model.design.Page;
+import it.naturtalent.design.model.design.Layer;
 import it.naturtalent.icons.core.Icon;
 import it.naturtalent.icons.core.IconSize;
 
@@ -17,7 +16,6 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.ResourceLocator;
 
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
@@ -30,12 +28,12 @@ import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link it.naturtalent.design.model.design.Page} object.
+ * This is the item provider adapter for a {@link it.naturtalent.design.model.design.Layer} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class PageItemProvider 
+public class LayerItemProvider 
 	extends ItemProviderAdapter
 	implements
 		IEditingDomainItemProvider,
@@ -50,7 +48,7 @@ public class PageItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public PageItemProvider(AdapterFactory adapterFactory)
+	public LayerItemProvider(AdapterFactory adapterFactory)
 	{
 		super(adapterFactory);
 	}
@@ -69,7 +67,6 @@ public class PageItemProvider
 			super.getPropertyDescriptors(object);
 
 			addNamePropertyDescriptor(object);
-			addScaleDenominatorPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -86,9 +83,9 @@ public class PageItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Page_name_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Page_name_feature", "_UI_Page_type"),
-				 DesignsPackage.Literals.PAGE__NAME,
+				 getString("_UI_Layer_name_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Layer_name_feature", "_UI_Layer_type"),
+				 DesignsPackage.Literals.LAYER__NAME,
 				 true,
 				 false,
 				 false,
@@ -98,63 +95,7 @@ public class PageItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Scale Denominator feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addScaleDenominatorPropertyDescriptor(Object object)
-	{
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Page_scaleDenominator_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Page_scaleDenominator_feature", "_UI_Page_type"),
-				 DesignsPackage.Literals.PAGE__SCALE_DENOMINATOR,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
-	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
-	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object)
-	{
-		if (childrenFeatures == null)
-		{
-			super.getChildrenFeatures(object);
-			childrenFeatures.add(DesignsPackage.Literals.PAGE__LAYERSETS);
-		}
-		return childrenFeatures;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected EStructuralFeature getChildFeature(Object object, Object child)
-	{
-		// Check the type of the specified child object and return the proper feature to use for
-		// adding (see {@link AddCommand}) it as a child.
-
-		return super.getChildFeature(object, child);
-	}
-
-	/**
-	 * This returns Page.gif.
+	 * This returns Layer.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated NOT
@@ -162,8 +103,8 @@ public class PageItemProvider
 	@Override
 	public Object getImage(Object object)
 	{
-		//return overlayImage(object, getResourceLocator().getImage("full/obj16/Page"));
-		return Icon.ICON_LAYERS.getImage(IconSize._16x16_DefaultIconSize);
+		//return overlayImage(object, getResourceLocator().getImage("full/obj16/Layer"));
+		return Icon.ICON_IMAGES.getImage(IconSize._16x16_DefaultIconSize);
 	}
 
 	/**
@@ -175,9 +116,9 @@ public class PageItemProvider
 	@Override
 	public String getText(Object object)
 	{
-		String label = ((Page)object).getName();
+		String label = ((Layer)object).getName();
 		return label == null || label.length() == 0 ?
-			getString("_UI_Page_type") : label;			
+			getString("_UI_Layer_type") : label;
 	}
 	
 
@@ -193,14 +134,10 @@ public class PageItemProvider
 	{
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(Page.class))
+		switch (notification.getFeatureID(Layer.class))
 		{
-			case DesignsPackage.PAGE__NAME:
-			case DesignsPackage.PAGE__SCALE_DENOMINATOR:
+			case DesignsPackage.LAYER__NAME:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
-			case DesignsPackage.PAGE__LAYERSETS:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
 		super.notifyChanged(notification);
@@ -217,11 +154,6 @@ public class PageItemProvider
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object)
 	{
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add
-			(createChildParameter
-				(DesignsPackage.Literals.PAGE__LAYERSETS,
-				 DesignsFactory.eINSTANCE.createLayerSet()));
 	}
 
 	/**

@@ -77,23 +77,26 @@ public class DesignMasterDetailRenderer extends TreeMasterDetailSWTRenderer
 					Menu menu = (Menu) source;
 					MenuItem [] items = menu.getItems();
 					if(ArrayUtils.isNotEmpty(items))
-					{
-						MenuItem item = items[0];
-						String text = item.getText();
-						
-						// Text ist definiert in 'it.naturtalent.design.model.design.provider' - plugin.properties
-						String pageTypeText = DesignEditPlugin.INSTANCE.getString("_UI_Page_type");	//$NON-NLS-N$					
-						if(StringUtils.equals(text, pageTypeText))
+					{						
+						for(MenuItem item : items)
 						{
-							IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-							Object selObj = selection.getFirstElement();
-							if (selObj instanceof Design)
+							String text = item.getText();
+						
+							// Text ist definiert in 'it.naturtalent.design.model.design.provider' - plugin.properties
+							String pageTypeText = DesignEditPlugin.INSTANCE.getString("_UI_Page_type");	//$NON-NLS-N$
+							String layerTypeText = DesignEditPlugin.INSTANCE.getString("_UI_Layer_type");	//$NON-NLS-N$
+							if(StringUtils.equals(text, pageTypeText) ||  StringUtils.equals(text, layerTypeText))
 							{
-								// enablen, wenn das zugeordnete DrawDocument geoeffnet ist
-								Design design = (Design) selObj;
-								item.setEnabled(OpenDesignAction.openDrawDocumentMap.get(design) != null);								
-							}
-						}
+								IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+								Object selObj = selection.getFirstElement();
+								if (selObj instanceof Design)
+								{
+									// enablen, wenn das zugeordnete DrawDocument geoeffnet ist
+									Design design = (Design) selObj;
+									item.setEnabled(DesignsView.openDrawDocumentMap.get(design) != null);								
+								}
+							}						
+						}						
 					}					
 				}
 			}

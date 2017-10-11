@@ -17,15 +17,20 @@ import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.connection.XConnection;
 import com.sun.star.connection.XConnector;
 import com.sun.star.container.XNameAccess;
+import com.sun.star.drawing.XLayer;
 import com.sun.star.drawing.XLayerManager;
 import com.sun.star.drawing.XLayerSupplier;
 import com.sun.star.frame.XComponentLoader;
+import com.sun.star.frame.XController;
+import com.sun.star.frame.XModel;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.uno.Any;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import com.sun.star.uno.XInterface;
 
 public class Utils
 {
@@ -409,5 +414,45 @@ protected static String[] parseUnoUrl(String url)
 			e.printStackTrace();
 		}
 	}
+    
+    public static void testLayerProperty(XComponent xComponent) throws UnknownPropertyException, WrappedTargetException
+ 	{
+		XModel xM = UnoRuntime.queryInterface(XModel.class, xComponent);
+		XController xC = xM.getCurrentController();
+		XPropertySet xPropertySet = UnoRuntime.queryInterface(XPropertySet.class, xC);
+		
+		Any any  = (Any) xPropertySet.getPropertyValue("ActiveLayer");
+		XLayer xLayer = UnoRuntime.queryInterface(XLayer.class, any);		
+		XPropertySet xLayerPropSet = UnoRuntime.queryInterface(XPropertySet.class, xLayer);
+		
+		Utils.printPropertyValues(xLayerPropSet);
+		
+		String name = (String) xLayerPropSet.getPropertyValue("Name");
+		
+		System.out.println("Layer: "+name);
+
+ 	}
+    
+    public static void testDocumentSettings(XComponent xComponent)
+	{
+		try
+		{
+			XMultiServiceFactory xFactory = UnoRuntime.queryInterface(
+					XMultiServiceFactory.class, xComponent);
+			XInterface settings = (XInterface) xFactory
+					.createInstance("com.sun.star.drawing.DocumentSettings");
+			XPropertySet xPropertySet = UnoRuntime.queryInterface(
+					XPropertySet.class, settings);
+			
+			Utils.printPropertyValues(xPropertySet);
+			
+		} catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+    
 
 }

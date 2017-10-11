@@ -9,6 +9,8 @@ import it.naturtalent.design.model.design.DesignsFactory;
 import it.naturtalent.design.model.design.DesignsPackage;
 import it.naturtalent.design.model.design.Ebene;
 import it.naturtalent.design.model.design.Item;
+import it.naturtalent.design.model.design.Layer;
+import it.naturtalent.design.model.design.LayerSet;
 import it.naturtalent.design.model.design.Page;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -67,6 +69,20 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 	 * @generated
 	 */
 	private EClass itemEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass layerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass layerSetEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -246,6 +262,16 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getDesign_Layers()
+	{
+		return (EReference)designEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getPage()
 	{
 		return pageEClass;
@@ -269,6 +295,16 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 	public EAttribute getPage_ScaleDenominator()
 	{
 		return (EAttribute)pageEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getPage_Layersets()
+	{
+		return (EReference)pageEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -326,6 +362,56 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getLayer()
+	{
+		return layerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getLayer_Name()
+	{
+		return (EAttribute)layerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getLayerSet()
+	{
+		return layerSetEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getLayerSet_Name()
+	{
+		return (EAttribute)layerSetEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getLayerSet_Layers()
+	{
+		return (EReference)layerSetEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public DesignsFactory getDesignsFactory()
 	{
 		return (DesignsFactory)getEFactoryInstance();
@@ -364,10 +450,12 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 		createEAttribute(designEClass, DESIGN__SCALE_DENOMINATOR);
 		createEAttribute(designEClass, DESIGN__DESIGN_URL);
 		createEReference(designEClass, DESIGN__PAGES);
+		createEReference(designEClass, DESIGN__LAYERS);
 
 		pageEClass = createEClass(PAGE);
 		createEAttribute(pageEClass, PAGE__NAME);
 		createEAttribute(pageEClass, PAGE__SCALE_DENOMINATOR);
+		createEReference(pageEClass, PAGE__LAYERSETS);
 
 		ebeneEClass = createEClass(EBENE);
 		createEAttribute(ebeneEClass, EBENE__NAME);
@@ -375,6 +463,13 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 
 		itemEClass = createEClass(ITEM);
 		createEAttribute(itemEClass, ITEM__NAME);
+
+		layerEClass = createEClass(LAYER);
+		createEAttribute(layerEClass, LAYER__NAME);
+
+		layerSetEClass = createEClass(LAYER_SET);
+		createEAttribute(layerSetEClass, LAYER_SET__NAME);
+		createEReference(layerSetEClass, LAYER_SET__LAYERS);
 	}
 
 	/**
@@ -421,10 +516,12 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 		initEAttribute(getDesign_ScaleDenominator(), ecorePackage.getEInt(), "scaleDenominator", null, 0, 1, Design.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getDesign_DesignURL(), ecorePackage.getEString(), "designURL", null, 0, 1, Design.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getDesign_Pages(), this.getPage(), null, "pages", null, 0, -1, Design.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getDesign_Layers(), this.getLayer(), null, "layers", null, 0, -1, Design.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(pageEClass, Page.class, "Page", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPage_Name(), ecorePackage.getEString(), "name", null, 0, 1, Page.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPage_ScaleDenominator(), ecorePackage.getEInt(), "scaleDenominator", null, 0, 1, Page.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPage_Layersets(), this.getLayerSet(), null, "layersets", null, 0, -1, Page.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ebeneEClass, Ebene.class, "Ebene", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEbene_Name(), ecorePackage.getEString(), "name", null, 0, 1, Ebene.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -432,6 +529,13 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 
 		initEClass(itemEClass, Item.class, "Item", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getItem_Name(), ecorePackage.getEString(), "name", null, 0, 1, Item.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(layerEClass, Layer.class, "Layer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getLayer_Name(), ecorePackage.getEString(), "name", null, 0, 1, Layer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(layerSetEClass, LayerSet.class, "LayerSet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getLayerSet_Name(), ecorePackage.getEString(), "name", null, 0, 1, LayerSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLayerSet_Layers(), this.getLayer(), null, "layers", null, 0, -1, LayerSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
