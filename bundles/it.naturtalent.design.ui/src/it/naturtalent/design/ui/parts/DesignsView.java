@@ -8,7 +8,6 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -60,25 +59,22 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.internal.gtk.XFocusChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.ToolItem;
 
 import it.naturtalent.application.IPreferenceAdapter;
 import it.naturtalent.design.model.design.Design;
 import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.model.design.Designs;
 import it.naturtalent.design.model.design.DesignsPackage;
+import it.naturtalent.design.model.design.Layer;
 import it.naturtalent.design.model.design.LayerSet;
 import it.naturtalent.design.model.design.Page;
 import it.naturtalent.design.ui.DesignUtils;
-import it.naturtalent.design.ui.actions.OpenDesignAction;
 import it.naturtalent.e4.project.IProjectData;
 import it.naturtalent.libreoffice.DrawDocumentEvent;
 import it.naturtalent.libreoffice.PageHelper;
-import it.naturtalent.libreoffice.Utils;
 import it.naturtalent.libreoffice.draw.DrawDocument;
 
 public class DesignsView
@@ -116,6 +112,29 @@ public class DesignsView
 					DeleteCommand delCommand = (DeleteCommand) command;										
 					Collection<?> results = delCommand.getResult();
 					Object obj = results.iterator().next();
+
+					if (obj instanceof DesignGroup)
+					{
+						// NtProject zuegordnete Groups koennen nicht geloescht werden
+						DesignGroup group = (DesignGroup) obj;
+						if(!StringUtils.isNotEmpty(group.getIProjectID()))
+						{	
+							// kein NtProject, alle DrawDocumente separat loeschen
+							EList<Design>designs = (EList<Design>)group.getDesigns();								
+							for(Design groupedDesign : designs)
+							{
+								String designFileName = groupedDesign.getDesignURL();
+								new File(designFileName).delete(); 
+							}
+							
+							// das geaenderte Modell festschreiben
+							DesignUtils.getDesignProject().saveContents();
+							eventBroker.send(DesignsView.DESIGNPROJECTSAVED_MODELEVENT, "Model saved");								
+						}
+						
+						return;
+					}
+					
 					if (obj instanceof Design)
 					{
 						Design design = (Design) obj;
@@ -137,7 +156,7 @@ public class DesignsView
 								drawFile = iPath.toFile();
 								drawFile.delete();
 								DesignUtils.getDesignProject().saveContents();
-								eventBroker.send(DesignsView.DESIGNPROJECTSAVED_MODELEVENT, "Model saved");
+								eventBroker.send(DesignsView.DESIGNPROJECTSAVED_MODELEVENT, "Model saved");								
 							}
 							else
 							{
@@ -147,7 +166,8 @@ public class DesignsView
 							
 							drawFile.delete();								
 							DesignUtils.getDesignProject().saveContents();
-							eventBroker.send(DesignsView.DESIGNPROJECTSAVED_MODELEVENT, "Model saved");								
+							eventBroker.send(DesignsView.DESIGNPROJECTSAVED_MODELEVENT, "Model saved");		
+							return;
 						}
 						
 						log.error("kein DesignDrawFile definiert"); //$NON-NLS-N$
@@ -520,12 +540,16 @@ public class DesignsView
 	 * Die selektierte Resource (ResourceNavigator) wird erkannt. Wurde ein Project selektiert wird dies 
 	 * zwischengespeichert. Wurde ein IProject selektiert und existiert eine entsprechende proektbezogenen DesignGroup 
 	 * im DesignMasterView, dann wird diese Gruppe selektiert. 
+	 * 
+	 * Der SelectionChangeListener muss vor der Selektion deaktiviert werden, da das Event vom ResourceNavigator
+	 * getriggert wurde und dieses ist somit auch das aktive Fenster. Somit ist sichergestellt dass DesignView 
+	 * seinerseits von seinem SelectionChangeListener aktiviert wird.  
 	 *  
 	 * @param selectedResource
 	 */
 	@Inject
 	public void setResourceSelection(@Named(IServiceConstants.ACTIVE_SELECTION)@Optional IProject selectedProject)
-	{
+	{		
 		if(selectedProject != null)
 		{
 			this.selectedProject = selectedProject;
@@ -534,9 +558,15 @@ public class DesignsView
 			{
 				// DesignGroup selektieren
 				if(treeViewer != null)
+				{
+					// TreeMasterViewSelectionListener deaktivieren
+					treeViewer.removeSelectionChangedListener(treeMasterViewSelectionListener);
 					treeViewer.setSelection(new StructuredSelection(designGroup));
+					treeViewer.addSelectionChangedListener(treeMasterViewSelectionListener);
+				}
 			}
 		}
+		
 	}
 	
 	
@@ -630,9 +660,12 @@ public class DesignsView
 				
 				// Modell auf den neuesten Stand bringen
 				readDesignPages();
+				readDesignLayers();
 			
 				// nach dem Oeffnen wird die aktuelle Page des DrawDocuments auch entsprechend im TreeViewer selektiert
-				selectCurrentPage();								
+				selectCurrentPage();	
+				
+				return;
 			}			
 		}
 		
@@ -700,7 +733,10 @@ public class DesignsView
 		
 		// ist die selektierte Seite auch geoffnet, werden alle pages des DrawDocuments lesen 
 		if(design != null)
-			readDesignPages();		
+		{
+			readDesignPages();
+			readDesignLayers();
+		}
 	}
 	
 	/*
@@ -833,10 +869,19 @@ public class DesignsView
 			
 			DesignUtils.getToolItem(DesignUtils.TOOLBAR_CLOSEDESIGN_ID, part)
 			.setEnabled(openDrawDocumentMap.containsKey(design));	
-			
-			DesignGroup group =  DesignUtils.findDesignGroup(design);
-			DesignUtils.getToolItem(DesignUtils.TOOLBAR_LINKPROJECT_ID, part)
-					.setEnabled(StringUtils.isNotEmpty(group.getIProjectID()));
+						
+			DesignGroup group = (DesignGroup) design.eContainer();
+			if(group == null)
+			{
+				// passiert, wenn design geloescht wurde
+				DesignUtils.getToolItem(DesignUtils.TOOLBAR_LINKPROJECT_ID, part)
+				.setEnabled(false);
+			}
+			else
+			{			
+				DesignUtils.getToolItem(DesignUtils.TOOLBAR_LINKPROJECT_ID, part)
+				.setEnabled(StringUtils.isNotEmpty(group.getIProjectID()));
+			}
 		}
 		else
 		{
@@ -894,7 +939,7 @@ public class DesignsView
 	}
 
 	/*
-	 * Modelldaten auf den neusten Stand bringen
+	 * Modelldaten auf den neusten Stand bringen (mit dem DrawDocument synchronisieren)
 	 * 
 	 * Alle Pages der Zeichnung einlesen.
 	 * Die Modelldaten entsprechen anpassen.
@@ -962,6 +1007,74 @@ public class DesignsView
 				modelPages.removeAll(obsoletModelPages);					
 			}						
 		}		
+	}
+	
+	private void readDesignLayers()
+	{
+		if (activeDesign != null)
+		{			
+			DrawDocument drawDocument = openDrawDocumentMap.get(activeDesign);
+			if(drawDocument != null)
+			{
+				// die momentanen ModellLayerNamen listen
+				List<String>modelLayerNames = new ArrayList<String>();
+				List<Layer>layers = activeDesign.getLayers();
+				for(Layer layer : activeDesign.getLayers())
+					modelLayerNames.add(layer.getName());
+					
+				// die DrawDocument Layernamen listen
+				List<String>drawlayerNames = drawDocument.getAllLayers();
+				
+				// alle Layer die bereits im Modell gespeichert sind aus 'drawLayerNames' streichen
+				List<String>delList = new ArrayList<String>();
+				for(String modelLayerName : modelLayerNames)
+				{
+					if(drawlayerNames.contains(modelLayerName))
+						delList.add(modelLayerName);
+				}
+				drawlayerNames.removeAll(delList);
+				
+				// alle noch nicht im Modell vorhandenen Layer erzeugen
+				for(String drawLayerName : drawlayerNames)
+				{
+					// neues ModelPage erzeugen
+					EClass pageClass = DesignsPackage.eINSTANCE.getLayer();
+					Layer layer = (Layer) EcoreUtil.create(pageClass);
+					layer.setName(drawLayerName);
+	
+					// zur Layerreference hinzufuegen
+					EReference eReference = DesignsPackage.eINSTANCE.getDesign_Layers();
+					EditingDomain editingDomain = DesignUtils.getDesignProject().getEditingDomain();												
+					ECPControlHelper.addModelElementInReference(
+							activeDesign, layer, eReference,editingDomain);
+				}
+				
+				// erneut alle DrawDocument Layernamen lesen
+				drawlayerNames = drawDocument.getAllLayers();
+				
+				// erneut die momentanen ModellLayerNamen listen
+				modelLayerNames = new ArrayList<String>();
+				layers = activeDesign.getLayers();
+				for(Layer layer : activeDesign.getLayers())
+					modelLayerNames.add(layer.getName());
+				
+				delList.clear();
+				for(String drawLayerName : drawlayerNames)
+				{
+					if(modelLayerNames.contains(drawLayerName))
+						delList.add(drawLayerName);
+				}
+				
+				// Modellayer die keine Entsprechung im DrawDocument haben loeschen
+				modelLayerNames.removeAll(delList);
+				
+				for(String modelLayerName : modelLayerNames)
+				{
+					System.out.println("zu Loeschen: "+modelLayerName);
+				}
+
+			}
+		}
 	}
 	
 	private void readAllLayers()

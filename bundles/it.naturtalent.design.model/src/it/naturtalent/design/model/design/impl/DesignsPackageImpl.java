@@ -535,7 +535,7 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 
 		initEClass(layerSetEClass, LayerSet.class, "LayerSet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLayerSet_Name(), ecorePackage.getEString(), "name", null, 0, 1, LayerSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getLayerSet_Layers(), this.getLayer(), null, "layers", null, 0, -1, LayerSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLayerSet_Layers(), this.getLayer(), null, "layers", null, 0, -1, LayerSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

@@ -1,7 +1,9 @@
 package it.naturtalent.libreoffice;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,8 +32,27 @@ import com.sun.star.view.XSelectionSupplier;
 
 public class DrawDocumentUtils
 {
+	// Systemlayernamen
+	private static Map <String, String>localLayerNamesMap;
 	
 	
+	private static String getLocalLayerName(String name)
+	{
+		if (localLayerNamesMap == null)
+		{
+			localLayerNamesMap = new HashMap<String, String>();
+								
+			localLayerNamesMap.put("layout", "Layout");
+			localLayerNamesMap.put("background", "");
+			localLayerNamesMap.put("backgroundobjects", "");
+			localLayerNamesMap.put("controls", "Steuerelemente");
+			localLayerNamesMap.put("measurelines", "Maßlinien");
+		}
+		
+		return localLayerNamesMap.get(name);
+	}
+	
+
 	/*
 	 * 
 	 *  Page
@@ -44,6 +65,8 @@ public class DrawDocumentUtils
 	 */
 	public static List<XDrawPage> getDrawPages(XComponent xComponent)
 	{
+	
+		
 		List<XDrawPage>pageList = new ArrayList<XDrawPage>();
 		int pageCount = getDrawPageCount(xComponent);
 		
@@ -140,7 +163,7 @@ public class DrawDocumentUtils
 	 * Alle Layernamen in einer Liste zurueckgeben.
 	 * 
 	 */
-	public static List<String> readLayer(XComponent xComponent)
+	public static List<String> readLayer(XComponent xComponent, boolean local)
 	{
 		List<String>layerList = new ArrayList<String>();
 		
@@ -160,7 +183,20 @@ public class DrawDocumentUtils
 				String [] names = nameAccess.getElementNames();
 				if(ArrayUtils.isNotEmpty(names))
 					for(String name : names)
+					{
+						if(local)
+						{
+							String localName = getLocalLayerName(name);
+							if(localName != null)
+							{
+								if(StringUtils.isEmpty(localName))
+									continue;
+								name = localName;
+							}
+						}
+						
 						layerList.add(name);
+					}
 				
 			} catch (Exception e)
 			{
@@ -212,7 +248,7 @@ public class DrawDocumentUtils
 	 */
 	public static String findLayer(XComponent xComponent, String pageName, XShape xShape)
 	{
-		List<String>layerNames = readLayer(xComponent);
+		List<String>layerNames = readLayer(xComponent, false);
 		if(!layerNames.isEmpty())
 		{
 			for(String layerName : layerNames)

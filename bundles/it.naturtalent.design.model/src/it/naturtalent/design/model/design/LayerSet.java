@@ -51,7 +51,7 @@ public interface LayerSet extends EObject
 	void setName(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Layers</b></em>' containment reference list.
+	 * Returns the value of the '<em><b>Layers</b></em>' reference list.
 	 * The list contents are of type {@link it.naturtalent.design.model.design.Layer}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -59,9 +59,9 @@ public interface LayerSet extends EObject
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Layers</em>' containment reference list.
+	 * @return the value of the '<em>Layers</em>' reference list.
 	 * @see it.naturtalent.design.model.design.DesignsPackage#getLayerSet_Layers()
-	 * @model containment="true"
+	 * @model
 	 * @generated
 	 */
 	EList<Layer> getLayers();

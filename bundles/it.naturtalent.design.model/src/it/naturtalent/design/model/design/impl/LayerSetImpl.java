@@ -8,16 +8,11 @@ import it.naturtalent.design.model.design.LayerSet;
 
 import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
-
-import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -56,7 +51,7 @@ public class LayerSetImpl extends MinimalEObjectImpl.Container implements LayerS
 	protected String name = NAME_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getLayers() <em>Layers</em>}' containment reference list.
+	 * The cached value of the '{@link #getLayers() <em>Layers</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getLayers()
@@ -118,25 +113,9 @@ public class LayerSetImpl extends MinimalEObjectImpl.Container implements LayerS
 	{
 		if (layers == null)
 		{
-			layers = new EObjectContainmentEList<Layer>(Layer.class, this, DesignsPackage.LAYER_SET__LAYERS);
+			layers = new EObjectResolvingEList<Layer>(Layer.class, this, DesignsPackage.LAYER_SET__LAYERS);
 		}
 		return layers;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
-	{
-		switch (featureID)
-		{
-			case DesignsPackage.LAYER_SET__LAYERS:
-				return ((InternalEList<?>)getLayers()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**

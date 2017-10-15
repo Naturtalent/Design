@@ -237,6 +237,12 @@ public class DesignUtils
 	 */
 	public static DesignGroup findDesignGroup(Design design)
 	{
+		
+		EObject eObject = design.eContainer();
+		
+		return (DesignGroup) design.eContainer();
+		
+		/*
 		Designs designs = DesignUtils.getDesigns();
 		EList<DesignGroup>designGroups = designs.getDesigns();
 		if(designGroups != null)
@@ -252,6 +258,7 @@ public class DesignUtils
 		}
 		
 		return null;
+		*/
 	}
 	
 	/**

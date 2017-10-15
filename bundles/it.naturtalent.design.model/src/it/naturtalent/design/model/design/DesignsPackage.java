@@ -418,7 +418,7 @@ public interface DesignsPackage extends EPackage
 	int LAYER_SET__NAME = 0;
 
 	/**
-	 * The feature id for the '<em><b>Layers</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Layers</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -713,10 +713,10 @@ public interface DesignsPackage extends EPackage
 	EAttribute getLayerSet_Name();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link it.naturtalent.design.model.design.LayerSet#getLayers <em>Layers</em>}'.
+	 * Returns the meta object for the reference list '{@link it.naturtalent.design.model.design.LayerSet#getLayers <em>Layers</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Layers</em>'.
+	 * @return the meta object for the reference list '<em>Layers</em>'.
 	 * @see it.naturtalent.design.model.design.LayerSet#getLayers()
 	 * @see #getLayerSet()
 	 * @generated
@@ -964,7 +964,7 @@ public interface DesignsPackage extends EPackage
 		EAttribute LAYER_SET__NAME = eINSTANCE.getLayerSet_Name();
 
 		/**
-		 * The meta object literal for the '<em><b>Layers</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Layers</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

@@ -398,6 +398,16 @@ public class DrawDocument
 		
 		return allPages;
 	}
+	
+	/**
+	 * Die Namen aller Layers in einer Liste zurueckgeben
+	 * 
+	 * @return
+	 */
+	public List<String> getAllLayers()
+	{
+		return DrawDocumentUtils.readLayer(xComponent, true);
+	}
 
 	public void closeDesktop()
 	{
