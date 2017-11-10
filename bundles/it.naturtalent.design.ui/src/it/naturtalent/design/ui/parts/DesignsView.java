@@ -62,6 +62,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.jnativehook.mouse.NativeMouseEvent;
 
 import it.naturtalent.application.IPreferenceAdapter;
 import it.naturtalent.design.model.design.Design;
@@ -79,6 +80,27 @@ import it.naturtalent.libreoffice.draw.DrawDocument;
 
 public class DesignsView
 {
+	
+	public final static String DESIGNSVIEW_ID = "it.naturtalent.design.ui.part.designs";
+	
+	// Name des ECP Projekts indem alle Zeichnungen gespeichert werden
+	public final static String DESIGNPROJECTNAME = "DesignsEMFProject";
+	
+	// Eventkey zur Selektion einer DesignGroup (@see DesignMasterDetailRenderer)
+	public final static String DESIGN_SELECTGROUP_EVENT = "designselectgroupevent";
+
+	// der Reenderer (@DesignMasterDetailRenderer) hat einen TreeViewer angelegt und stellt diesen zur Veruegung 
+	public final static String DESIGN_TREEVIEWER_EVENT = "designtreeviewerevent";
+	
+	// mit diesem Event wird eine Aenderung im DesignModel angezeigt
+	public static final String DESIGNPROJECTCHANGED_MODELEVENT = "designprojectmodelevent"; //$NON-NLS-N$
+
+	// mit diesem Event wird angezeigt, dass die Daten des Modell festgeschrieben wurden
+	public static final String DESIGNPROJECTSAVED_MODELEVENT = "designprojectsavedmodelevent"; //$NON-NLS-N$
+
+	// mit diesem Event wird angezeigt, dass die Daten des Modell festgeschrieben wurden
+	public static final String DESIGNPROJECTADD_MODELEVENT = "designprojectaddmodelevent"; //$NON-NLS-N$
+
 	
 	/*
 	 * Listener meldet Anderungen am Commandstack. Add und Delete Commands werden abgegriffen und die mit dem 
@@ -254,10 +276,14 @@ public class DesignsView
 							EList<Page>pages = design.getPages();
 							String pageName = DesignUtils.getAutoPageName(pages);
 							page.setName(pageName);
-														
+							
+							// neue Seite im DrawDocument hinzufuegen
 							DrawDocument drawDocument = openDrawDocumentMap.get(activeDesign);
 							drawDocument.addDrawPage(page.getName());
-
+							
+							// neue Seite im Modell(TreeViewer) selektieren
+							treeViewer.refresh(activeDesign);
+							treeViewer.setSelection(new StructuredSelection(page));
 						}
 					}
 				}
@@ -275,27 +301,6 @@ public class DesignsView
 	}
 	private DesingCommandStackListener desingCommandStackListener = new DesingCommandStackListener();
 
-	public final static String DESIGNSVIEW_ID = "it.naturtalent.design.ui.part.designs";
-	
-	// Name des ECP Projekts indem alle Zeichnungen gespeichert werden
-	public final static String DESIGNPROJECTNAME = "DesignsEMFProject";
-	
-	// Eventkey zur Selektion einer DesignGroup (@see DesignMasterDetailRenderer)
-	public final static String DESIGN_SELECTGROUP_EVENT = "designselectgroupevent";
-
-	// der Reenderer (@DesignMasterDetailRenderer) hat einen TreeViewer angelegt und stellt diesen zur Veruegung 
-	public final static String DESIGN_TREEVIEWER_EVENT = "designtreeviewerevent";
-	
-	// mit diesem Event wird eine Aenderung im DesignModel angezeigt
-	public static final String DESIGNPROJECTCHANGED_MODELEVENT = "designprojectmodelevent"; //$NON-NLS-N$
-
-	// mit diesem Event wird angezeigt, dass die Daten des Modell festgeschrieben wurden
-	public static final String DESIGNPROJECTSAVED_MODELEVENT = "designprojectsavedmodelevent"; //$NON-NLS-N$
-
-	// mit diesem Event wird angezeigt, dass die Daten des Modell festgeschrieben wurden
-	public static final String DESIGNPROJECTADD_MODELEVENT = "designprojectaddmodelevent"; //$NON-NLS-N$
-
-	
 	private IProject selectedProject;
 	
 	private IEventBroker eventBroker;
@@ -309,13 +314,58 @@ public class DesignsView
 	private Design activeDesign;
 	private Page activePage;
 	
-	public static final String DEFAULT_LAYERSETNAME = "alle Layer";
-	
-	// die auszuführende Action soll nur bei der erstmaligen Aktivierung der View ausgefuehrt werden
+	// bei der erstmaligen Aktivierung den Toolbar-Status aktivieren 
 	private static boolean firstTimeActivated = false;
+	private IPartListener iPartListener = new IPartListener()
+	{
+		
+		@Override
+		public void partVisible(MPart part)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void partHidden(MPart part)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void partDeactivated(MPart part)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void partBroughtToTop(MPart part)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void partActivated(MPart part)
+		{
+			// beim erstmaligen Aktivieren der View den Toolbarstatus aktualisieren 
+			if(StringUtils.equals(part.getElementId(), DESIGNSVIEW_ID))
+			{					
+				if (!firstTimeActivated)
+				{						
+					updateToolBarStatus(part);
+					firstTimeActivated = true;
+				}					
+			}				
+		}
+	};
 	
 	// Zuordnungstabelle Desing und geoffnetes DrawDocument
 	public static Map<Design,DrawDocument> openDrawDocumentMap = new HashMap<Design,DrawDocument>();
+	
+	public static final String DEFAULT_LAYERSETNAME = "alle Layer";
 
 	
 	/*
@@ -388,7 +438,8 @@ public class DesignsView
 							// die 'andere' Zeichnung wird zur aktiven, deren
 							// Pages werden neu eingelesen
 							activeDesign = parentDesign;
-							readDesignPages();
+							//readDesignPages();
+							pullDrawDocumentData();
 							treeViewer.refresh(activeDesign);
 
 							// gibt es bei den neu eingelesenen Pages eines mit
@@ -408,12 +459,60 @@ public class DesignsView
 							treeViewer.addSelectionChangedListener(treeMasterViewSelectionListener);
 						}
 						
+						// Seite im DrawDocument selektieren
 						DrawDocument selectedDrawDocument = openDrawDocumentMap.get(activeDesign);
 						if (selectedDrawDocument != null)
 						{
 							// Selektion der Page in DrawDocument
-							// System.out.println("Select Page im Modell");
-							selectedDrawDocument.selectDrawPage(page.getName());
+							// System.out.println("Select Page im Modell");							
+							selectedDrawDocument.selectPage(page.getName()); 
+							selectedDrawDocument.setFocus();
+						}
+					}
+					
+					// Layer selektiert
+					if (treeSelected instanceof Layer)
+					{
+						Layer layer = (Layer) treeSelected;
+						Design parentDesign = (Design) layer.eContainer();
+						if (!parentDesign.equals(activeDesign))
+						{
+							// System.out.println("nicht synchron");
+
+							// Layerselektion erfolgte in einer anderen als der
+							// aktuellen Zeichnung
+							treeViewer.removeSelectionChangedListener(treeMasterViewSelectionListener);
+
+							// die 'andere' Zeichnung wird zur aktiven, deren
+							// Daten werden neu eingelesen
+							activeDesign = parentDesign;
+							pullDrawDocumentData();
+							treeViewer.refresh(activeDesign);
+
+							// gibt es bei den neu eingelesenen Layer eines mit
+							// dem urspruenglichen Namen,
+							// wird dieses selektiert
+							String layerName = layer.getName();
+							EList<Layer> activeLayers = activeDesign.getLayers();
+							for (Layer activeLayer : activeLayers)
+							{
+								if (StringUtils.equals(layerName,activeLayer.getName()))
+								{
+									treeViewer.setSelection(new StructuredSelection(activeLayer));
+									break;
+								}
+							}
+
+							treeViewer.addSelectionChangedListener(treeMasterViewSelectionListener);
+						}
+						
+						// Layer im DrawDocument selektieren
+						DrawDocument selectedDrawDocument = openDrawDocumentMap.get(activeDesign);
+						if (selectedDrawDocument != null)
+						{
+							// Selektion des Layers in DrawDocument
+							// System.out.println("Select Page im Modell");							
+							selectedDrawDocument.selectLayer(layer.getName()); 
 							selectedDrawDocument.setFocus();
 						}
 					}
@@ -463,47 +562,11 @@ public class DesignsView
 		
 		// nach der Aktivierung dieses Parts muessen die Toolbaraktionen enablen
 		MPart part = partService.findPart(DesignsView.DESIGNSVIEW_ID);				
-		partService.addPartListener(new IPartListener()
-		{			
-			@Override
-			public void partVisible(MPart part)
-			{
-			}
-			
-			@Override
-			public void partHidden(MPart part)
-			{
-			}
-			
-			@Override
-			public void partDeactivated(MPart part)
-			{
-			}
-			
-			@Override
-			public void partBroughtToTop(MPart part)
-			{
-			}
-			
-			@Override
-			public void partActivated(MPart part)
-			{
-				// beim erstmaligen Aktivieren der View den Toolbarstatus aktualisieren 
-				if(StringUtils.equals(part.getElementId(), DESIGNSVIEW_ID))
-				{					
-					if (!firstTimeActivated)
-					{						
-						updateToolBarStatus(part);
-						firstTimeActivated = true;
-					}					
-				}				
-			}
-		});
-		
+		partService.addPartListener(iPartListener);
 	}
 	
 	@PreDestroy
-	public void dispose()
+	public void dispose(EPartService partService)
 	{		
 		for(DrawDocument drawDocument : openDrawDocumentMap.values())
 		{
@@ -526,6 +589,7 @@ public class DesignsView
 		}
 		*/
 	
+		partService.removePartListener(iPartListener);
 		
 		// Command-Listener entfernen 
 		EditingDomain domain = AdapterFactoryEditingDomain.getEditingDomainFor(DesignUtils.getDesignProject());
@@ -659,8 +723,7 @@ public class DesignsView
 				updateToolBarStatus(part);
 				
 				// Modell auf den neuesten Stand bringen
-				readDesignPages();
-				readDesignLayers();
+				pullDrawDocumentData();
 			
 				// nach dem Oeffnen wird die aktuelle Page des DrawDocuments auch entsprechend im TreeViewer selektiert
 				selectCurrentPage();	
@@ -734,8 +797,7 @@ public class DesignsView
 		// ist die selektierte Seite auch geoffnet, werden alle pages des DrawDocuments lesen 
 		if(design != null)
 		{
-			readDesignPages();
-			readDesignLayers();
+			pullDrawDocumentData();
 		}
 	}
 	
@@ -791,7 +853,10 @@ public class DesignsView
 	 * DrawPage interpretiert.
 	 * 	  
 	 * Diese Funktion sucht im Modell das zur selektierten XDrawPage gehoerende Design und macht diese Zeichnung zur
-	 * 'activeDesign'. Zusaetzlich wird die Page innerhalb der Zeichnung selektiert.  
+	 * 'activeDesign'. Zusaetzlich wird die Page innerhalb der Zeichnung selektiert. 
+	 * 
+	 * Die Modelldaten muessen syncronisiert werden, das LibreOffice offensichtlich Seiten loescht und neu erzeugt.
+	 * (ist z.B. Page 2 leer und wird verschoben wird diese geloescht und eine neue Page 3 an der neuen Position erzeugt) 
 	 * 
 	 * @param obj
 	 * @param part
@@ -801,21 +866,28 @@ public class DesignsView
 	public void handleDrawPageChangeProperty(@UIEventTopic(DrawDocumentEvent.DRAWDOCUMENT_PAGECHANGE_PROPERTY) Object xDrawPage)
 	{				
 		// die Zeichnung mit der Seite 'xDrawPage' wird zur activen Zeichnung 
-		Design design = findParentDesign(xDrawPage);		
+		Design design = findParentDesign(xDrawPage);
+		
 		if(design != null)
 			treeViewer.setSelection(new StructuredSelection(design));
-		
-		// Page im Viewer selektieren
-		String pageName = PageHelper.getPageName(xDrawPage);
+						
+		// DrawDocumentDaten im Modell aktualisieren
+		pullDrawDocumentData();
+
+		// auch im Modell(TreeViewer) die aktive DrawDocument Seite selektieren  
+		DrawDocument drawDocument = openDrawDocumentMap.get(activeDesign);
+		String pageName = drawDocument.readPageName(xDrawPage);		
 		if(StringUtils.isNotEmpty(pageName))
 		{
 			EList<Page>designPages = activeDesign.getPages();
 			for(Page page : designPages)
 			{
 				if(StringUtils.equals(pageName, page.getName()))
-				{					
-					treeViewer.refresh(activeDesign);
+				{		
+					treeViewer.removeSelectionChangedListener(treeMasterViewSelectionListener);
+					treeViewer.refresh(activeDesign);					
 					treeViewer.setSelection(new StructuredSelection(page));
+					treeViewer.addSelectionChangedListener(treeMasterViewSelectionListener);
 					return;
 				}
 			}
@@ -837,6 +909,35 @@ public class DesignsView
 		DrawDocument drawDocument = openDrawDocumentMap.get(activeDesign);
 		drawDocument.doShapeSelection(eventObject);
 	}
+	
+	/*
+	 * Global Mousecklick
+	 * 
+	 * 
+	 */	
+	@Inject
+	@Optional
+	public void handleGlobalMouseClickEvent(@UIEventTopic(DrawDocumentEvent.DRAWDOCUMENT_EVENT_GLOBALMOUSEPRESSED) Object eventObject)
+	{	
+		//
+		if (eventObject instanceof NativeMouseEvent)
+		{
+			NativeMouseEvent mouseEvent = (NativeMouseEvent) eventObject;
+			System.out.println("Click "+mouseEvent.getX()+" | "+mouseEvent.getY());
+			
+			/*
+			DrawDocument drawDocument = openDrawDocumentMap.get(activeDesign);
+			if(drawDocument != null)
+			{
+				Double [] pos = drawDocument.getStatusPosition();
+				System.out.println(pos[0]+" | "+pos[1]);
+			}
+			else System.out.println("ungueltiges Global event");
+			*/
+		}
+		
+	}
+
 
 	/**
 	 * Den Status der Tooolbaraktionen aktualisieren.
@@ -917,7 +1018,7 @@ public class DesignsView
 			}
 		}
 	}
-	
+		
 	public static Map<Design,DrawDocument> getDrawDocumentMap()
 	{
 		return openDrawDocumentMap;		
@@ -936,6 +1037,16 @@ public class DesignsView
 				return design;
 		}
 		return null;
+	}
+
+	/*
+	 * alle DrawDocumentDaten in das Modell einlesen (synchronisieren)
+	 * 
+	 */
+	private void pullDrawDocumentData()
+	{
+		readDesignPages();
+		readDesignLayers();
 	}
 
 	/*
@@ -1068,10 +1179,13 @@ public class DesignsView
 				// Modellayer die keine Entsprechung im DrawDocument haben loeschen
 				modelLayerNames.removeAll(delList);
 				
+				// alternativ koennte man auch die ModellLayer im DrawDocument generieren
+				/*
 				for(String modelLayerName : modelLayerNames)
 				{
 					System.out.println("zu Loeschen: "+modelLayerName);
 				}
+				*/
 
 			}
 		}

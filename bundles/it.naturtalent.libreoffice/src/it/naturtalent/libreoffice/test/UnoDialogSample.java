@@ -169,7 +169,7 @@ public class UnoDialogSample implements XTextListener, XSpinListener, XActionLis
             oUnoDialogSample.insertProgressBar(106, 44, 100, 100);
             oUnoDialogSample.insertHorizontalFixedLine(106, 58, 100, "My FixedLine");
             oUnoDialogSample.insertEditField(oUnoDialogSample, oUnoDialogSample, 106, 72, 60);
-            oUnoDialogSample.insertTimeField(106, 96, 50, new Time((short)0,(short)0,(short)0,(short)10), new Time((short)0,(short)0,(short)0,(short)0), new Time((short)0,(short)0,(short)0,(short)17));
+            //oUnoDialogSample.insertTimeField(106, 96, 50, new Time((short)0,(short)0,(short)0,(short)10), new Time((short)0,(short)0,(short)0,(short)0), new Time((short)0,(short)0,(short)0,(short)17));
             oUnoDialogSample.insertDateField(oUnoDialogSample, 166, 96, 50);
             oUnoDialogSample.insertGroupBox(102, 124, 70, 100);
             oUnoDialogSample.insertPatternField(106, 136, 50);

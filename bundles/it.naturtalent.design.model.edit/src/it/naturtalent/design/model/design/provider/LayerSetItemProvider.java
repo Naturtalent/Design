@@ -127,7 +127,7 @@ public class LayerSetItemProvider
 	public Object getImage(Object object)
 	{
 		//return overlayImage(object, getResourceLocator().getImage("full/obj16/LayerSet"));
-		return Icon.ICON_IMAGE.getImage(IconSize._16x16_DefaultIconSize);
+		return Icon.ICON_LAYERS.getImage(IconSize._16x16_DefaultIconSize);
 	}
 
 	/**

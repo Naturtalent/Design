@@ -45,6 +45,7 @@ import javax.swing.JLabel;
 
 import com.sun.star.frame.FrameActionEvent;
 import com.sun.star.uno.UnoRuntime;
+import com.sun.star.uno.XComponentContext;
 
 // __________ Implementation __________
 
@@ -65,7 +66,7 @@ import com.sun.star.uno.UnoRuntime;
  * So we must start threads for updating something internally.
  *
  */
-class StatusListener implements com.sun.star.frame.XStatusListener,
+public class StatusListener implements com.sun.star.frame.XStatusListener,
                                 com.sun.star.frame.XFrameActionListener,
                                 IShutdownListener,
                                 IOnewayLink
@@ -88,12 +89,36 @@ class StatusListener implements com.sun.star.frame.XStatusListener,
     private final String                       m_sFalseText       ;
     private com.sun.star.frame.XDispatch m_xDispatch        ;
     private com.sun.star.frame.XFrame    m_xFrame           ;
-    private com.sun.star.util.URL        m_aURL             ;
+    private com.sun.star.util.URL        m_aURL             ;   
     private boolean                      m_bIsActionListener;
     private boolean                      m_bIsStatusListener;
     private boolean                      m_bDead            ;
 
 
+
+    /**
+     * ctor
+     * It initialize an instance of this class only.
+     * We set all necessary information on our internal member - that's it
+     */
+    StatusListener( /*IN*/ Component                   rControl   ,
+                    /*IN*/ String                      sTrueText  ,
+                    /*IN*/ String                      sFalseText ,
+                    /*IN*/ com.sun.star.frame.XFrame   xFrame     ,
+                    /*IN*/ String                      sURL,       
+                    XComponentContext xContext)
+    {
+        m_rControl          = rControl   ;
+        m_sTrueText         = sTrueText  ;
+        m_sFalseText        = sFalseText ;
+        m_xFrame            = xFrame     ;
+        m_bIsStatusListener = false      ;
+        m_bIsActionListener = false      ;
+        m_bDead             = false      ;
+        // to be perform - we parse the given URL  one times only
+        // and use it till we die ...
+        m_aURL = FunctionHelper.parseURL(xContext, sURL);
+    }
 
     /**
      * ctor
@@ -117,7 +142,6 @@ class StatusListener implements com.sun.star.frame.XStatusListener,
         // and use it till we die ...
         m_aURL = FunctionHelper.parseURL(sURL);
     }
-
 
 
     /**

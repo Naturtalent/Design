@@ -104,7 +104,7 @@ public class LayerItemProvider
 	public Object getImage(Object object)
 	{
 		//return overlayImage(object, getResourceLocator().getImage("full/obj16/Layer"));
-		return Icon.ICON_IMAGES.getImage(IconSize._16x16_DefaultIconSize);
+		return Icon.ICON_LAYER.getImage(IconSize._16x16_DefaultIconSize);
 	}
 
 	/**

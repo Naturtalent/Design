@@ -25,7 +25,7 @@ public class MessenAction extends AbstractPlanungAction
 		{
 			// Layer 'Masslinien' aktivieren
 			Layer layer = drawDocument.getLayer(DefaultLayerNames.Masslinien.getType());			
-			drawDocument.selectLayer(layer);
+			drawDocument.selectDrawLayer(layer);
 		
 			PlanungDetailsComposite detailPage = planungMasterComposite.getDetailPage();
 			ILayerContentRepository layerContentRepository = detailPage.getLayerContentRepository();			

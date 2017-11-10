@@ -27,10 +27,15 @@ Bundle-ClassPath: lib/java_uno_accessbridge.jar,
  lib/jurt.jar,
  lib/officebean.jar,
  lib/ridl.jar,
- lib/unoil.jar,
  lib/unoloader.jar,
- .
+ .,
+ lib/unoil-5.2.0.jar,
+ lib/jna-platform-4.5.0.jar,
+ lib/jna.jar,
+ lib/javax.mail.jar,
+ lib/jnativehook-2.1.0.jar
 Import-Package: org.apache.commons.lang3
 Export-Package: it.naturtalent.libreoffice,
  it.naturtalent.libreoffice.calc,
- it.naturtalent.libreoffice.draw
+ it.naturtalent.libreoffice.draw,
+ org.jnativehook.mouse

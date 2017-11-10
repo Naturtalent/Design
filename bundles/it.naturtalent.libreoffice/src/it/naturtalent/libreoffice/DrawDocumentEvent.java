@@ -30,6 +30,7 @@ public class DrawDocumentEvent
 	
 	public static final String DRAWDOCUMENT_EVENT_DOCUMENT_ACTIVATE = DRAWDOCUMENT_EVENT+"drawDocumentActivate"; //$NON-NLS-N$
 	
+	public static final String DRAWDOCUMENT_EVENT_GLOBALMOUSEPRESSED = DRAWDOCUMENT_EVENT+"globalmousecklick"; //$NON-NLS-N$
 	
 	
 	

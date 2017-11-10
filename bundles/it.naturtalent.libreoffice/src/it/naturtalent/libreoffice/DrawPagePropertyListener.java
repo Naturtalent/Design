@@ -76,7 +76,7 @@ public class DrawPagePropertyListener extends PropertyChangeListenerHelper
 			{
 				MApplication currentApplication = E4Workbench.getServiceContext().get(IWorkbench.class).getApplication();
 				IEventBroker eventBroker = currentApplication.getContext().get(IEventBroker.class);
-				eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_PAGECHANGE_PROPERTY,xDrawPage);
+				eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_PAGECHANGE_PROPERTY,xDrawPage);					
 			}
 		}
 	}

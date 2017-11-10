@@ -164,7 +164,7 @@ public class DesignGroupItemProvider
 	public Object getImage(Object object)
 	{
 		//return overlayImage(object, getResourceLocator().getImage("full/obj16/DesignGroup"));
-		return Icon.ICON_PICTURES.getImage(IconSize._16x16_DefaultIconSize);
+		return Icon.ICON_DESIGNS.getImage(IconSize._16x16_DefaultIconSize);
 	}
 
 	/**

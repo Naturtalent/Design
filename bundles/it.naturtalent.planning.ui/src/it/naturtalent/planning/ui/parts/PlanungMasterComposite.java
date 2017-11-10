@@ -523,7 +523,7 @@ public class PlanungMasterComposite extends Composite
 					if (layer != null)
 					{
 						// PlanningItem Layer (Ebene) im Dokument selektieren
-						drawDocument.selectLayer(layer);
+						drawDocument.selectDrawLayer(layer);
 
 						// alle anderen Ebenen unsichtbar
 						PlanningItem[] items = curDesign.getItems();

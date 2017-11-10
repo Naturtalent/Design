@@ -37,6 +37,10 @@ package it.naturtalent.libreoffice.environment.example;
 
 import java.awt.*;
 import javax.swing.*;
+
+import com.sun.star.frame.XFrame;
+import com.sun.star.uno.XComponentContext;
+
 import java.awt.event.*;
 
 /**
@@ -98,7 +102,7 @@ public class CustomizeView extends    JPanel
      * Create view controls on startup and initialize it.
      * We don't start listening here. see setFrame()!
      */
-    CustomizeView()
+    public CustomizeView()
     {
         this.setLayout(new GridLayout(3,0));
 
@@ -161,6 +165,33 @@ public class CustomizeView extends    JPanel
         m_aToolBarListener.startListening();
         m_aObjectBarListener.startListening();
     }
+    
+    public void setFrame(com.sun.star.frame.XFrame xFrame, XComponentContext xContext)
+    {
+        if (xFrame==null)
+            return;
+
+        // be listener for click events
+        // They will toogle the UI controls.
+        ClickListener aMenuBarHandler   = new ClickListener(FEATUREURL_MENUBAR  ,FEATUREPROP_MENUBAR  ,xFrame, xContext);
+        ClickListener aToolBarHandler   = new ClickListener(FEATUREURL_TOOLBAR  ,FEATUREPROP_TOOLBAR  ,xFrame, xContext);
+        ClickListener aObjectBarHandler = new ClickListener(FEATUREURL_OBJECTBAR,FEATUREPROP_OBJECTBAR,xFrame, xContext);
+
+        m_cbMenuBar.addActionListener  (aMenuBarHandler  );
+        m_cbToolBar.addActionListener  (aToolBarHandler  );
+        m_cbObjectBar.addActionListener(aObjectBarHandler);
+
+        // be frame action listener
+        // The callback will update listener connections
+        // for status updates automatically!
+        m_aMenuBarListener   = new StatusListener(m_cbMenuBar  ,MENUBAR_ON  ,MENUBAR_OFF  ,xFrame, FEATUREURL_MENUBAR, xContext );
+        m_aToolBarListener   = new StatusListener(m_cbToolBar  ,TOOLBAR_ON  ,TOOLBAR_OFF  ,xFrame, FEATUREURL_TOOLBAR, xContext  );
+        m_aObjectBarListener = new StatusListener(m_cbObjectBar,OBJECTBAR_ON,OBJECTBAR_OFF,xFrame, FEATUREURL_OBJECTBAR, xContext);
+
+        m_aMenuBarListener.startListening();
+        m_aToolBarListener.startListening();
+        m_aObjectBarListener.startListening();
+    }
 
 
 
@@ -183,6 +214,8 @@ public class CustomizeView extends    JPanel
         private final String m_sProp;
         /// we must use this frame to dispatch a request
         private com.sun.star.frame.XFrame m_xFrame;
+        
+        private XComponentContext xContext;
 
 
 
@@ -190,18 +223,29 @@ public class CustomizeView extends    JPanel
          * ctor
          * It initialize an instance of this class only.
          */
-        private ClickListener( String                    sURL   ,
-                       String                    sProp  ,
-                       com.sun.star.frame.XFrame xFrame )
+		private ClickListener(String sURL, String sProp, com.sun.star.frame.XFrame xFrame)
         {
             m_sURL   = sURL  ;
             m_sProp  = sProp ;
             m_xFrame = xFrame;
         }
 
+		
 
 
-        /**
+        public ClickListener(String m_sURL, String m_sProp, XFrame m_xFrame,XComponentContext xContext)
+		{
+			super();
+			this.m_sURL = m_sURL;
+			this.m_sProp = m_sProp;
+			this.m_xFrame = m_xFrame;
+			this.xContext = xContext;
+		}
+
+
+
+
+		/**
          * callback for action events
          * Such events occur, if someone clicked the
          * JCheckBox control, on which we are registered.
@@ -225,7 +269,12 @@ public class CustomizeView extends    JPanel
             boolean bState = ((JCheckBox)aEvent.getSource()).isSelected();
 
             // prepare the dispatch
-            com.sun.star.util.URL aURL = FunctionHelper.parseURL(m_sURL);
+            com.sun.star.util.URL aURL;
+            if(xContext != null)
+            	aURL = FunctionHelper.parseURL(m_sURL);
+            else
+            	aURL = FunctionHelper.parseURL(xContext, m_sURL);
+            
             if (aURL==null)
                 return;
 

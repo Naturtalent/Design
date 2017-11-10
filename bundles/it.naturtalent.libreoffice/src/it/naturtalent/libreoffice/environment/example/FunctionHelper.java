@@ -38,6 +38,7 @@ package it.naturtalent.libreoffice.environment.example;
 // __________ Imports __________
 
 import com.sun.star.uno.UnoRuntime;
+import com.sun.star.uno.XComponentContext;
 import com.sun.star.uno.AnyConverter;
 
 import java.awt.*;
@@ -78,6 +79,53 @@ public class FunctionHelper
      * @return [com.sun.star.util.URL]
      *              URL in UNO struct notation
      */
+    public static com.sun.star.util.URL parseURL(XComponentContext xContext, String sURL)
+    {
+        com.sun.star.util.URL aURL = null;
+
+        if (sURL==null || sURL.equals(""))
+        {
+            System.out.println("wrong using of URL parser");
+            return null;
+        }
+
+        try
+        {
+            com.sun.star.uno.XComponentContext xOfficeCtx = xContext;
+                
+
+            // Create special service for parsing of given URL.
+            com.sun.star.util.XURLTransformer xParser =
+                UnoRuntime.queryInterface(
+                com.sun.star.util.XURLTransformer.class,
+                xOfficeCtx.getServiceManager().createInstanceWithContext(
+                    "com.sun.star.util.URLTransformer", xOfficeCtx));
+
+            // Because it's an in/out parameter we must use an array of URL objects.
+            com.sun.star.util.URL[] aParseURL = new com.sun.star.util.URL[1];
+            aParseURL[0] = new com.sun.star.util.URL();
+            aParseURL[0].Complete = sURL;
+
+            // Parse the URL
+            xParser.parseStrict(aParseURL);
+
+            aURL = aParseURL[0];
+        }
+        catch(com.sun.star.uno.RuntimeException exRuntime)
+        {
+            // Any UNO method of this scope can throw this exception.
+            // Reset the return value only.
+        }
+        catch(com.sun.star.uno.Exception exUno)
+        {
+            // "createInstance()" method of used service manager can throw it.
+            // Then it wasn't possible to get the URL transformer.
+            // Return default instead of really parsed URL.
+        }
+
+        return aURL;
+    }
+    
     public static com.sun.star.util.URL parseURL(String sURL)
     {
         com.sun.star.util.URL aURL = null;
@@ -124,6 +172,7 @@ public class FunctionHelper
 
         return aURL;
     }
+
 
 
 

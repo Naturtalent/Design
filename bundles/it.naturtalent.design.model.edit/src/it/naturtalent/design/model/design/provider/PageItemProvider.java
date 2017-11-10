@@ -163,7 +163,7 @@ public class PageItemProvider
 	public Object getImage(Object object)
 	{
 		//return overlayImage(object, getResourceLocator().getImage("full/obj16/Page"));
-		return Icon.ICON_LAYERS.getImage(IconSize._16x16_DefaultIconSize);
+		return Icon.ICON_PAGE.getImage(IconSize._16x16_DefaultIconSize);
 	}
 
 	/**

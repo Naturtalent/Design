@@ -61,7 +61,7 @@ public class MassstabAction extends AbstractPlanungAction
 			// alle vorhandenen Shapes loeschen
 			layer.deleteShapes();
 						
-			drawDocument.selectLayer(layer);
+			drawDocument.selectDrawLayer(layer);
 			createReferenceShape(layer);
 			
 			// Dialog Massstab

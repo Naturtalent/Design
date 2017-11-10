@@ -11,6 +11,13 @@ import com.sun.star.view.XSelectionChangeListener;
 public class ShapeSelectionListener implements XSelectionChangeListener
 {
 
+	/*
+	 * 
+	 * !!! kein Breakpoint in Debug - blockiert das Gesamtsystem
+	 *  
+	 */
+	
+	
 	@Override
 	public void disposing(EventObject arg0)
 	{

@@ -26,7 +26,7 @@ public class CloseAction extends Action
 		if(drawDocument != null)
 		{
 			// vor dem Schliessen den ShapeListener entfernen
-			drawDocument.deActivateShapeListener();
+			drawDocument.doActivateShapeListener();
 			drawDocument.closeDocument();
 		}
 

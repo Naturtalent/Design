@@ -189,7 +189,7 @@ public class DesignItemProvider
 	public Object getImage(Object object)
 	{
 		//return overlayImage(object, getResourceLocator().getImage("full/obj16/Design"));
-		return Icon.ICON_PICTURE.getImage(IconSize._16x16_DefaultIconSize);
+		return Icon.ICON_DESIGN.getImage(IconSize._16x16_DefaultIconSize);
 	}
 
 	/**
