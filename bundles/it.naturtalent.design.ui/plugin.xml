@@ -22,6 +22,12 @@
             label="Zeichnung schließen"
             location="menu">
       </MasterDetailAction>
+      <MasterDetailAction
+            command="it.naturtalent.design.ui.actions.StampModusAction"
+            imagePath="icons/application_cascade.png"
+            label="Stempelmodus"
+            location="menu">
+      </MasterDetailAction>
    </extension>
 
 </plugin>

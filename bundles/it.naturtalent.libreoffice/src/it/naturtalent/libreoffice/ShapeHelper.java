@@ -77,6 +77,7 @@ public class ShapeHelper
     public static XShape createShape(XComponent xDrawDoc, Point aPos, Size aSize, String sShapeType)
         throws java.lang.Exception
     {
+    	
         XShape xShape = null;
         XMultiServiceFactory xFactory =
             UnoRuntime.queryInterface(

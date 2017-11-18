@@ -127,7 +127,25 @@ public class Scale
 	{
 		this.measureUnit = measureUnit;
 	}
+	
+	public Point scalePoint(Point pt)
+	{
+		double scaleFactor = ((double)scaleDenominator/(double)scaleNumerator);
+		
+		pt.X = (int) (pt.X * scaleFactor);
+		pt.Y = (int) (pt.Y * scaleFactor);
+		
+		return pt;
+	}
 
+	/**
+	 * Der Devisor wird bestimmt indem eine Referenzlaenge (z.B. eine gezeichnete Linie) durch einen 
+	 * Zielwert geteilt wird. Man definiert: die gezeichnet Linie hat eine Laenge von x-Meter und erhaelt damit den
+	 * Masstab.
+	 * 
+	 * @param referenceLength
+	 * @param targetLength
+	 */
 	public void calculateScaleByLineLength(BigDecimal referenceLength, BigDecimal targetLength)
 	{
 		BigDecimal doubleMass = targetLength.multiply(measureFactor);		

@@ -15,13 +15,17 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.sun.star.accessibility.AccessibleRole;
 import com.sun.star.accessibility.XAccessible;
+import com.sun.star.accessibility.XAccessibleComponent;
 import com.sun.star.accessibility.XAccessibleContext;
 import com.sun.star.accessibility.XAccessibleText;
 import com.sun.star.awt.Point;
+import com.sun.star.awt.Rectangle;
+import com.sun.star.awt.Size;
 import com.sun.star.awt.XExtendedToolkit;
 import com.sun.star.awt.XTopWindow;
 import com.sun.star.awt.XWindow;
 import com.sun.star.beans.PropertyValue;
+import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XNameAccess;
@@ -56,6 +60,7 @@ import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.EventObject;
+import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.IndexOutOfBoundsException;
 
 import com.sun.star.lang.WrappedTargetException;
@@ -75,6 +80,7 @@ import com.sun.star.view.XSelectionSupplier;
 import it.naturtalent.libreoffice.environment.example.OfficeConnect;
 import it.naturtalent.libreoffice.listeners.MouseListener;
 import it.naturtalent.libreoffice.utils.Lo;
+import it.naturtalent.libreoffice.utils.Props;
 
 public class DrawDocumentUtils
 {
@@ -112,12 +118,106 @@ public class DrawDocumentUtils
 		}
 	}
 	
+
+	/*
+	 * 
+	 * 
+	 * 
+	 */
+	/*
+	public static Double getScaleFactor(XComponent xComponent)
+	{
+		if (xComponent != null)
+		{
+			try
+			{
+				XMultiServiceFactory xFactory = UnoRuntime.queryInterface(
+						XMultiServiceFactory.class, xComponent);
+				XInterface settings = (XInterface) xFactory
+						.createInstance("com.sun.star.drawing.DocumentSettings");
+				XPropertySet xPageProperties = UnoRuntime.queryInterface(
+						XPropertySet.class, settings);
+				Integer scaleNumerator = (Integer) xPageProperties
+						.getPropertyValue("ScaleNumerator");
+				Integer scaleDenominator = (Integer) xPageProperties
+						.getPropertyValue("ScaleDenominator");
+				
+				double scaleFactor = ((double)scaleDenominator/(double)scaleNumerator);
+				return scaleFactor;
+
+			} catch (UnknownPropertyException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (WrappedTargetException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (com.sun.star.uno.Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return null;
+	}
+	*/
+
+	
+	
 	/*
 	 * Accessible Contexts
 	 *  
 	 * 
 	 */
+
+	/**
+	 * Ueber XAccessibleComponent Zugriff auf Groesse und Position des TopWindows moeglich.
+	 *  
+	 * @param xContext
+	 * @return
+	 */
+	public static XAccessibleComponent getAccessibleComponent(XComponentContext xContext)
+	{
+		XAccessibleComponent aComp = null;
+		XTopWindow xTopWindow = getDrawDocumentXTopWindow(xContext);
+		XAccessible xTopWindowAccessible = (XAccessible)
+		         UnoRuntime.queryInterface(XAccessible.class, xTopWindow);	
+		XAccessibleContext xAccessibleContext = xTopWindowAccessible.getAccessibleContext();
+		aComp = (XAccessibleComponent) UnoRuntime.queryInterface(
+              XAccessibleComponent.class, xAccessibleContext);	
+		return aComp;
+	}
 	
+	/**
+	 * TopWindow des DrawDocumnts zurueckgeben
+	 * 
+	 * @param xContext
+	 * @return
+	 */
+	public static XTopWindow getDrawDocumentXTopWindow(XComponentContext xContext)
+	{
+		XTopWindow [] xTopWindows = getXTopWindows(xContext);		
+		for(XTopWindow xTopWindow : xTopWindows)
+		{
+			XAccessible xTopWindowAccessible = (XAccessible)
+			         UnoRuntime.queryInterface(XAccessible.class, xTopWindow);				
+			XAccessibleContext xAccessibleContext = xTopWindowAccessible.getAccessibleContext();
+			String name = xAccessibleContext.getAccessibleName();
+			if(StringUtils.contains(name, "Draw"))
+				return xTopWindow;				
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Alle im 'XAccessibleContext' gespeicherten TopWindows zurueckgeben.
+	 * 
+	 * @param xContext
+	 * @return
+	 */
 	public static XTopWindow [] getXTopWindows(XComponentContext xContext)
 	{
 		XTopWindow [] xTopWindows;
@@ -139,23 +239,6 @@ public class DrawDocumentUtils
 		return xTopWindows;
 	}
 
-	public static XTopWindow getDrawDocumentXTopWindows(XComponentContext xContext)
-	{
-		XTopWindow [] xTopWindows = getXTopWindows(xContext);		
-		for(XTopWindow xTopWindow : xTopWindows)
-		{
-			XAccessible xTopWindowAccessible = (XAccessible)
-			         UnoRuntime.queryInterface(XAccessible.class, xTopWindow);				
-			XAccessibleContext xAccessibleContext = xTopWindowAccessible.getAccessibleContext();
-			String name = xAccessibleContext.getAccessibleName();
-			if(StringUtils.contains(name, "Draw"))
-				return xTopWindow;				
-		}
-		
-		return null;
-	}
-	
-	
 	/**
 	 * Den XAccessibleContext fuer das DrawDocument ermitteln.
 	 * Sucht in allen XTopWindows nach dem XAccessibleContext dessen Name den String 'Draw' enthaelt.
@@ -234,7 +317,7 @@ public class DrawDocumentUtils
 		} catch (IndexOutOfBoundsException e)
 		{
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		return null;
@@ -609,7 +692,46 @@ public class DrawDocumentUtils
 	 *  Page
 	 * 
 	 */
+
+	public static Size getPageSize(XDrawPage xDrawPage)
+	{
+		Integer width = (Integer) getDrawPagePropertyValue(xDrawPage, "Width");
+		Integer height = (Integer) getDrawPagePropertyValue(xDrawPage, "Height");
+		Size size = new Size(width, height);
+		return size;
+	}
+
+	public static Point getPageLeftTopBorder(XDrawPage xDrawPage)
+	{
+		Integer borderLeft = (Integer) getDrawPagePropertyValue(xDrawPage, "BorderLeft");
+		Integer bordertop = (Integer) getDrawPagePropertyValue(xDrawPage, "BorderTop");		
+		return new Point(borderLeft, bordertop);
+	}
+
+	public static int getPageBorderLeft(XDrawPage xDrawPage)
+	{
+		Integer borderLeft = (Integer) getDrawPagePropertyValue(xDrawPage, "BorderLeft");		
+		return borderLeft.intValue();
+	}
 	
+	public static Object getDrawPagePropertyValue(XDrawPage xDrawPage, String propertyName)
+	{
+		XPropertySet xPageProperties = UnoRuntime.queryInterface(XPropertySet.class, xDrawPage);		
+		try
+		{
+			Object obj = xPageProperties.getPropertyValue(propertyName);
+			return obj;
+		} catch (UnknownPropertyException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WrappedTargetException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}	
 
 	/**
 	 * Eine neue Seite hinzufuegen.
@@ -703,6 +825,26 @@ public class DrawDocumentUtils
 		}
 
 	}
+    
+    static public XDrawPage getCurrentPage(XComponent xComponent)
+ 	{
+ 		try
+ 		{
+ 			XModel xModel = UnoRuntime.queryInterface(XModel.class, xComponent);
+ 			XController xController = xModel.getCurrentController();
+ 			XPropertySet xPageProperties = UnoRuntime
+ 					.queryInterface(XPropertySet.class, xController);
+ 			Any any = (Any) xPageProperties.getPropertyValue("CurrentPage");
+ 			return(UnoRuntime.queryInterface(XDrawPage.class, any));
+ 			
+ 		} catch (Exception e)
+ 		{
+ 			// TODO Auto-generated catch block
+ 			e.printStackTrace();
+ 		}
+ 		return null;
+ 	}
+
 
 	/**
 	 * Alle DrawPage in einer Liste zurueckgeben.
@@ -805,7 +947,7 @@ public class DrawDocumentUtils
 	/**
 	 * Alle Layernamen in einer Liste zurueckgeben.
 	 * @param xComponent
-	 * @param local = Umwandlung in Local
+	 * @param local = Umwandlung in Local (Umwandlung der Namen)
 	 * @return
 	 */
 	public static List<String> readLayer(XComponent xComponent, boolean local)
@@ -855,39 +997,102 @@ public class DrawDocumentUtils
 	 */
 	public static void selectLayer(XComponent xComponent, String layerName)
 	{
-		 try
-		{			 
-			XLayer xLayer = findLayer(xComponent, layerName);
-			if (xLayer != null)
-			{
-				XModel xModel = UnoRuntime.queryInterface(XModel.class,xComponent);
-				XController xController = xModel.getCurrentController();
+		XLayer xLayer = findLayer(xComponent, layerName);
+		selectLayer(xComponent, xLayer);
+	}
 
-				XPropertySet xPageProperties = UnoRuntime
-						.queryInterface(XPropertySet.class, xController);
+	/**
+	 * Einen Layer selektiern.
+	 * 
+	 * @param xComponent
+	 * @param xLayer
+	 */
+	public static void selectLayer(XComponent xComponent, XLayer xLayer)
+	{		
+		if (xLayer != null)
+		{
+			XModel xModel = UnoRuntime.queryInterface(XModel.class,xComponent);
+			XController xController = xModel.getCurrentController();
 
-				/*
-				for(String localLayerName : localPageNamesMap.keySet())
-				{
-					String checkLocalName = localPageNamesMap.get(localLayerName);
-					if(StringUtils.equals(checkLocalName, layerName))
-					{
-						layerName = localLayerName;
-						break;
-					}
-				}
-				*/
-				
-				
-				xPageProperties.setPropertyValue("ActiveLayer", xLayer);
-			}
+			XPropertySet xPageProperties = UnoRuntime
+					.queryInterface(XPropertySet.class, xController);
 			
-		} catch (Exception e)
+			try
+			{
+				xPageProperties.setPropertyValue("ActiveLayer", xLayer);
+			} catch (IllegalArgumentException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnknownPropertyException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (PropertyVetoException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (WrappedTargetException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Einen Layer selektiern.
+	 * 
+	 * @param xComponent
+	 * @param pageName
+	 * @param layerName
+	 */
+	public static XLayer getCurrentLayer(XComponent xComponent)
+	{
+		XLayer xLayer = null;
+		try
+		{
+			XModel xModel = UnoRuntime.queryInterface(XModel.class,xComponent);
+			XController xController = xModel.getCurrentController();
+			XPropertySet props = UnoRuntime
+					.queryInterface(XPropertySet.class, xController); 
+			Any any = (Any) props.getPropertyValue("ActiveLayer");
+			xLayer = UnoRuntime.queryInterface(XLayer.class, any);	
+			
+		} catch (UnknownPropertyException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WrappedTargetException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return xLayer;		
 	}
+
+	/**
+	 * Gibt den Namen des Layers zurueck in dem 'xShape' definiert ist.
+	 * 
+	 * @param xComponent
+	 * @param pageName
+	 * @param xShape
+	 * @return
+	 */
+	public static XLayer getLayerforShape(XComponent xComponent, XShape xShape)
+	{
+		XLayer layer = null;
+		
+		XLayerManager xLayerManager = null;
+		XLayerSupplier xLayerSupplier = UnoRuntime.queryInterface(
+				XLayerSupplier.class, xComponent);
+		XNameAccess xNameAccess = xLayerSupplier.getLayerManager();
+		xLayerManager = UnoRuntime.queryInterface(XLayerManager.class, xNameAccess );		
+		layer = xLayerManager.getLayerForShape(xShape);
+		return layer;
+	}
+
 	
 	/**
 	 * Gibt den Namen des Layers zurueck in dem 'xShape' definiert ist.
@@ -968,13 +1173,26 @@ public class DrawDocumentUtils
 		return null;
 	}
 	
+	public static void setLockedState(XLayer xLayer, boolean status)
+	{
+		try
+		{		
+			XPropertySet props = UnoRuntime.queryInterface(XPropertySet.class, xLayer); 
+			props.setPropertyValue("IsLocked", status);
+		} catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
 	/*
 	 * 
 	 *  Shapes
 	 * 
 	 * 
 	 */
-	
 	
 	/**
 	 * Die Shapes eines Layers auflisten.
@@ -1072,8 +1290,12 @@ public class DrawDocumentUtils
 						if (obj instanceof Any)
 						{
 							any = (Any) xShapes.getByIndex(i);
-							XShape xShape = UnoRuntime
-									.queryInterface(XShape.class, any);
+							XShape xShape = UnoRuntime.queryInterface(XShape.class, any);
+							
+							Point pt = xShape.getPosition();
+							System.out.println(pt.X+"  "+pt.Y);
+							
+							
 							if (xShape != null)
 								shapeList.add(xShape);
 						}
@@ -1156,5 +1378,22 @@ public class DrawDocumentUtils
 		}
 		
 		return label;			
+	}
+	
+	public static XShape createShape(XComponent xComponent, Point pos, Size size, String shapeType)
+	{
+		XShape xShape = null;
+		try
+		{
+			xShape = createInstanceMSF(xComponent, XShape.class, shapeType);
+			xShape.setPosition( pos );
+			xShape.setSize( size );
+		} catch (PropertyVetoException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return xShape;
 	}
 }

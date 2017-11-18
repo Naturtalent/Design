@@ -11,6 +11,11 @@ public class GlobalMouseListener implements NativeMouseListener
 
 	private IEventBroker eventBroker;
 	
+	/**
+	 * Die Implementierung des globalen MouseListeners.
+	 * Das empfangene Event wird mit dem EventBroker weitergegeben
+	 * @param eventBroker
+	 */
 	public GlobalMouseListener(IEventBroker eventBroker)
 	{
 		super();

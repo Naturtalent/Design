@@ -2,6 +2,7 @@ package it.naturtalent.libreoffice.draw;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListenerProxy;
 import java.io.File;
 import java.security.AccessControlContext;
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JCheckBox;
 import javax.swing.plaf.synth.SynthSpinnerUI;
@@ -25,7 +28,9 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.IWorkbench;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.jface.dialogs.DialogMessageArea;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.mouse.NativeMouseEvent;
@@ -34,6 +39,8 @@ import org.jnativehook.mouse.NativeMouseListener;
 import com.sun.star.accessibility.XAccessible;
 import com.sun.star.accessibility.XAccessibleComponent;
 import com.sun.star.accessibility.XAccessibleContext;
+import com.sun.star.awt.Point;
+import com.sun.star.awt.Rectangle;
 import com.sun.star.awt.Size;
 import com.sun.star.awt.XControl;
 import com.sun.star.awt.XExtendedToolkit;
@@ -43,8 +50,11 @@ import com.sun.star.awt.XTopWindow;
 import com.sun.star.awt.XTopWindowListener;
 import com.sun.star.awt.XWindow;
 import com.sun.star.beans.Property;
+import com.sun.star.beans.PropertyChangeEvent;
 import com.sun.star.beans.PropertyValue;
+import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
+import com.sun.star.beans.XPropertyChangeListener;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XIndexAccess;
 import com.sun.star.container.XNameAccess;
@@ -60,6 +70,7 @@ import com.sun.star.drawing.XShape;
 import com.sun.star.drawing.XShapes;
 import com.sun.star.drawing.framework.XConfigurationController;
 import com.sun.star.drawing.framework.XPane;
+import com.sun.star.drawing.framework.XResourceId;
 import com.sun.star.frame.DispatchResultEvent;
 import com.sun.star.frame.FeatureStateEvent;
 import com.sun.star.frame.FrameSearchFlag;
@@ -76,6 +87,7 @@ import com.sun.star.frame.XStatusListener;
 import com.sun.star.frame.XStatusbarController;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.EventObject;
+import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
@@ -111,11 +123,13 @@ import it.naturtalent.libreoffice.PageHelper;
 import it.naturtalent.libreoffice.ShapeSelectionListener;
 import it.naturtalent.libreoffice.Utils;
 import it.naturtalent.libreoffice.environment.example.FunctionHelper;
+import it.naturtalent.libreoffice.listeners.ActiveLayerPropertyListener;
 import it.naturtalent.libreoffice.listeners.FocusListener;
 import it.naturtalent.libreoffice.listeners.GlobalMouseListener;
 import it.naturtalent.libreoffice.listeners.GlobalMouseMoveListener;
 import it.naturtalent.libreoffice.listeners.MouseListener;
 import it.naturtalent.libreoffice.listeners.StatusBarListener;
+import it.naturtalent.libreoffice.utils.Draw;
 import it.naturtalent.libreoffice.utils.GUI;
 import it.naturtalent.libreoffice.utils.ItemInterceptor;
 import it.naturtalent.libreoffice.utils.Lo;
@@ -169,17 +183,22 @@ public class DrawDocument
 	private FrameActionListener frameActionListener;
 	
 	private Log log = LogFactory.getLog(this.getClass());
-	
-	private MouseListener mouseListerner = new MouseListener();
-	
-	private XPane pane;
-	
+
+	// der Globale MouseListener
 	private GlobalMouseListener globalMouseListener;
+	
+	// TopWindow der des Draw-Documents
+	private XTopWindow xTopWindow;
+	
+	// Stempelmodus ein-/ausschalten 
+	private boolean stampMode = true;
 	
 	
 	private XWindow xComponentWindow;
 	private XWindow xContainerWindow;
 	
+	private Map<XLayer, ILayerLayout> layoutMap = new HashMap<XLayer, ILayerLayout>();
+	private ILayerLayout currentLayout;
 	
 	
 	/**
@@ -312,10 +331,6 @@ public class DrawDocument
 			// empirisch ermittelt
 			Thread.sleep(500);
 			
-			
-
-						
-			
 			xComponent.addEventListener(new XEventListener()
 			{				
 				@Override
@@ -324,8 +339,6 @@ public class DrawDocument
 					// EventBroker informiert ueber das Schliessen des Dokuments
 					eventBroker.post(DrawDocumentEvent.DRAWDOCUMENT_EVENT_DOCUMENT_CLOSE, DrawDocument.this);					
 				}
-				
-				
 			});
 						
 			// TerminateListener (registriert eine durch Libreoffice ausgeloeste Close-Aktionen)
@@ -341,7 +354,7 @@ public class DrawDocument
 			// PageListener installieren und aktivierten
 			drawPagePropertyListener = new DrawPagePropertyListener(xComponent);
 			drawPagePropertyListener.activatePageListener();
-			
+						
 			/*
 			 * Shapeselection Listener 
 			 */			
@@ -350,6 +363,31 @@ public class DrawDocument
 			selectionSupplier = UnoRuntime.queryInterface(XSelectionSupplier.class, xController);
 			shapeSelectionListener = new ShapeSelectionListener();
 			selectionSupplier.addSelectionChangeListener(shapeSelectionListener);
+			
+			// exp
+			XPropertySet props = UnoRuntime.queryInterface(XPropertySet.class,xController);
+			Props.showProps("XComponent", props);
+			props.addPropertyChangeListener("ActiveLayer",new XPropertyChangeListener()
+			{
+				
+				@Override
+				public void disposing(EventObject arg0)
+				{
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void propertyChange(PropertyChangeEvent arg0)
+				{
+					System.out.println("L A Y E R");
+					
+				}
+			});
+			//ActiveLayerPropertyListener layerListener = new ActiveLayerPropertyListener(xComponent);
+			//layerListener.activatePageListener();
+			
+
 			
 			// Listener ueberwacht die Frameaktivitaeten (z.B. Frame wird aktiviert)
 			xFrame = xController.getFrame();
@@ -360,33 +398,32 @@ public class DrawDocument
 			
 			/* -------------------------- experimental -----------------------------------*/
 
+			// Globalen MouseListener einschalten und Logger begrenzen
 			GlobalScreen.registerNativeHook();			
-			globalMouseListener = new GlobalMouseListener(eventBroker);
-			GlobalScreen.unregisterNativeHook();
-			
-			
-			//GlobalScreen.registerNativeHook();
-			//GlobalScreen.addNativeMouseListener(globalMouseListener);
-			
+			globalMouseListener = new GlobalMouseListener(eventBroker);			
+			Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+			logger.setLevel(Level.WARNING);
 
-			XTopWindow xTopWindows = DrawDocumentUtils.getDrawDocumentXTopWindows(xContext);			
-			xTopWindows.addTopWindowListener(new XTopWindowAdapter()
+			// den globalen MouseListener ein-/ausschalten
+			xTopWindow = DrawDocumentUtils.getDrawDocumentXTopWindow(xContext);			
+			xTopWindow.addTopWindowListener(new XTopWindowAdapter()
 			{
 				@Override
 				public void windowDeactivated(EventObject arg0)
 				{
-					System.out.println("DEACTIVATE");
+					// TopWindow wurde deaktiviert - MouseListener ausschalten
+					//System.out.println("DEACTIVATE");
 					GlobalScreen.removeNativeMouseListener(globalMouseListener);					
 				}
 				
 				@Override
 				public void windowActivated(EventObject arg0)
 				{
-					System.out.println("ACTIVATE");
+					// TopWindow wurde aktiviert	- MouseListener einschalten				
+					//System.out.println("ACTIVATE");
 					GlobalScreen.addNativeMouseListener(globalMouseListener);
 				}
 			});
-			
 			
 			// die erste Seite wird selektioert
 			List<XDrawPage>drawPages = DrawDocumentUtils.getDrawPages(xComponent);
@@ -417,22 +454,10 @@ public class DrawDocument
 	 *  
 	 */
 	public void doShapeSelection(Object arg0)
-	{			
-		try
-		{
-			List<XShape>shapeList = DrawDocumentUtils.getSelectedShapes(xComponent);
-			if(shapeList.size() > 0)
-			{
-				String pageName = DrawDocumentUtils.getCurrentPageName(xComponent);
-				String layerName = DrawDocumentUtils.findLayer(xComponent, pageName, shapeList.get(0));
-				DrawDocumentUtils.selectLayer(xComponent, layerName);
-			}
-		} catch (DisposedException e)
-		{
-			// DrawDocument wurde wahrscheinlich extern geschlossen - interne Schliessung veranlassen
-			log.error(e);
-			closeDocument();			
-		}
+	{					
+		List<XShape>shapeList = DrawDocumentUtils.getSelectedShapes(xComponent);
+		XLayer xLayer = DrawDocumentUtils.getLayerforShape(xComponent, shapeList.get(0));
+		DrawDocumentUtils.selectLayer(xComponent, xLayer);
 	}
 	
 	/**
@@ -446,38 +471,134 @@ public class DrawDocument
 		if (xDrawPage != null)
 			DrawDocumentUtils.setCurrentPage(xComponent, xDrawPage);
 		
+		int borderLeft = DrawDocumentUtils.getPageBorderLeft(xDrawPage);
 		
-		XShapes xShapes = UnoRuntime.queryInterface(XShapes.class, xDrawPage);
-		XSection xSection = UnoRuntime.queryInterface(XSection.class, xShapes);
-		System.out.println(xSection);
 		
-		XPropertySet propSet = UnoRuntime.queryInterface(XPropertySet.class, xShapes);
-		Props.showProps("xShapes", propSet);
-		
-		propSet = UnoRuntime.queryInterface(XPropertySet.class, xDrawPage);
-		Props.showProps("Page", propSet);
-		
-		propSet = UnoRuntime.queryInterface(XPropertySet.class, xSection);
-		Props.showProps("Section", propSet);
-		
+		System.out.println(borderLeft);
 		//xComponentWindow.setVisible(flag);
 		//flag = !flag;
 		
 	}
-
 	
-	public Double[] getStatusPosition()
+	/**
+	 * Ueberpruefen und Anpassen der Mouseposition, die durch den globalen MouseListener zureckgegeben werden.
+	 * 
+	 * (Left/Top- Position des TopWindows (0,0))
+	 * 
+	 * Zurueckgegeben wird eine Position die an das TopWindow angepasst ist oder null wenn dieses nicht
+	 * tangiert wird. 
+	 * 
+	 */
+	
+	public Point containsPoint(int x, int y)
 	{		
+		XAccessible xTopWindowAccessible = (XAccessible)
+		         UnoRuntime.queryInterface(XAccessible.class, xTopWindow);	
+		XAccessibleContext xAccessibleContext = xTopWindowAccessible.getAccessibleContext();
+		XAccessibleComponent aComp = (XAccessibleComponent) UnoRuntime.queryInterface(
+               XAccessibleComponent.class, xAccessibleContext);	
+
+		// pruefen, ob die vom globalen Listener gemeldete Mouseposition im TopWindow des DrawDokuments liegt
+		Point ptScreen = aComp.getLocationOnScreen();
+		Size size = aComp.getSize();
 		
-			//GlobalScreen.removeNativeMouseListener(globalMouseListener);
-			
-			
-			//DispatchResultEvent result = DrawDocumentUtils.dispatchCmd(xContext,xFrame, "StatusGetPosition", null);
-			
-		XAccessibleContext xACParent = DrawDocumentUtils.getAccessibleContext(xContext);
-		return DrawDocumentUtils.getStatusposition(xACParent);
+		if( (x < ptScreen.X) || (x > (ptScreen.X + size.Width)))
+			return null;
+		
+		if( (y < ptScreen.Y) || (y > (ptScreen.Y + size.Height)))
+			return null;
+		
+		// globale MousePosition pt an TopWindow anpassen
+		Point pt = new Point(x, y);		
+		pt.X = pt.X - ptScreen.X;
+		pt.Y = pt.Y - ptScreen.Y;
+		
+		return pt;
 	}
 
+	
+	/**
+	 * Realisiert einen Globalen MouseClick.
+	 * 
+	 * @param mousePoint
+	 */
+	public void doGlobalMouseEvent(Object mousePoint)
+	{
+		Point pos = getStatusbarPosition();
+		if((pos != null) && (currentLayout != null))
+		{
+			
+			
+			
+			// Testshape hinzufuegen
+			Size size = new Size(1000, 1000);
+			XShape xShape = DrawDocumentUtils.createShape(xComponent, pos, size,
+					"com.sun.star.drawing.RectangleShape");
+			XDrawPage xDrawPage = DrawDocumentUtils.getCurrentPage(xComponent);
+			xDrawPage.add(xShape);
+
+		}
+	}
+	
+	/**
+	 * Statusbarposition auslesen und transformieren um die Laengeneinheit und die aktuelle DrawBorderEinstellung.
+	 * 
+	 * @return
+	 */
+	public Point getStatusbarPosition()
+	{
+		Point pos = null;
+		
+		XAccessibleContext accessibleContext = DrawDocumentUtils.getAccessibleContext(xContext);
+		Double [] statusPos = DrawDocumentUtils.getStatusposition(accessibleContext);
+		if (statusPos != null)
+		{
+			// 'LeftTop' - Position der Page Borderdefinition
+			XDrawPage xDrawPage = DrawDocumentUtils.getCurrentPage(xComponent);
+			Point LeftTop = DrawDocumentUtils.getPageLeftTopBorder(xDrawPage);
+
+			//
+			// ToDo
+			//
+			// die MousePosition an Laengeneinheit anpassen
+			//
+			
+			// eaperimentell
+			statusPos[0] = statusPos[0] * 1000.0;
+			statusPos[1] = statusPos[1] * 1000.0;
+
+			// Postion in Point ueberfuehren
+			pos = new Point(statusPos[0].intValue(), statusPos[1].intValue());
+
+			// Mouseposition an Borderdefinition der Page anpassen
+			pos.X = pos.X + LeftTop.X;
+			pos.Y = pos.Y + LeftTop.Y;
+		}
+		else
+		{
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "", "Statusbar einschalten");
+		}
+
+		return pos;
+	}
+	
+	
+
+	public boolean isStampMode()
+	{
+		return stampMode;
+	}
+
+	public void setStampMode(boolean stampMode)
+	{
+		this.stampMode = stampMode;
+	}
+
+	public boolean isLayerSelect()
+	{
+		
+		return false;
+	}
 	
 	
 	/**
@@ -579,6 +700,9 @@ public class DrawDocument
 	 */	
 	public void closeDocument()
 	{
+		// global MouseListener deaktivieren
+		GlobalScreen.removeNativeMouseListener(globalMouseListener);
+		
 		
 		// verursacht Exception: Ursache unklar
 		// com.sun.star.lang.DisposedException: java_remote_bridge com.sun.star.lib.uno.bridges.java_remote.java_remote_bridge@1ca8eaf is disposed
@@ -586,11 +710,30 @@ public class DrawDocument
 		xComponent.dispose();
 	}
 	
+	/**
+	 * Die aktuelle Skalierung einlesen 
+	 */
+	public void readScaleData()
+	{
+		scale = new Scale(xComponent);
+		scale.pullScaleProperties();		
+	}
+	
+	public void scalePoint(int x, int y)
+	{		
+		Point pt = new Point(x,y);
+		pt = scale.scalePoint(pt); 
+		System.out.println("Scale: "+pt.X+" | "+pt.Y);
+	}
+	
+
+	/*
 	public void pullScaleData()
 	{
 		scale = new Scale(xComponent);
 		scale.pullScaleProperties();		
 	}
+	*/
 	
 	public Scale getScale()
 	{
@@ -1059,7 +1202,7 @@ public class DrawDocument
 		return null;
 	}
 
-	
+	/*
 	public Double getScaleFactor()
 	{
 		if (xComponent != null)
@@ -1097,6 +1240,7 @@ public class DrawDocument
 
 		return null;
 	}
+	*/
 
 	public HomogenMatrixLine3 getScaleFactors()
 	{		

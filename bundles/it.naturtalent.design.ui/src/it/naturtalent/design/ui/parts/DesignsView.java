@@ -62,6 +62,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.jnativehook.GlobalScreen;
 import org.jnativehook.mouse.NativeMouseEvent;
 
 import it.naturtalent.application.IPreferenceAdapter;
@@ -98,7 +99,7 @@ public class DesignsView
 	// mit diesem Event wird angezeigt, dass die Daten des Modell festgeschrieben wurden
 	public static final String DESIGNPROJECTSAVED_MODELEVENT = "designprojectsavedmodelevent"; //$NON-NLS-N$
 
-	// mit diesem Event wird angezeigt, dass die Daten des Modell festgeschrieben wurden
+	// Event zeigt an, dass ein EObject dem Modell hinzuefuegt wurde
 	public static final String DESIGNPROJECTADD_MODELEVENT = "designprojectaddmodelevent"; //$NON-NLS-N$
 
 	
@@ -913,29 +914,36 @@ public class DesignsView
 	/*
 	 * Global Mousecklick
 	 * 
+	 * Ein Shape an der Mouseposition zeichnen.
 	 * 
 	 */	
 	@Inject
 	@Optional
 	public void handleGlobalMouseClickEvent(@UIEventTopic(DrawDocumentEvent.DRAWDOCUMENT_EVENT_GLOBALMOUSEPRESSED) Object eventObject)
-	{	
-		//
+	{					
 		if (eventObject instanceof NativeMouseEvent)
-		{
-			NativeMouseEvent mouseEvent = (NativeMouseEvent) eventObject;
-			System.out.println("Click "+mouseEvent.getX()+" | "+mouseEvent.getY());
-			
-			/*
+		{			
 			DrawDocument drawDocument = openDrawDocumentMap.get(activeDesign);
 			if(drawDocument != null)
 			{
-				Double [] pos = drawDocument.getStatusPosition();
-				System.out.println(pos[0]+" | "+pos[1]);
+				if (drawDocument.isStampMode())
+				{
+					// war der MouseClick im TopWindow
+					NativeMouseEvent mouseEvent = (NativeMouseEvent) eventObject;
+					Object mousePoint = drawDocument.containsPoint(
+							mouseEvent.getX(), mouseEvent.getY());
+					if (mousePoint != null)
+					{
+
+						System.out.println("ClickIntervall: "
+								+ GlobalScreen.getMultiClickIterval());
+
+						// die angepasste Postion wird weitergegeben
+						drawDocument.doGlobalMouseEvent(mousePoint);
+					}
+				}
 			}
-			else System.out.println("ungueltiges Global event");
-			*/
 		}
-		
 	}
 
 
@@ -1047,6 +1055,13 @@ public class DesignsView
 	{
 		readDesignPages();
 		readDesignLayers();
+		
+		if(activeDesign != null)
+		{
+			DrawDocument drawDocument = openDrawDocumentMap.get(activeDesign);	
+			if(drawDocument != null)
+				drawDocument.readScaleData();
+		}
 	}
 
 	/*

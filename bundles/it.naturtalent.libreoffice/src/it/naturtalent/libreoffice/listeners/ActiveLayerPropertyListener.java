@@ -1,4 +1,4 @@
-package it.naturtalent.libreoffice;
+package it.naturtalent.libreoffice.listeners;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -22,9 +22,11 @@ import com.sun.star.uno.RuntimeException;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XInterface;
 
+import it.naturtalent.libreoffice.PropertyChangeListenerHelper;
+
 
 /**
- * Ueberwacht im XPropertySet von XComponent die Eigenschaft mit dem Namen 'CurrentPage'. Aendert sich der Wert dieser
+ * Ueberwacht im XPropertySet von XComponent die Eigenschaft mit dem Namen 'ActiveLayer'. Aendert sich der Wert dieser
  * Eigenschaft ist das gleichbdutend mit einer Selektionsaenderung.
  * 
  * @author dieter

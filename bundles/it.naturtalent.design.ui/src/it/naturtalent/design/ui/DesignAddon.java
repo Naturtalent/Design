@@ -12,6 +12,8 @@ import org.osgi.service.event.Event;
 
 import it.naturtalent.e4.project.INtProjectPropertyFactory;
 import it.naturtalent.e4.project.INtProjectPropertyFactoryRepository;
+import it.naturtalent.libreoffice.draw.ILayerLayoutFactory;
+import it.naturtalent.libreoffice.draw.ILayerLayoutFactoryRepository;
 
 public class DesignAddon
 {
@@ -19,6 +21,8 @@ public class DesignAddon
 	// das zentrale ProjectPropertyRepository
 	private @Inject INtProjectPropertyFactoryRepository ntProjektDataFactoryRepository;
 
+	private @Inject ILayerLayoutFactoryRepository layerLayoutRepository;
+	
 	
 	@Inject
 	@Optional
@@ -29,6 +33,9 @@ public class DesignAddon
 		{
 			List<INtProjectPropertyFactory>ntDataFactories = ntProjektDataFactoryRepository.getAllProjektDataFactories();
 			ntDataFactories.add(new DesignProjectPropertyFactory());
+			
+			List<ILayerLayoutFactory>layerLayoutFactories = layerLayoutRepository.getLayerLayoutFactories();
+			layerLayoutFactories.add(new DefaultTextLayerFactory());
 		}
 	}
 	
