@@ -286,6 +286,11 @@ public class DesignsView
 							treeViewer.refresh(activeDesign);
 							treeViewer.setSelection(new StructuredSelection(page));
 						}
+						else
+						{
+							// neuer Layer
+							System.out.println("neuer Layer");
+						}
 					}
 				}
 				

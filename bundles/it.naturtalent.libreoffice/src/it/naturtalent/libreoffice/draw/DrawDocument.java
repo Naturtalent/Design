@@ -364,7 +364,8 @@ public class DrawDocument
 			shapeSelectionListener = new ShapeSelectionListener();
 			selectionSupplier.addSelectionChangeListener(shapeSelectionListener);
 			
-			// exp
+			// Listener meldet Layeraenderung die vom Modelllayer ausgegangen ist oder durch Selektion eines
+			// Shapes in einem anderen Layer - (nicht durch direkte Tabselektion im DrawDocument)
 			XPropertySet props = UnoRuntime.queryInterface(XPropertySet.class,xController);
 			Props.showProps("XComponent", props);
 			props.addPropertyChangeListener("ActiveLayer",new XPropertyChangeListener()
