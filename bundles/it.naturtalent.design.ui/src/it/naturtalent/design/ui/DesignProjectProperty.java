@@ -1,8 +1,5 @@
 package it.naturtalent.design.ui;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
@@ -69,14 +66,26 @@ public class DesignProjectProperty implements INtProjectProperty
 	@Override
 	public String getNtProjectID()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return (designGroup != null) ? designGroup.getIProjectID() : null; 
 	}
 	
+	@Override
+	public void setNtPropertyData(Object eObject)
+	{
+		if(eObject instanceof DesignGroup)
+			designGroup = (DesignGroup) eObject;		
+	}
+
 	@Override
 	public Object getNtPropertyData()
 	{
 		return designGroup;
+	}
+
+	@Override
+	public Object getPropertyContainer()
+	{		
+		return DesignUtils.getDesigns();
 	}
 
 	@Override
@@ -222,6 +231,7 @@ public class DesignProjectProperty implements INtProjectProperty
 		return null;
 	}
 
+	/*
 	@Override
 	public void exportProperty()
 	{
@@ -235,6 +245,6 @@ public class DesignProjectProperty implements INtProjectProperty
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+	*/
 
 }

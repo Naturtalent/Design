@@ -457,8 +457,11 @@ public class DrawDocument
 	public void doShapeSelection(Object arg0)
 	{					
 		List<XShape>shapeList = DrawDocumentUtils.getSelectedShapes(xComponent);
-		XLayer xLayer = DrawDocumentUtils.getLayerforShape(xComponent, shapeList.get(0));
-		DrawDocumentUtils.selectLayer(xComponent, xLayer);
+		if ((shapeList != null) && (!shapeList.isEmpty()))
+		{
+			XLayer xLayer = DrawDocumentUtils.getLayerforShape(xComponent,shapeList.get(0));
+			DrawDocumentUtils.selectLayer(xComponent, xLayer);
+		}
 	}
 	
 	/**

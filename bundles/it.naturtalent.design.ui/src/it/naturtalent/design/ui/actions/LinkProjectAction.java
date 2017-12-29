@@ -11,6 +11,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 import it.naturtalent.design.model.design.Design;
@@ -83,6 +84,17 @@ public class LinkProjectAction
 				if (StringUtils.isNotEmpty(projectID))
 					iProject = ResourcesPlugin.getWorkspace().getRoot()
 							.getProject(projectID);
+			}
+			else
+			{
+				EObject eObject = (EObject) selectedDesignObjec;
+				while(!(eObject instanceof DesignGroup))
+					eObject = eObject.eContainer();
+					
+				// DesignGroup ist selektiert -> IProject direkt ueber ProjektID ermitteln
+				projectID = ((DesignGroup)eObject).getIProjectID();
+				if(StringUtils.isNotEmpty(projectID))
+					return(ResourcesPlugin.getWorkspace().getRoot().getProject(projectID));			
 			}
 		}
 

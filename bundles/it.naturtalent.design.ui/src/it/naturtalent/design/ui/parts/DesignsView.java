@@ -785,7 +785,8 @@ public class DesignsView
 	@Optional
 	public void handleSelectGroupEvent(@UIEventTopic(DesignsView.DESIGN_SELECTGROUP_EVENT) DesignGroup designGroup)
 	{				
-		treeViewer.setSelection(new StructuredSelection(designGroup));		
+		if(treeViewer != null)
+			treeViewer.setSelection(new StructuredSelection(designGroup));		
 	}
 	
 	/*
@@ -913,7 +914,8 @@ public class DesignsView
 	{	
 		// die Realisierung erfolgt in @see doShapeSelection() 
 		DrawDocument drawDocument = openDrawDocumentMap.get(activeDesign);
-		drawDocument.doShapeSelection(eventObject);
+		if(drawDocument != null)
+			drawDocument.doShapeSelection(eventObject);
 	}
 	
 	/*

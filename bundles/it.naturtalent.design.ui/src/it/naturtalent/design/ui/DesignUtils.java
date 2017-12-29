@@ -180,7 +180,7 @@ public class DesignUtils
 		if(designs != null)
 			return designs;
 		
-		// im ECPProject 'designsProject'  das Modell Archives suchen 		
+		// im ECPProject 'designsProject'  das Modell Design suchen 		
 		EList<Object>projectContents = getDesignProject().getContents();
 		if(!projectContents.isEmpty())
 		{

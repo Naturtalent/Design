@@ -13,6 +13,8 @@ public class DesignProjectPropertyFactory implements INtProjectPropertyFactory
 {
 	public final static String DESIGNPROJECTPROPERTYLABEL = "Zeichnungen";
 
+	public final static String DESIGNPROJECTNAME = "DesignsEMFProject";
+	
 	@Override
 	public INtProjectProperty createNtProjektData()
 	{
@@ -26,6 +28,13 @@ public class DesignProjectPropertyFactory implements INtProjectPropertyFactory
 	public String getLabel()
 	{
 		return DESIGNPROJECTPROPERTYLABEL;
+	}
+
+	@Override
+	public String getParentContainerName()
+	{
+		
+		return DESIGNPROJECTNAME;
 	}
 
 }
