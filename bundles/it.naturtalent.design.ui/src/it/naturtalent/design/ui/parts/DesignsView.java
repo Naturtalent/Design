@@ -963,7 +963,7 @@ public class DesignsView
 	{
 		// Undo
 		EditingDomain domain = AdapterFactoryEditingDomain.getEditingDomainFor(DesignUtils.getDesignProject());	
-		domain.getCommandStack().canUndo();
+		//domain.getCommandStack().canUndo();
 		DesignUtils.getToolItem(DesignUtils.TOOLBAR_UNDO_ID, part).setEnabled(domain.getCommandStack().canUndo());
 		
 		// Save Data
