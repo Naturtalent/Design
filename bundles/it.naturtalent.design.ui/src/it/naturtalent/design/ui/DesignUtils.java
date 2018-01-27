@@ -55,6 +55,7 @@ import it.naturtalent.design.model.design.DesignsPackage;
 import it.naturtalent.design.model.design.Page;
 import it.naturtalent.design.ui.parts.DesignsView;
 import it.naturtalent.e4.project.IProjectData;
+import it.naturtalent.emf.model.EMFModelUtils;
 import it.naturtalent.libreoffice.draw.DrawDocument;
 
 
@@ -79,7 +80,7 @@ public class DesignUtils
 
 	private static Log log = LogFactory.getLog(DesignUtils.class);
 	
-	private static ECPProject designsProject;
+	//private static ECPProject designsProject;
 	private static Designs designs;
 	
 	
@@ -128,16 +129,20 @@ public class DesignUtils
 	 */
 	public static ECPProject getDesignProject()
 	{
+		ECPProject designsProject = null; 
+				
+		designsProject = ECPUtil.getECPProjectManager().getProject(DesignsView.DESIGNPROJECTNAME);
 		if(designsProject == null)
-			designsProject = ECPUtil.getECPProjectManager().getProject(DesignsView.DESIGNPROJECTNAME);			
-		
-		// ggf. Projekt 'DESIGNPROJECT' erzeugen (bei Erstaufruf)	
-		if(designsProject == null)
-			designsProject = createProject(DesignsView.DESIGNPROJECTNAME);			
+		{
+			designsProject = EMFModelUtils.createProject(DesignsView.DESIGNPROJECTNAME);
+			if(designsProject == null)
+				log.error("es konnte kein ECPProject erzeugt werden");
+		}
 
 		return designsProject;
 	}
 	
+	/*
 	public static ECPProject createProject(String projectName)
 	{
 		ECPProject project = null;
@@ -167,6 +172,7 @@ public class DesignUtils
 		
 		return project;
 	}
+	*/
 
 	
 	/**
@@ -180,26 +186,30 @@ public class DesignUtils
 		if(designs != null)
 			return designs;
 		
-		// im ECPProject 'designsProject'  das Modell Design suchen 		
-		EList<Object>projectContents = getDesignProject().getContents();
-		if(!projectContents.isEmpty())
+		// im ECPProject 'designsProject'  das Modell Design suchen 
+		ECPProject ecpProject = getDesignProject();				
+		if (ecpProject != null)
 		{
-			for(Object projectContent : projectContents)
+			EList<Object> projectContents = ecpProject.getContents();
+			if (!projectContents.isEmpty())
 			{
-				if (projectContent instanceof Designs)
+				for (Object projectContent : projectContents)
 				{
-					designs = (Designs) projectContent; 
-					break;
+					if (projectContent instanceof Designs)
+					{
+						designs = (Designs) projectContent;
+						break;
+					}
 				}
-			}			
-		}
-		else
-		{
-			// das Modell Designs erzeugen und im ECPProject speichern
-			EClass designsClass = DesignsPackage.eINSTANCE.getDesigns();
-			designs = (Designs)EcoreUtil.create(designsClass);
-			projectContents.add(designs);
-			designsProject.saveContents();			
+			}
+			else
+			{
+				// das Modell Designs erzeugen und im ECPProject speichern
+				EClass designsClass = DesignsPackage.eINSTANCE.getDesigns();
+				designs = (Designs) EcoreUtil.create(designsClass);
+				projectContents.add(designs);
+				ecpProject.saveContents();
+			}
 		}
 		
 		return designs;
