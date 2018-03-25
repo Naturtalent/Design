@@ -223,16 +223,20 @@ public class DesignUtils
 	 * @param ntProjectID
 	 * @return
 	 */
-	public static DesignGroup findDesignGroup(String ntProjectID)
+	public static DesignGroup findProjectDesignGroup(String ntProjectID)
 	{
-		Designs designs = DesignUtils.getDesigns();
-		EList<DesignGroup>designGroups = designs.getDesigns();
-		if(designGroups != null)
+		if (StringUtils.isNotEmpty(ntProjectID))
 		{
-			for(DesignGroup designGroup : designGroups)
+			Designs designs = DesignUtils.getDesigns();
+			EList<DesignGroup> designGroups = designs.getDesigns();
+			if (designGroups != null)
 			{
-				if(StringUtils.equals(ntProjectID, designGroup.getIProjectID()))
-					return designGroup;
+				for (DesignGroup designGroup : designGroups)
+				{
+					if (StringUtils.equals(ntProjectID,
+							designGroup.getIProjectID()))
+						return designGroup;
+				}
 			}
 		}
 		

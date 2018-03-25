@@ -5,7 +5,6 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -19,11 +18,10 @@ import org.eclipse.emf.ecp.core.ECPProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.wizard.IWizardPage;
 
+import it.naturtalent.design.model.design.Design;
 import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.model.design.Designs;
-import it.naturtalent.design.model.design.DesignsFactory;
 import it.naturtalent.design.ui.parts.DesignsView;
-import it.naturtalent.e4.project.INtProject;
 import it.naturtalent.e4.project.INtProjectProperty;
 
 
@@ -35,9 +33,12 @@ import it.naturtalent.e4.project.INtProjectProperty;
  */
 public class DesignProjectProperty implements INtProjectProperty
 {
+	// die mit diesem Adapter erzugte WizardPage
+	private DesignProjectPropertyWizardPage designWizardPage;
 	
 	// die eigentlichen Propertydaten
-	private DesignGroup designGroup = DesignsFactory.eINSTANCE.createDesignGroup();
+	//private DesignGroup designGroup = DesignsFactory.eINSTANCE.createDesignGroup();
+	private DesignGroup designGroup;
 	
 	// ID des Projekts, auf das sich die Eigenschaft bezieht
 	private String ntProjectID;
@@ -56,11 +57,8 @@ public class DesignProjectProperty implements INtProjectProperty
 	@Override
 	public void setNtProjectID(String ntProjectID)
 	{
-		this.ntProjectID = ntProjectID;		
-
-		DesignGroup designGroup = DesignUtils.findDesignGroup(ntProjectID);
-		if(designGroup != null)
-			this.designGroup = designGroup;		
+		this.ntProjectID = ntProjectID;				
+		designGroup = DesignUtils.findProjectDesignGroup(ntProjectID);
 	}
 
 	@Override
@@ -91,55 +89,107 @@ public class DesignProjectProperty implements INtProjectProperty
 	@Override
 	public void commit()
 	{
-		//ECPProject ecpProject = DesignUtils.getDesignProject();
-		//if (ecpProject.hasDirtyContents() && StringUtils.isNotEmpty(ntProjectID))
-		if (StringUtils.isNotEmpty(ntProjectID))	
+		// ohne WizardPage keine bearbeitetes DesignGroup 
+		if(designWizardPage == null)
+			return;
+		
+		// das ContainerModell
+		Designs designs = DesignUtils.getDesigns();
+		
+		// die mit dem WizardPage bearbeitete DesignGroup
+		DesignGroup editedDesignGroup = designWizardPage.getWizardDesignGroup();
+		
+		DesignGroup persistenceDesignGroup = DesignUtils.findProjectDesignGroup(ntProjectID);
+		
+		if(editedDesignGroup.getDesigns().size() == 0)
 		{
-			designGroup.setIProjectID(ntProjectID);
-			
-			if (StringUtils.isEmpty(designGroup.getName()))
+			// eine bereits vorhandene Group laden			
+			if(persistenceDesignGroup != null)
 			{
-				// DesignGroupName nicht definiert - Projektname wird uebernommen
+				// existierende Group entfernen
+				designs.getDesigns().remove(persistenceDesignGroup);	
+				
+				// Modell speichern
+				ECPProject designProject = DesignUtils.getDesignProject();
+				designProject.saveContents();				
+			}	
+			return;
+		}
+		else
+		{
+			if(persistenceDesignGroup == null)
+			{
+				// DesignGroup ist neu
+				editedDesignGroup.setIProjectID(ntProjectID);
+				
+				// die erforderlichen Dateien im Datenbereich des Projekts erzeugen
 				IProject iProject = ResourcesPlugin.getWorkspace().getRoot().getProject(ntProjectID);
-				try
-				{
-					String name = iProject.getPersistentProperty(INtProject.projectNameQualifiedName);
-					designGroup.setName(name);
-				} catch (CoreException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				for(Design design : editedDesignGroup.getDesigns())		
+					design.setDesignURL(DesignUtils.createProjectDesignFile(iProject));
+						
+				// neue DesignGroup zum Modell hinzufuegen
+				designs.getDesigns().add(editedDesignGroup);
 			}
+		}
 
-			DesignGroup persistenceDesignGroup = DesignUtils.findDesignGroup(ntProjectID);
-			if (persistenceDesignGroup == null)
-			{
-				// neuer Datensatz - zum Modell hinzufuegen
-				Designs designs = DesignUtils.getDesigns();
-				designs.getDesigns().add(designGroup);
+	}
+	
+	public void commitOLD()
+	{
+		// ohne WizardPage keine bearbeitetes DesignGroup 
+		if(designWizardPage == null)
+			return;
+		
+		// die mit dem WizardPage bearbeitete DesignGroup
+		DesignGroup editedDesignGroup = designWizardPage.getWizardDesignGroup();
+		
+		// eine bereits vorhandene Group laden
+		DesignGroup persistenceDesignGroup = DesignUtils.findProjectDesignGroup(ntProjectID);
+		
+		// das ContainerModell
+		Designs designs = DesignUtils.getDesigns();
+		
+		// ist der DesingGroupName null wird eine evtl. existierende Gruppe geloescht
+		if(StringUtils.isEmpty(editedDesignGroup.getName()))
+		{			
+			if(persistenceDesignGroup != null)
+			{				
+				// existierende Group entfernen
+				designs.getDesigns().remove(persistenceDesignGroup);	
+				
+				// Modell speichern
+				ECPProject designProject = DesignUtils.getDesignProject();
+				designProject.saveContents();
 			}
-			else
-			{
-				persistenceDesignGroup.setName(designGroup.getName());
-			}
-
-			// Modell speichern
-			ECPProject designProject = DesignUtils.getDesignProject();
-			designProject.saveContents();
-
+			
+			return;
+		}
+				
+		if(persistenceDesignGroup != null)
+		{
+			// Name der existierenden DesignGroup aktualisieren
+			persistenceDesignGroup.setName(editedDesignGroup.getName());			
+		}
+		else
+		{
+			// neue DesignGroup hinzufuegen
+			editedDesignGroup.setIProjectID(ntProjectID);
+			designs.getDesigns().add(editedDesignGroup);
 		}
 		
+		// Modell speichern
+		ECPProject designProject = DesignUtils.getDesignProject();
+		designProject.saveContents();
 	}
 
 	/*
-	 * loescht die DesignGroup des Projekts und die ProjectDesignFiles 
+	 * DesingPropertyWizarPage erzeugen
 	 * 
 	 */
 	@Override
 	public IWizardPage createWizardPage()
 	{
-		DesignProjectPropertyWizardPage designWizardPage = ContextInjectionFactory.make(DesignProjectPropertyWizardPage.class, context);
+		designWizardPage = ContextInjectionFactory.make(DesignProjectPropertyWizardPage.class, context);
 		designWizardPage.setDesignProjectProperty(this);			
 		return designWizardPage;
 	}
@@ -162,7 +212,7 @@ public class DesignProjectProperty implements INtProjectProperty
 	{
 		if (StringUtils.isNotEmpty(ntProjectID))	
 		{
-			DesignGroup projectDesignGroup = DesignUtils.findDesignGroup(ntProjectID);
+			DesignGroup projectDesignGroup = DesignUtils.findProjectDesignGroup(ntProjectID);
 			if (projectDesignGroup != null)
 			{
 				// die ProjectDesignFiles muessen nicht explizit enfernt werden, da sie im
@@ -229,6 +279,20 @@ public class DesignProjectProperty implements INtProjectProperty
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getPropertyFactoryName()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean importProperty(Object importData)
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	/*

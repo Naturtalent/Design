@@ -623,7 +623,7 @@ public class DesignsView
 		if(selectedProject != null)
 		{
 			this.selectedProject = selectedProject;
-			DesignGroup designGroup = DesignUtils.findDesignGroup(selectedProject.getName());
+			DesignGroup designGroup = DesignUtils.findProjectDesignGroup(selectedProject.getName());
 			if(designGroup != null)
 			{
 				// DesignGroup selektieren
@@ -672,7 +672,7 @@ public class DesignsView
 		
 		if(selectedProject != null)
 		{			
-			DesignGroup designGroup = DesignUtils.findDesignGroup(selectedProject.getName());
+			DesignGroup designGroup = DesignUtils.findProjectDesignGroup(selectedProject.getName());
 			if(designGroup != null)				
 				treeViewer.setSelection(new StructuredSelection(designGroup));
 		}			

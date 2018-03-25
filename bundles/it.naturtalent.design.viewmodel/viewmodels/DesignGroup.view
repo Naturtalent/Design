@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ASCII"?>
+<org.eclipse.emf.ecp.view.model:View xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:org.eclipse.emf.ecp.view.model="http://org/eclipse/emf/ecp/view/model/170" xmi:id="_j-LKoC-uEeieHfyeRpPc7g" name="DesignGroup" ecorePath="/Design_bundles/it.naturtalent.design.model/model/design.ecore">
+  <rootEClass href="http://it.naturtalent/design#//DesignGroup"/>
+  <children xsi:type="org.eclipse.emf.ecp.view.model:Control" xmi:id="_j-kMMC-uEeieHfyeRpPc7g" name="Control name">
+    <domainModelReference xsi:type="org.eclipse.emf.ecp.view.model:FeaturePathDomainModelReference" xmi:id="_j-kMMS-uEeieHfyeRpPc7g">
+      <domainModelEFeature xsi:type="ecore:EAttribute" href="http://it.naturtalent/design#//DesignGroup/name"/>
+    </domainModelReference>
+  </children>
+  <children xsi:type="org.eclipse.emf.ecp.view.model:Control" xmi:id="_j-kMNC-uEeieHfyeRpPc7g" name="Control designs">
+    <domainModelReference xsi:type="org.eclipse.emf.ecp.view.model:FeaturePathDomainModelReference" xmi:id="_j-kMNS-uEeieHfyeRpPc7g">
+      <domainModelEFeature xsi:type="ecore:EReference" href="http://it.naturtalent/design#//DesignGroup/designs"/>
+    </domainModelReference>
+  </children>
+</org.eclipse.emf.ecp.view.model:View>
