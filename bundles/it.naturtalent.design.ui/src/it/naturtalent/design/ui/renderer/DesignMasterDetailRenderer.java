@@ -6,14 +6,17 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecp.view.spi.context.ViewModelContext;
 import org.eclipse.emf.ecp.view.spi.treemasterdetail.ui.swt.TreeMasterDetailSWTRenderer;
 import org.eclipse.emf.ecp.view.treemasterdetail.model.VTreeMasterDetail;
 import org.eclipse.emfforms.spi.common.report.ReportService;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
@@ -23,6 +26,7 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import it.naturtalent.design.model.design.Design;
 import it.naturtalent.design.model.design.provider.DesignEditPlugin;
+import it.naturtalent.design.ui.DesignUtils;
 import it.naturtalent.design.ui.actions.OpenDesignAction;
 import it.naturtalent.design.ui.parts.DesignsView;
 
@@ -40,7 +44,6 @@ import it.naturtalent.design.ui.parts.DesignsView;
  */
 public class DesignMasterDetailRenderer extends TreeMasterDetailSWTRenderer
 {
-	
 	@Inject
 	public DesignMasterDetailRenderer(VTreeMasterDetail vElement,
 			ViewModelContext viewContext, ReportService reportService)
@@ -111,6 +114,4 @@ public class DesignMasterDetailRenderer extends TreeMasterDetailSWTRenderer
 		return treeViewer;
 	}
 
-	
-	
 }

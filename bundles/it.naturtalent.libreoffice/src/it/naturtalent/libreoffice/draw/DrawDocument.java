@@ -400,10 +400,13 @@ public class DrawDocument
 			/* -------------------------- experimental -----------------------------------*/
 
 			// Globalen MouseListener einschalten und Logger begrenzen
+			
+		
 			GlobalScreen.registerNativeHook();			
 			globalMouseListener = new GlobalMouseListener(eventBroker);			
 			Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
 			logger.setLevel(Level.WARNING);
+		
 
 			// den globalen MouseListener ein-/ausschalten
 			xTopWindow = DrawDocumentUtils.getDrawDocumentXTopWindow(xContext);			

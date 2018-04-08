@@ -875,8 +875,12 @@ public class DesignsView
 		// die Zeichnung mit der Seite 'xDrawPage' wird zur activen Zeichnung 
 		Design design = findParentDesign(xDrawPage);
 		
+		
 		if(design != null)
 			treeViewer.setSelection(new StructuredSelection(design));
+		
+		
+		//eventBroker.post(DesignUtils.DESIGN_SELECTMASTER_REQUEST, design);
 						
 		// DrawDocumentDaten im Modell aktualisieren
 		pullDrawDocumentData();

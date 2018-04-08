@@ -6,6 +6,8 @@ import org.eclipse.emf.ecp.view.treemasterdetail.model.VTreeMasterDetail;
 import org.eclipse.emf.ecp.view.treemasterdetail.ui.swt.internal.TreeMasterDetailSWTRendererService;
 import org.eclipse.emfforms.spi.swt.core.AbstractSWTRenderer;
 
+import it.naturtalent.design.model.design.Designs;
+
 public class DesignMasterDetailRendererService extends TreeMasterDetailSWTRendererService
 {
 
@@ -20,7 +22,8 @@ public class DesignMasterDetailRendererService extends TreeMasterDetailSWTRender
 	{
 		if (VTreeMasterDetail.class.isInstance(vElement))
 		{
-			return 10d;
+			if(viewModelContext.getDomainModel() instanceof Designs)
+				return 10d;
 		}
 		return NOT_APPLICABLE;
 	}

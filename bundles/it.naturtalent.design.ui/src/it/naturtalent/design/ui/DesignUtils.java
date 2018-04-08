@@ -77,7 +77,7 @@ public class DesignUtils
 	
 	// 'Ziel' im Projeckdatabereich wird die Vorlage unter diesem Namen abeglegt (ggf. erweitert mit counter)
 	private static final String DEFAULT_DESIGNNAME = "zeichnung.odg"; //$NON-NLS-1$
-
+	
 	private static Log log = LogFactory.getLog(DesignUtils.class);
 	
 	//private static ECPProject designsProject;
