@@ -3,7 +3,6 @@ package it.naturtalent.planning.ui.parts;
 
 
 
-import it.naturtalent.e4.office.odf.shapes.IOdfElementFactoryRegistry;
 import it.naturtalent.e4.project.IResourceNavigator;
 import it.naturtalent.icons.core.Icon;
 import it.naturtalent.icons.core.IconSize;
@@ -14,6 +13,7 @@ import it.naturtalent.libreoffice.draw.Layer;
 import it.naturtalent.libreoffice.draw.Scale;
 import it.naturtalent.libreoffice.draw.Shape;
 import it.naturtalent.libreoffice.draw.Style;
+import it.naturtalent.libreoffice.odf.shapes.IOdfElementFactoryRegistry;
 import it.naturtalent.planning.ui.DefaultItemStyle;
 import it.naturtalent.planning.ui.DesignDetailsComposite;
 import it.naturtalent.planning.ui.DesignDrawDocumentRegistry;

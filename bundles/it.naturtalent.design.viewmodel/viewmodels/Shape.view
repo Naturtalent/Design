@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ASCII"?>
+<org.eclipse.emf.ecp.view.model:View xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:org.eclipse.emf.ecp.view.model="http://org/eclipse/emf/ecp/view/model/170" xmi:id="_oWHBAEKCEeiqWYj3y6J4Bw" name="Shape" ecorePath="/Design_bundles/it.naturtalent.design.model/model/design.ecore">
+  <rootEClass href="http://it.naturtalent/design#//Shape"/>
+  <children xsi:type="org.eclipse.emf.ecp.view.model:Control" xmi:id="_oWe0cEKCEeiqWYj3y6J4Bw" name="Control name">
+    <domainModelReference xsi:type="org.eclipse.emf.ecp.view.model:FeaturePathDomainModelReference" xmi:id="_oWe0cUKCEeiqWYj3y6J4Bw">
+      <domainModelEFeature xsi:type="ecore:EAttribute" href="http://it.naturtalent/design#//Shape/name"/>
+    </domainModelReference>
+  </children>
+  <children xsi:type="org.eclipse.emf.ecp.view.model:Control" xmi:id="_oWe0ckKCEeiqWYj3y6J4Bw" name="Control class">
+    <domainModelReference xsi:type="org.eclipse.emf.ecp.view.model:FeaturePathDomainModelReference" xmi:id="_oWe0c0KCEeiqWYj3y6J4Bw">
+      <domainModelEFeature xsi:type="ecore:EAttribute" href="http://it.naturtalent/design#//Shape/class"/>
+    </domainModelReference>
+  </children>
+</org.eclipse.emf.ecp.view.model:View>

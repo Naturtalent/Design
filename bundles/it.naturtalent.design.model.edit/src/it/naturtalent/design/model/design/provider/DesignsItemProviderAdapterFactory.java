@@ -174,56 +174,6 @@ public class DesignsItemProviderAdapterFactory extends DesignsAdapterFactory imp
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link it.naturtalent.design.model.design.Ebene} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected EbeneItemProvider ebeneItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link it.naturtalent.design.model.design.Ebene}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createEbeneAdapter()
-	{
-		if (ebeneItemProvider == null)
-		{
-			ebeneItemProvider = new EbeneItemProvider(this);
-		}
-
-		return ebeneItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link it.naturtalent.design.model.design.Item} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ItemItemProvider itemItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link it.naturtalent.design.model.design.Item}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createItemAdapter()
-	{
-		if (itemItemProvider == null)
-		{
-			itemItemProvider = new ItemItemProvider(this);
-		}
-
-		return itemItemProvider;
-	}
-
-	/**
 	 * This keeps track of the one adapter used for all {@link it.naturtalent.design.model.design.Layer} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -271,6 +221,56 @@ public class DesignsItemProviderAdapterFactory extends DesignsAdapterFactory imp
 		}
 
 		return layerSetItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link it.naturtalent.design.model.design.Shape} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ShapeItemProvider shapeItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link it.naturtalent.design.model.design.Shape}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createShapeAdapter()
+	{
+		if (shapeItemProvider == null)
+		{
+			shapeItemProvider = new ShapeItemProvider(this);
+		}
+
+		return shapeItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link it.naturtalent.design.model.design.ShapeType} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ShapeTypeItemProvider shapeTypeItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link it.naturtalent.design.model.design.ShapeType}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createShapeTypeAdapter()
+	{
+		if (shapeTypeItemProvider == null)
+		{
+			shapeTypeItemProvider = new ShapeTypeItemProvider(this);
+		}
+
+		return shapeTypeItemProvider;
 	}
 
 	/**
@@ -388,10 +388,10 @@ public class DesignsItemProviderAdapterFactory extends DesignsAdapterFactory imp
 		if (designGroupItemProvider != null) designGroupItemProvider.dispose();
 		if (designItemProvider != null) designItemProvider.dispose();
 		if (pageItemProvider != null) pageItemProvider.dispose();
-		if (ebeneItemProvider != null) ebeneItemProvider.dispose();
-		if (itemItemProvider != null) itemItemProvider.dispose();
 		if (layerItemProvider != null) layerItemProvider.dispose();
 		if (layerSetItemProvider != null) layerSetItemProvider.dispose();
+		if (shapeItemProvider != null) shapeItemProvider.dispose();
+		if (shapeTypeItemProvider != null) shapeTypeItemProvider.dispose();
 	}
 
 }

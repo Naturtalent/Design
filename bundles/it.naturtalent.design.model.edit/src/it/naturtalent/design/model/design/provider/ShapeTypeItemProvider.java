@@ -3,11 +3,8 @@
 package it.naturtalent.design.model.design.provider;
 
 
-import it.naturtalent.design.model.design.DesignsFactory;
 import it.naturtalent.design.model.design.DesignsPackage;
-import it.naturtalent.design.model.design.Layer;
-import it.naturtalent.icons.core.Icon;
-import it.naturtalent.icons.core.IconSize;
+import it.naturtalent.design.model.design.ShapeType;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,7 +14,6 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.ResourceLocator;
 
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
@@ -30,12 +26,12 @@ import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link it.naturtalent.design.model.design.Layer} object.
+ * This is the item provider adapter for a {@link it.naturtalent.design.model.design.ShapeType} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class LayerItemProvider 
+public class ShapeTypeItemProvider 
 	extends ItemProviderAdapter
 	implements
 		IEditingDomainItemProvider,
@@ -50,7 +46,7 @@ public class LayerItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public LayerItemProvider(AdapterFactory adapterFactory)
+	public ShapeTypeItemProvider(AdapterFactory adapterFactory)
 	{
 		super(adapterFactory);
 	}
@@ -69,7 +65,6 @@ public class LayerItemProvider
 			super.getPropertyDescriptors(object);
 
 			addNamePropertyDescriptor(object);
-			addShapeFactoryNamePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -86,9 +81,9 @@ public class LayerItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Layer_name_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Layer_name_feature", "_UI_Layer_type"),
-				 DesignsPackage.Literals.LAYER__NAME,
+				 getString("_UI_ShapeType_name_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ShapeType_name_feature", "_UI_ShapeType_type"),
+				 DesignsPackage.Literals.SHAPE_TYPE__NAME,
 				 true,
 				 false,
 				 false,
@@ -98,86 +93,30 @@ public class LayerItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Shape Factory Name feature.
+	 * This returns ShapeType.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 */
-	protected void addShapeFactoryNamePropertyDescriptor(Object object)
-	{
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Layer_shapeFactoryName_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Layer_shapeFactoryName_feature", "_UI_Layer_type"),
-				 DesignsPackage.Literals.LAYER__SHAPE_FACTORY_NAME,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
-	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
-	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object)
-	{
-		if (childrenFeatures == null)
-		{
-			super.getChildrenFeatures(object);
-			childrenFeatures.add(DesignsPackage.Literals.LAYER__SHAPES);
-		}
-		return childrenFeatures;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected EStructuralFeature getChildFeature(Object object, Object child)
-	{
-		// Check the type of the specified child object and return the proper feature to use for
-		// adding (see {@link AddCommand}) it as a child.
-
-		return super.getChildFeature(object, child);
-	}
-
-	/**
-	 * This returns Layer.gif.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object)
 	{
-		//return overlayImage(object, getResourceLocator().getImage("full/obj16/Layer"));
-		return Icon.ICON_LAYER.getImage(IconSize._16x16_DefaultIconSize);
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/ShapeType"));
 	}
 
 	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public String getText(Object object)
 	{
-		String label = ((Layer)object).getName();
+		String label = ((ShapeType)object).getName();
 		return label == null || label.length() == 0 ?
-			getString("_UI_Layer_type") : label;
+			getString("_UI_ShapeType_type") :
+			getString("_UI_ShapeType_type") + " " + label;
 	}
 	
 
@@ -193,14 +132,10 @@ public class LayerItemProvider
 	{
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(Layer.class))
+		switch (notification.getFeatureID(ShapeType.class))
 		{
-			case DesignsPackage.LAYER__NAME:
-			case DesignsPackage.LAYER__SHAPE_FACTORY_NAME:
+			case DesignsPackage.SHAPE_TYPE__NAME:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
-			case DesignsPackage.LAYER__SHAPES:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
 		super.notifyChanged(notification);
@@ -217,11 +152,6 @@ public class LayerItemProvider
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object)
 	{
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add
-			(createChildParameter
-				(DesignsPackage.Literals.LAYER__SHAPES,
-				 DesignsFactory.eINSTANCE.createShape()));
 	}
 
 	/**

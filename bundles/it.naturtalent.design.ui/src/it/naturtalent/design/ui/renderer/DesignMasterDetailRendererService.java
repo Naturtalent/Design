@@ -23,7 +23,7 @@ public class DesignMasterDetailRendererService extends TreeMasterDetailSWTRender
 		if (VTreeMasterDetail.class.isInstance(vElement))
 		{
 			if(viewModelContext.getDomainModel() instanceof Designs)
-				return 10d;
+				return 30d;
 		}
 		return NOT_APPLICABLE;
 	}

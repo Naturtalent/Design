@@ -95,16 +95,6 @@ public class DesignsAdapterFactory extends AdapterFactoryImpl
 				return createPageAdapter();
 			}
 			@Override
-			public Adapter caseEbene(Ebene object)
-			{
-				return createEbeneAdapter();
-			}
-			@Override
-			public Adapter caseItem(Item object)
-			{
-				return createItemAdapter();
-			}
-			@Override
 			public Adapter caseLayer(Layer object)
 			{
 				return createLayerAdapter();
@@ -113,6 +103,16 @@ public class DesignsAdapterFactory extends AdapterFactoryImpl
 			public Adapter caseLayerSet(LayerSet object)
 			{
 				return createLayerSetAdapter();
+			}
+			@Override
+			public Adapter caseShape(Shape object)
+			{
+				return createShapeAdapter();
+			}
+			@Override
+			public Adapter caseShapeType(ShapeType object)
+			{
+				return createShapeTypeAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object)
@@ -197,36 +197,6 @@ public class DesignsAdapterFactory extends AdapterFactoryImpl
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link it.naturtalent.design.model.design.Ebene <em>Ebene</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see it.naturtalent.design.model.design.Ebene
-	 * @generated
-	 */
-	public Adapter createEbeneAdapter()
-	{
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link it.naturtalent.design.model.design.Item <em>Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see it.naturtalent.design.model.design.Item
-	 * @generated
-	 */
-	public Adapter createItemAdapter()
-	{
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link it.naturtalent.design.model.design.Layer <em>Layer</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -252,6 +222,36 @@ public class DesignsAdapterFactory extends AdapterFactoryImpl
 	 * @generated
 	 */
 	public Adapter createLayerSetAdapter()
+	{
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link it.naturtalent.design.model.design.Shape <em>Shape</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see it.naturtalent.design.model.design.Shape
+	 * @generated
+	 */
+	public Adapter createShapeAdapter()
+	{
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link it.naturtalent.design.model.design.ShapeType <em>Shape Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see it.naturtalent.design.model.design.ShapeType
+	 * @generated
+	 */
+	public Adapter createShapeTypeAdapter()
 	{
 		return null;
 	}

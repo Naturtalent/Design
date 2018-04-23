@@ -16,8 +16,7 @@
 		<module>it.naturtalent.design.model</module>
 		<module>it.naturtalent.design.model.edit</module>
 		<module>it.naturtalent.design.ui</module>
-		<module>it.naturtalent.design.viewmodel</module>
-		<module>it.naturtalent.libreoffice</module>
+		<module>it.naturtalent.design.viewmodel</module>		
 	</modules>
 
 </project>

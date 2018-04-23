@@ -68,10 +68,10 @@ public class DesignsFactoryImpl extends EFactoryImpl implements DesignsFactory
 			case DesignsPackage.DESIGN_GROUP: return createDesignGroup();
 			case DesignsPackage.DESIGN: return createDesign();
 			case DesignsPackage.PAGE: return createPage();
-			case DesignsPackage.EBENE: return createEbene();
-			case DesignsPackage.ITEM: return createItem();
 			case DesignsPackage.LAYER: return createLayer();
 			case DesignsPackage.LAYER_SET: return createLayerSet();
+			case DesignsPackage.SHAPE: return createShape();
+			case DesignsPackage.SHAPE_TYPE: return createShapeType();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -126,28 +126,6 @@ public class DesignsFactoryImpl extends EFactoryImpl implements DesignsFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Ebene createEbene()
-	{
-		EbeneImpl ebene = new EbeneImpl();
-		return ebene;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Item createItem()
-	{
-		ItemImpl item = new ItemImpl();
-		return item;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public Layer createLayer()
 	{
 		LayerImpl layer = new LayerImpl();
@@ -163,6 +141,28 @@ public class DesignsFactoryImpl extends EFactoryImpl implements DesignsFactory
 	{
 		LayerSetImpl layerSet = new LayerSetImpl();
 		return layerSet;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Shape createShape()
+	{
+		ShapeImpl shape = new ShapeImpl();
+		return shape;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ShapeType createShapeType()
+	{
+		ShapeTypeImpl shapeType = new ShapeTypeImpl();
+		return shapeType;
 	}
 
 	/**

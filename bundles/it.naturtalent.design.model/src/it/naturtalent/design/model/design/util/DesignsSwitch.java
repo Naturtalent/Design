@@ -100,20 +100,6 @@ public class DesignsSwitch<T> extends Switch<T>
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case DesignsPackage.EBENE:
-			{
-				Ebene ebene = (Ebene)theEObject;
-				T result = caseEbene(ebene);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case DesignsPackage.ITEM:
-			{
-				Item item = (Item)theEObject;
-				T result = caseItem(item);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case DesignsPackage.LAYER:
 			{
 				Layer layer = (Layer)theEObject;
@@ -125,6 +111,20 @@ public class DesignsSwitch<T> extends Switch<T>
 			{
 				LayerSet layerSet = (LayerSet)theEObject;
 				T result = caseLayerSet(layerSet);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case DesignsPackage.SHAPE:
+			{
+				Shape shape = (Shape)theEObject;
+				T result = caseShape(shape);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case DesignsPackage.SHAPE_TYPE:
+			{
+				ShapeType shapeType = (ShapeType)theEObject;
+				T result = caseShapeType(shapeType);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -197,38 +197,6 @@ public class DesignsSwitch<T> extends Switch<T>
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Ebene</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Ebene</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseEbene(Ebene object)
-	{
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Item</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseItem(Item object)
-	{
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Layer</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -256,6 +224,38 @@ public class DesignsSwitch<T> extends Switch<T>
 	 * @generated
 	 */
 	public T caseLayerSet(LayerSet object)
+	{
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Shape</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Shape</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseShape(Shape object)
+	{
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Shape Type</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Shape Type</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseShapeType(ShapeType object)
 	{
 		return null;
 	}

@@ -53,12 +53,16 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.emfstore.internal.client.model.changeTracking.commands.EMFStoreBasicCommandStack;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -73,11 +77,21 @@ import it.naturtalent.design.model.design.DesignsPackage;
 import it.naturtalent.design.model.design.Layer;
 import it.naturtalent.design.model.design.LayerSet;
 import it.naturtalent.design.model.design.Page;
+import it.naturtalent.design.model.design.Shape;
+import it.naturtalent.design.model.design.ShapeType;
+import it.naturtalent.design.ui.DefaultShapeAdapter;
 import it.naturtalent.design.ui.DesignUtils;
+import it.naturtalent.design.ui.ILayerShapeAdapter;
+import it.naturtalent.design.ui.ILayerShapeFactory;
+import it.naturtalent.design.ui.ILayerShapeFactoryRepository;
+import it.naturtalent.design.ui.renderer.LayerRenderer;
 import it.naturtalent.e4.project.IProjectData;
 import it.naturtalent.libreoffice.DrawDocumentEvent;
+import it.naturtalent.libreoffice.DrawDocumentUtils;
 import it.naturtalent.libreoffice.PageHelper;
 import it.naturtalent.libreoffice.draw.DrawDocument;
+import it.naturtalent.libreoffice.draw.IShape;
+
 
 public class DesignsView
 {
@@ -317,8 +331,12 @@ public class DesignsView
 	
 	@Inject private EPartService partService;
 	
+	// Zentrales Repository aller ShapeAdapter
+	@Inject private ILayerShapeFactoryRepository layerShapeRepository;
+	
 	private Design activeDesign;
 	private Page activePage;
+	private Layer activeLayer;
 	
 	// bei der erstmaligen Aktivierung den Toolbar-Status aktivieren 
 	private static boolean firstTimeActivated = false;
@@ -479,8 +497,8 @@ public class DesignsView
 					// Layer selektiert
 					if (treeSelected instanceof Layer)
 					{
-						Layer layer = (Layer) treeSelected;
-						Design parentDesign = (Design) layer.eContainer();
+						activeLayer = (Layer) treeSelected;
+						Design parentDesign = (Design) activeLayer.eContainer();
 						if (!parentDesign.equals(activeDesign))
 						{
 							// System.out.println("nicht synchron");
@@ -498,13 +516,13 @@ public class DesignsView
 							// gibt es bei den neu eingelesenen Layer eines mit
 							// dem urspruenglichen Namen,
 							// wird dieses selektiert
-							String layerName = layer.getName();
-							EList<Layer> activeLayers = activeDesign.getLayers();
-							for (Layer activeLayer : activeLayers)
+							String layerName = activeLayer.getName();
+							EList<Layer> designLayers = activeDesign.getLayers();
+							for (Layer designLayer : designLayers)
 							{
 								if (StringUtils.equals(layerName,activeLayer.getName()))
 								{
-									treeViewer.setSelection(new StructuredSelection(activeLayer));
+									treeViewer.setSelection(new StructuredSelection(designLayer));
 									break;
 								}
 							}
@@ -518,8 +536,11 @@ public class DesignsView
 						{
 							// Selektion des Layers in DrawDocument
 							// System.out.println("Select Page im Modell");							
-							selectedDrawDocument.selectLayer(layer.getName()); 
+							selectedDrawDocument.selectLayer(activeLayer.getName()); 
 							selectedDrawDocument.setFocus();
+							
+							// die Shapes diese Layers einlesen
+							//readLayerShapes(layer);
 						}
 					}
 				}
@@ -887,19 +908,22 @@ public class DesignsView
 
 		// auch im Modell(TreeViewer) die aktive DrawDocument Seite selektieren  
 		DrawDocument drawDocument = openDrawDocumentMap.get(activeDesign);
-		String pageName = drawDocument.readPageName(xDrawPage);		
-		if(StringUtils.isNotEmpty(pageName))
+		if (drawDocument != null)
 		{
-			EList<Page>designPages = activeDesign.getPages();
-			for(Page page : designPages)
+			String pageName = drawDocument.readPageName(xDrawPage);
+			if (StringUtils.isNotEmpty(pageName))
 			{
-				if(StringUtils.equals(pageName, page.getName()))
-				{		
-					treeViewer.removeSelectionChangedListener(treeMasterViewSelectionListener);
-					treeViewer.refresh(activeDesign);					
-					treeViewer.setSelection(new StructuredSelection(page));
-					treeViewer.addSelectionChangedListener(treeMasterViewSelectionListener);
-					return;
+				EList<Page> designPages = activeDesign.getPages();
+				for (Page page : designPages)
+				{
+					if (StringUtils.equals(pageName, page.getName()))
+					{
+						treeViewer.removeSelectionChangedListener(treeMasterViewSelectionListener);
+						treeViewer.refresh(activeDesign);
+						treeViewer.setSelection(new StructuredSelection(page));
+						treeViewer.addSelectionChangedListener(treeMasterViewSelectionListener);
+						return;
+					}
 				}
 			}
 		}
@@ -921,6 +945,39 @@ public class DesignsView
 		if(drawDocument != null)
 			drawDocument.doShapeSelection(eventObject);
 	}
+	
+	@Inject
+	@Optional
+	public void handleLayerRenderer(@UIEventTopic(LayerRenderer.LAYERRENDERERTABLEVIEWER) TableViewer tableViewer)
+	{	
+		DrawDocument drawDocument = openDrawDocumentMap.get(activeDesign);
+		if(drawDocument != null)
+		{
+			ILayerShapeFactory layerShapeFactory = layerShapeRepository.getLayerShapeFactory("Shapecounter");
+			if(layerShapeFactory != null)
+			{
+				ILayerShapeAdapter layerShapeAdapter = layerShapeFactory.createShapeAdapter();
+				layerShapeAdapter.init(drawDocument, activeLayer, tableViewer);
+			}
+			else
+			{
+				DefaultShapeAdapter shapeAdapter = new DefaultShapeAdapter();
+				shapeAdapter.init(drawDocument, activeLayer, tableViewer);
+			}			
+				
+		//Object obj = tableViewer.getData(LayerRenderer.LAYERRENDERERTABLEVIEWER);
+		
+		// die Realisierung erfolgt in @see doShapeSelection() 
+		//System.out.println("LayerRenderer: "+activeLayer.getName());
+		
+		//Object data = tableViewer.getData(key);
+		
+		// die Shapes diese Layers einlesen
+		//readLayerShapes(layer);
+		}
+
+	}
+
 	
 	/*
 	 * Global Mousecklick
@@ -1066,6 +1123,9 @@ public class DesignsView
 	{
 		readDesignPages();
 		readDesignLayers();
+		//readLayerShapes();
+		
+		//readLayerSha
 		
 		if(activeDesign != null)
 		{
@@ -1089,7 +1149,7 @@ public class DesignsView
 			if(drawDocument != null)
 			{
 				// Namen aller im DrawDocument enthaltenen Pages
-				List<String> drawPageNames = drawDocument.getAllPages();
+				List<String> drawPageNames = drawDocument.getAllPages(true);
 				
 				// die momentan im Modell gespeicherten Pages
 				EList<Page>modelPages = activeDesign.getPages();
@@ -1160,7 +1220,7 @@ public class DesignsView
 					modelLayerNames.add(layer.getName());
 					
 				// die DrawDocument Layernamen listen
-				List<String>drawlayerNames = drawDocument.getAllLayers();
+				List<String>drawlayerNames = drawDocument.getAllLayers(true);
 				
 				// alle Layer die bereits im Modell gespeichert sind aus 'drawLayerNames' streichen
 				List<String>delList = new ArrayList<String>();
@@ -1187,7 +1247,7 @@ public class DesignsView
 				}
 				
 				// erneut alle DrawDocument Layernamen lesen
-				drawlayerNames = drawDocument.getAllLayers();
+				drawlayerNames = drawDocument.getAllLayers(true);
 				
 				// erneut die momentanen ModellLayerNamen listen
 				modelLayerNames = new ArrayList<String>();

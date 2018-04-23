@@ -9,6 +9,12 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import it.naturtalent.e4.project.INtProjectProperty;
 import it.naturtalent.e4.project.INtProjectPropertyFactory;
 
+/**
+ * Factory zur Erzeugung einer NtProjekt-Designeigenschaft.
+ * 
+ * @author dieter
+ *
+ */
 public class DesignProjectPropertyFactory implements INtProjectPropertyFactory
 {
 	public final static String DESIGNPROJECTPROPERTYLABEL = "Zeichnungen";

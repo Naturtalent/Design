@@ -3,8 +3,6 @@
 import java.io.File;
 import java.util.List;
 
-import it.naturtalent.e4.office.odf.shapes.IOdfElementFactory;
-import it.naturtalent.e4.office.odf.shapes.IOdfElementFactoryRegistry;
 import it.naturtalent.icons.core.Icon;
 import it.naturtalent.icons.core.IconSize;
 import it.naturtalent.libreoffice.ImportFilter;
@@ -14,6 +12,8 @@ import it.naturtalent.libreoffice.draw.ImportODF;
 import it.naturtalent.libreoffice.draw.ImportSVGShape;
 import it.naturtalent.libreoffice.draw.Layer;
 import it.naturtalent.libreoffice.draw.OpenBezierShape.PolygonFlags;
+import it.naturtalent.libreoffice.odf.shapes.IOdfElementFactory;
+import it.naturtalent.libreoffice.odf.shapes.IOdfElementFactoryRegistry;
 import it.naturtalent.libreoffice.draw.Shape;
 import it.naturtalent.planning.ui.Activator;
 import it.naturtalent.planning.ui.parts.PlanungContentProvider;

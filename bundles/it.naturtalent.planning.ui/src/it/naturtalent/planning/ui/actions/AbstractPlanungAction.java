@@ -1,7 +1,7 @@
 package it.naturtalent.planning.ui.actions;
 
-import it.naturtalent.e4.office.odf.shapes.IOdfElementFactoryRegistry;
 import it.naturtalent.libreoffice.draw.DrawDocument;
+import it.naturtalent.libreoffice.odf.shapes.IOdfElementFactoryRegistry;
 import it.naturtalent.planning.ui.parts.PlanungMasterComposite;
 import it.naturtalent.planung.IAlternativeFactoryRegistry;
 import it.naturtalent.planung.ILayerContentRepository;

@@ -278,90 +278,6 @@ public interface DesignsPackage extends EPackage
 	int PAGE_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link it.naturtalent.design.model.design.impl.EbeneImpl <em>Ebene</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see it.naturtalent.design.model.design.impl.EbeneImpl
-	 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getEbene()
-	 * @generated
-	 */
-	int EBENE = 4;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EBENE__NAME = 0;
-
-	/**
-	 * The feature id for the '<em><b>Shape Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EBENE__SHAPE_NAME = 1;
-
-	/**
-	 * The number of structural features of the '<em>Ebene</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EBENE_FEATURE_COUNT = 2;
-
-	/**
-	 * The number of operations of the '<em>Ebene</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EBENE_OPERATION_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link it.naturtalent.design.model.design.impl.ItemImpl <em>Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see it.naturtalent.design.model.design.impl.ItemImpl
-	 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getItem()
-	 * @generated
-	 */
-	int ITEM = 5;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__NAME = 0;
-
-	/**
-	 * The number of structural features of the '<em>Item</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM_FEATURE_COUNT = 1;
-
-	/**
-	 * The number of operations of the '<em>Item</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM_OPERATION_COUNT = 0;
-
-
-	/**
 	 * The meta object id for the '{@link it.naturtalent.design.model.design.impl.LayerImpl <em>Layer</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -369,7 +285,7 @@ public interface DesignsPackage extends EPackage
 	 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getLayer()
 	 * @generated
 	 */
-	int LAYER = 6;
+	int LAYER = 4;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -381,13 +297,31 @@ public interface DesignsPackage extends EPackage
 	int LAYER__NAME = 0;
 
 	/**
+	 * The feature id for the '<em><b>Shape Factory Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LAYER__SHAPE_FACTORY_NAME = 1;
+
+	/**
+	 * The feature id for the '<em><b>Shapes</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LAYER__SHAPES = 2;
+
+	/**
 	 * The number of structural features of the '<em>Layer</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LAYER_FEATURE_COUNT = 1;
+	int LAYER_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Layer</em>' class.
@@ -406,7 +340,7 @@ public interface DesignsPackage extends EPackage
 	 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getLayerSet()
 	 * @generated
 	 */
-	int LAYER_SET = 7;
+	int LAYER_SET = 5;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -443,6 +377,127 @@ public interface DesignsPackage extends EPackage
 	 * @ordered
 	 */
 	int LAYER_SET_OPERATION_COUNT = 0;
+
+
+	/**
+	 * The meta object id for the '{@link it.naturtalent.design.model.design.impl.ShapeImpl <em>Shape</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see it.naturtalent.design.model.design.impl.ShapeImpl
+	 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getShape()
+	 * @generated
+	 */
+	int SHAPE = 6;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHAPE__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Class</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHAPE__CLASS = 1;
+
+	/**
+	 * The feature id for the '<em><b>X</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHAPE__X = 2;
+
+	/**
+	 * The feature id for the '<em><b>Y</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHAPE__Y = 3;
+
+	/**
+	 * The feature id for the '<em><b>Width</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHAPE__WIDTH = 4;
+
+	/**
+	 * The feature id for the '<em><b>Height</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHAPE__HEIGHT = 5;
+
+	/**
+	 * The number of structural features of the '<em>Shape</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHAPE_FEATURE_COUNT = 6;
+
+	/**
+	 * The number of operations of the '<em>Shape</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHAPE_OPERATION_COUNT = 0;
+
+
+	/**
+	 * The meta object id for the '{@link it.naturtalent.design.model.design.impl.ShapeTypeImpl <em>Shape Type</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see it.naturtalent.design.model.design.impl.ShapeTypeImpl
+	 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getShapeType()
+	 * @generated
+	 */
+	int SHAPE_TYPE = 7;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHAPE_TYPE__NAME = 0;
+
+	/**
+	 * The number of structural features of the '<em>Shape Type</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHAPE_TYPE_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Shape Type</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHAPE_TYPE_OPERATION_COUNT = 0;
 
 
 	/**
@@ -618,59 +673,6 @@ public interface DesignsPackage extends EPackage
 	EReference getPage_Layersets();
 
 	/**
-	 * Returns the meta object for class '{@link it.naturtalent.design.model.design.Ebene <em>Ebene</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Ebene</em>'.
-	 * @see it.naturtalent.design.model.design.Ebene
-	 * @generated
-	 */
-	EClass getEbene();
-
-	/**
-	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.Ebene#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see it.naturtalent.design.model.design.Ebene#getName()
-	 * @see #getEbene()
-	 * @generated
-	 */
-	EAttribute getEbene_Name();
-
-	/**
-	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.Ebene#getShapeName <em>Shape Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Shape Name</em>'.
-	 * @see it.naturtalent.design.model.design.Ebene#getShapeName()
-	 * @see #getEbene()
-	 * @generated
-	 */
-	EAttribute getEbene_ShapeName();
-
-	/**
-	 * Returns the meta object for class '{@link it.naturtalent.design.model.design.Item <em>Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Item</em>'.
-	 * @see it.naturtalent.design.model.design.Item
-	 * @generated
-	 */
-	EClass getItem();
-
-	/**
-	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.Item#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see it.naturtalent.design.model.design.Item#getName()
-	 * @see #getItem()
-	 * @generated
-	 */
-	EAttribute getItem_Name();
-
-	/**
 	 * Returns the meta object for class '{@link it.naturtalent.design.model.design.Layer <em>Layer</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -690,6 +692,28 @@ public interface DesignsPackage extends EPackage
 	 * @generated
 	 */
 	EAttribute getLayer_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.Layer#getShapeFactoryName <em>Shape Factory Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Shape Factory Name</em>'.
+	 * @see it.naturtalent.design.model.design.Layer#getShapeFactoryName()
+	 * @see #getLayer()
+	 * @generated
+	 */
+	EAttribute getLayer_ShapeFactoryName();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link it.naturtalent.design.model.design.Layer#getShapes <em>Shapes</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Shapes</em>'.
+	 * @see it.naturtalent.design.model.design.Layer#getShapes()
+	 * @see #getLayer()
+	 * @generated
+	 */
+	EReference getLayer_Shapes();
 
 	/**
 	 * Returns the meta object for class '{@link it.naturtalent.design.model.design.LayerSet <em>Layer Set</em>}'.
@@ -722,6 +746,103 @@ public interface DesignsPackage extends EPackage
 	 * @generated
 	 */
 	EReference getLayerSet_Layers();
+
+	/**
+	 * Returns the meta object for class '{@link it.naturtalent.design.model.design.Shape <em>Shape</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Shape</em>'.
+	 * @see it.naturtalent.design.model.design.Shape
+	 * @generated
+	 */
+	EClass getShape();
+
+	/**
+	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.Shape#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see it.naturtalent.design.model.design.Shape#getName()
+	 * @see #getShape()
+	 * @generated
+	 */
+	EAttribute getShape_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.Shape#getClass_ <em>Class</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Class</em>'.
+	 * @see it.naturtalent.design.model.design.Shape#getClass_()
+	 * @see #getShape()
+	 * @generated
+	 */
+	EAttribute getShape_Class();
+
+	/**
+	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.Shape#getX <em>X</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>X</em>'.
+	 * @see it.naturtalent.design.model.design.Shape#getX()
+	 * @see #getShape()
+	 * @generated
+	 */
+	EAttribute getShape_X();
+
+	/**
+	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.Shape#getY <em>Y</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Y</em>'.
+	 * @see it.naturtalent.design.model.design.Shape#getY()
+	 * @see #getShape()
+	 * @generated
+	 */
+	EAttribute getShape_Y();
+
+	/**
+	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.Shape#getWidth <em>Width</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Width</em>'.
+	 * @see it.naturtalent.design.model.design.Shape#getWidth()
+	 * @see #getShape()
+	 * @generated
+	 */
+	EAttribute getShape_Width();
+
+	/**
+	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.Shape#getHeight <em>Height</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Height</em>'.
+	 * @see it.naturtalent.design.model.design.Shape#getHeight()
+	 * @see #getShape()
+	 * @generated
+	 */
+	EAttribute getShape_Height();
+
+	/**
+	 * Returns the meta object for class '{@link it.naturtalent.design.model.design.ShapeType <em>Shape Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Shape Type</em>'.
+	 * @see it.naturtalent.design.model.design.ShapeType
+	 * @generated
+	 */
+	EClass getShapeType();
+
+	/**
+	 * Returns the meta object for the attribute '{@link it.naturtalent.design.model.design.ShapeType#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see it.naturtalent.design.model.design.ShapeType#getName()
+	 * @see #getShapeType()
+	 * @generated
+	 */
+	EAttribute getShapeType_Name();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -884,50 +1005,6 @@ public interface DesignsPackage extends EPackage
 		EReference PAGE__LAYERSETS = eINSTANCE.getPage_Layersets();
 
 		/**
-		 * The meta object literal for the '{@link it.naturtalent.design.model.design.impl.EbeneImpl <em>Ebene</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see it.naturtalent.design.model.design.impl.EbeneImpl
-		 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getEbene()
-		 * @generated
-		 */
-		EClass EBENE = eINSTANCE.getEbene();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute EBENE__NAME = eINSTANCE.getEbene_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Shape Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute EBENE__SHAPE_NAME = eINSTANCE.getEbene_ShapeName();
-
-		/**
-		 * The meta object literal for the '{@link it.naturtalent.design.model.design.impl.ItemImpl <em>Item</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see it.naturtalent.design.model.design.impl.ItemImpl
-		 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getItem()
-		 * @generated
-		 */
-		EClass ITEM = eINSTANCE.getItem();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ITEM__NAME = eINSTANCE.getItem_Name();
-
-		/**
 		 * The meta object literal for the '{@link it.naturtalent.design.model.design.impl.LayerImpl <em>Layer</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -944,6 +1021,22 @@ public interface DesignsPackage extends EPackage
 		 * @generated
 		 */
 		EAttribute LAYER__NAME = eINSTANCE.getLayer_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Shape Factory Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LAYER__SHAPE_FACTORY_NAME = eINSTANCE.getLayer_ShapeFactoryName();
+
+		/**
+		 * The meta object literal for the '<em><b>Shapes</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference LAYER__SHAPES = eINSTANCE.getLayer_Shapes();
 
 		/**
 		 * The meta object literal for the '{@link it.naturtalent.design.model.design.impl.LayerSetImpl <em>Layer Set</em>}' class.
@@ -970,6 +1063,82 @@ public interface DesignsPackage extends EPackage
 		 * @generated
 		 */
 		EReference LAYER_SET__LAYERS = eINSTANCE.getLayerSet_Layers();
+
+		/**
+		 * The meta object literal for the '{@link it.naturtalent.design.model.design.impl.ShapeImpl <em>Shape</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see it.naturtalent.design.model.design.impl.ShapeImpl
+		 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getShape()
+		 * @generated
+		 */
+		EClass SHAPE = eINSTANCE.getShape();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SHAPE__NAME = eINSTANCE.getShape_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Class</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SHAPE__CLASS = eINSTANCE.getShape_Class();
+
+		/**
+		 * The meta object literal for the '<em><b>X</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SHAPE__X = eINSTANCE.getShape_X();
+
+		/**
+		 * The meta object literal for the '<em><b>Y</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SHAPE__Y = eINSTANCE.getShape_Y();
+
+		/**
+		 * The meta object literal for the '<em><b>Width</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SHAPE__WIDTH = eINSTANCE.getShape_Width();
+
+		/**
+		 * The meta object literal for the '<em><b>Height</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SHAPE__HEIGHT = eINSTANCE.getShape_Height();
+
+		/**
+		 * The meta object literal for the '{@link it.naturtalent.design.model.design.impl.ShapeTypeImpl <em>Shape Type</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see it.naturtalent.design.model.design.impl.ShapeTypeImpl
+		 * @see it.naturtalent.design.model.design.impl.DesignsPackageImpl#getShapeType()
+		 * @generated
+		 */
+		EClass SHAPE_TYPE = eINSTANCE.getShapeType();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SHAPE_TYPE__NAME = eINSTANCE.getShapeType_Name();
 
 	}
 

@@ -59,24 +59,6 @@ public interface DesignsFactory extends EFactory
 	Page createPage();
 
 	/**
-	 * Returns a new object of class '<em>Ebene</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Ebene</em>'.
-	 * @generated
-	 */
-	Ebene createEbene();
-
-	/**
-	 * Returns a new object of class '<em>Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Item</em>'.
-	 * @generated
-	 */
-	Item createItem();
-
-	/**
 	 * Returns a new object of class '<em>Layer</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -93,6 +75,24 @@ public interface DesignsFactory extends EFactory
 	 * @generated
 	 */
 	LayerSet createLayerSet();
+
+	/**
+	 * Returns a new object of class '<em>Shape</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Shape</em>'.
+	 * @generated
+	 */
+	Shape createShape();
+
+	/**
+	 * Returns a new object of class '<em>Shape Type</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Shape Type</em>'.
+	 * @generated
+	 */
+	ShapeType createShapeType();
 
 	/**
 	 * Returns the package supported by this factory.

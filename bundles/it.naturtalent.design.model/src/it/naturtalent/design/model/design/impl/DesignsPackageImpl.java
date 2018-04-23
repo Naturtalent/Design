@@ -7,12 +7,12 @@ import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.model.design.Designs;
 import it.naturtalent.design.model.design.DesignsFactory;
 import it.naturtalent.design.model.design.DesignsPackage;
-import it.naturtalent.design.model.design.Ebene;
-import it.naturtalent.design.model.design.Item;
 import it.naturtalent.design.model.design.Layer;
 import it.naturtalent.design.model.design.LayerSet;
 import it.naturtalent.design.model.design.Page;
 
+import it.naturtalent.design.model.design.Shape;
+import it.naturtalent.design.model.design.ShapeType;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
@@ -61,20 +61,6 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass ebeneEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass itemEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass layerEClass = null;
 
 	/**
@@ -83,6 +69,20 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 	 * @generated
 	 */
 	private EClass layerSetEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass shapeEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass shapeTypeEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -312,56 +312,6 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getEbene()
-	{
-		return ebeneEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getEbene_Name()
-	{
-		return (EAttribute)ebeneEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getEbene_ShapeName()
-	{
-		return (EAttribute)ebeneEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getItem()
-	{
-		return itemEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getItem_Name()
-	{
-		return (EAttribute)itemEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getLayer()
 	{
 		return layerEClass;
@@ -375,6 +325,26 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 	public EAttribute getLayer_Name()
 	{
 		return (EAttribute)layerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getLayer_ShapeFactoryName()
+	{
+		return (EAttribute)layerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getLayer_Shapes()
+	{
+		return (EReference)layerEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -405,6 +375,96 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 	public EReference getLayerSet_Layers()
 	{
 		return (EReference)layerSetEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getShape()
+	{
+		return shapeEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getShape_Name()
+	{
+		return (EAttribute)shapeEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getShape_Class()
+	{
+		return (EAttribute)shapeEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getShape_X()
+	{
+		return (EAttribute)shapeEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getShape_Y()
+	{
+		return (EAttribute)shapeEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getShape_Width()
+	{
+		return (EAttribute)shapeEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getShape_Height()
+	{
+		return (EAttribute)shapeEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getShapeType()
+	{
+		return shapeTypeEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getShapeType_Name()
+	{
+		return (EAttribute)shapeTypeEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -457,19 +517,25 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 		createEAttribute(pageEClass, PAGE__SCALE_DENOMINATOR);
 		createEReference(pageEClass, PAGE__LAYERSETS);
 
-		ebeneEClass = createEClass(EBENE);
-		createEAttribute(ebeneEClass, EBENE__NAME);
-		createEAttribute(ebeneEClass, EBENE__SHAPE_NAME);
-
-		itemEClass = createEClass(ITEM);
-		createEAttribute(itemEClass, ITEM__NAME);
-
 		layerEClass = createEClass(LAYER);
 		createEAttribute(layerEClass, LAYER__NAME);
+		createEAttribute(layerEClass, LAYER__SHAPE_FACTORY_NAME);
+		createEReference(layerEClass, LAYER__SHAPES);
 
 		layerSetEClass = createEClass(LAYER_SET);
 		createEAttribute(layerSetEClass, LAYER_SET__NAME);
 		createEReference(layerSetEClass, LAYER_SET__LAYERS);
+
+		shapeEClass = createEClass(SHAPE);
+		createEAttribute(shapeEClass, SHAPE__NAME);
+		createEAttribute(shapeEClass, SHAPE__CLASS);
+		createEAttribute(shapeEClass, SHAPE__X);
+		createEAttribute(shapeEClass, SHAPE__Y);
+		createEAttribute(shapeEClass, SHAPE__WIDTH);
+		createEAttribute(shapeEClass, SHAPE__HEIGHT);
+
+		shapeTypeEClass = createEClass(SHAPE_TYPE);
+		createEAttribute(shapeTypeEClass, SHAPE_TYPE__NAME);
 	}
 
 	/**
@@ -523,19 +589,25 @@ public class DesignsPackageImpl extends EPackageImpl implements DesignsPackage
 		initEAttribute(getPage_ScaleDenominator(), ecorePackage.getEInt(), "scaleDenominator", null, 0, 1, Page.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPage_Layersets(), this.getLayerSet(), null, "layersets", null, 0, -1, Page.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(ebeneEClass, Ebene.class, "Ebene", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getEbene_Name(), ecorePackage.getEString(), "name", null, 0, 1, Ebene.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getEbene_ShapeName(), ecorePackage.getEString(), "shapeName", null, 0, 1, Ebene.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(itemEClass, Item.class, "Item", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getItem_Name(), ecorePackage.getEString(), "name", null, 0, 1, Item.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
 		initEClass(layerEClass, Layer.class, "Layer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLayer_Name(), ecorePackage.getEString(), "name", null, 0, 1, Layer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLayer_ShapeFactoryName(), ecorePackage.getEString(), "shapeFactoryName", null, 0, 1, Layer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLayer_Shapes(), this.getShape(), null, "shapes", null, 0, -1, Layer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(layerSetEClass, LayerSet.class, "LayerSet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLayerSet_Name(), ecorePackage.getEString(), "name", null, 0, 1, LayerSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getLayerSet_Layers(), this.getLayer(), null, "layers", null, 0, -1, LayerSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(shapeEClass, Shape.class, "Shape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getShape_Name(), ecorePackage.getEString(), "name", null, 0, 1, Shape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getShape_Class(), ecorePackage.getEString(), "class", null, 0, 1, Shape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getShape_X(), ecorePackage.getEInt(), "x", null, 0, 1, Shape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getShape_Y(), ecorePackage.getEInt(), "y", null, 0, 1, Shape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getShape_Width(), ecorePackage.getEInt(), "width", null, 0, 1, Shape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getShape_Height(), ecorePackage.getEInt(), "height", null, 0, 1, Shape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(shapeTypeEClass, ShapeType.class, "ShapeType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getShapeType_Name(), ecorePackage.getEString(), "name", null, 0, 1, ShapeType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

@@ -1,9 +1,9 @@
 package it.naturtalent.planning.ui.parts;
 
-import it.naturtalent.e4.office.odf.shapes.IOdfElementFactoryRegistry;
 import it.naturtalent.libreoffice.DrawDocumentEvent;
 import it.naturtalent.libreoffice.draw.DrawDocument;
 import it.naturtalent.libreoffice.draw.Shape;
+import it.naturtalent.libreoffice.odf.shapes.IOdfElementFactoryRegistry;
 import it.naturtalent.planning.ui.DesignDetailsComposite;
 import it.naturtalent.planning.ui.actions.AbstractPlanungAction;
 import it.naturtalent.planning.ui.actions.MassstabAction;
