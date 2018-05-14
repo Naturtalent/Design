@@ -1,18 +1,13 @@
 package it.naturtalent.design.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 
 import it.naturtalent.design.model.design.Layer;
-import it.naturtalent.libreoffice.DrawDocumentUtils;
 import it.naturtalent.libreoffice.DrawShape;
 import it.naturtalent.libreoffice.draw.DrawDocument;
 
-public class LayerShapeCounterAdapter implements ILayerShapeAdapter
+public class LayerShapeCounterAdapter extends DefaultShapeAdapter
 {
 	
 	// unspezifischer Shape Labelprovider   
@@ -24,13 +19,39 @@ public class LayerShapeCounterAdapter implements ILayerShapeAdapter
 			if (element instanceof DrawShape)
 			{
 				DrawShape shape = (DrawShape) element;
-				return shape.type;				
+				return (String) shape.getData();				
 			}
 			return super.getText(element);
 		}
 	}
 
 	@Override
+	public void pull(String pageName, Layer layer, DrawDocument drawDocument)
+	{		
+		super.pull(pageName, layer, drawDocument);
+		
+		String sum = "Summe: " + drawShapes.size();
+		String [] sumline = new String [] {sum};
+	
+		drawShapes.clear();
+		DrawShape drawShape = new DrawShape();	
+		drawShape.setData(sum);
+		drawShapes.add(drawShape);
+	}
+
+	@Override
+	public void showLayerContent(TableViewer tableViewer)
+	{		
+		super.showLayerContent(tableViewer);
+		tableViewer.setLabelProvider(new ShapeLabelProvider());
+	}
+
+	
+	
+	
+
+	/*
+	@Override	
 	public void init(DrawDocument drawDocument, Layer layer,TableViewer tableViewer)
 	{
 		String layerName = layer.getName();
@@ -55,5 +76,6 @@ public class LayerShapeCounterAdapter implements ILayerShapeAdapter
 
 		
 	}
+	*/
 
 }

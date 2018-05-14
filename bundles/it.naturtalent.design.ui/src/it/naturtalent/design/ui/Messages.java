@@ -19,6 +19,13 @@ public class Messages extends NLS
 	public static String DesignUtils_NoNtProjektFound;
 
 	public static String DesignUtils_NoTemplateFounded;
+	public static String LayerDialog_this_title;
+	public static String LayerDialog_lblNewLabel_text;
+	public static String LayerDialog_text_text;
+	public static String LayerDialog_lblNewLabel_text_1;
+	public static String MasslineLengthDialog_lblLength_text;
+	public static String MasslineLengthDialog_text_text;
+	public static String MasslineLengthDialog_comboUnit_text;
 	static
 	{
 		// initialize resource bundle

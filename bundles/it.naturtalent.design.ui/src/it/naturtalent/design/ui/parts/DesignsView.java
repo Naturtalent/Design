@@ -62,7 +62,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -75,29 +74,28 @@ import it.naturtalent.design.model.design.DesignGroup;
 import it.naturtalent.design.model.design.Designs;
 import it.naturtalent.design.model.design.DesignsPackage;
 import it.naturtalent.design.model.design.Layer;
-import it.naturtalent.design.model.design.LayerSet;
 import it.naturtalent.design.model.design.Page;
-import it.naturtalent.design.model.design.Shape;
-import it.naturtalent.design.model.design.ShapeType;
 import it.naturtalent.design.ui.DefaultShapeAdapter;
 import it.naturtalent.design.ui.DesignUtils;
 import it.naturtalent.design.ui.ILayerShapeAdapter;
 import it.naturtalent.design.ui.ILayerShapeFactory;
 import it.naturtalent.design.ui.ILayerShapeFactoryRepository;
+import it.naturtalent.design.ui.MassstabShapeAdapter;
+import it.naturtalent.design.ui.actions.LayerAction;
 import it.naturtalent.design.ui.renderer.LayerRenderer;
 import it.naturtalent.e4.project.IProjectData;
 import it.naturtalent.libreoffice.DrawDocumentEvent;
 import it.naturtalent.libreoffice.DrawDocumentUtils;
-import it.naturtalent.libreoffice.PageHelper;
+import it.naturtalent.libreoffice.DrawShape;
 import it.naturtalent.libreoffice.draw.DrawDocument;
-import it.naturtalent.libreoffice.draw.IShape;
 
 
 public class DesignsView
 {
 	
 	public final static String DESIGNSVIEW_ID = "it.naturtalent.design.ui.part.designs";
-	
+
+
 	// Name des ECP Projekts indem alle Zeichnungen gespeichert werden
 	public final static String DESIGNPROJECTNAME = "DesignsEMFProject";
 	
@@ -302,8 +300,11 @@ public class DesignsView
 						}
 						else
 						{
-							// neuer Layer
-							System.out.println("neuer Layer");
+							if(createObj instanceof Layer)
+							{
+								LayerAction labelAction = new LayerAction(part, (Layer) createObj);
+								labelAction.run();
+							}
 						}
 					}
 				}
@@ -334,8 +335,10 @@ public class DesignsView
 	// Zentrales Repository aller ShapeAdapter
 	@Inject private ILayerShapeFactoryRepository layerShapeRepository;
 	
+	private MPart part;
+	
 	private Design activeDesign;
-	private Page activePage;
+	//private Page activePage;
 	private Layer activeLayer;
 	
 	// bei der erstmaligen Aktivierung den Toolbar-Status aktivieren 
@@ -380,7 +383,7 @@ public class DesignsView
 				if (!firstTimeActivated)
 				{						
 					updateToolBarStatus(part);
-					firstTimeActivated = true;
+					firstTimeActivated = true;					
 				}					
 			}				
 		}
@@ -389,7 +392,7 @@ public class DesignsView
 	// Zuordnungstabelle Desing und geoffnetes DrawDocument
 	public static Map<Design,DrawDocument> openDrawDocumentMap = new HashMap<Design,DrawDocument>();
 	
-	public static final String DEFAULT_LAYERSETNAME = "alle Layer";
+	//public static final String DEFAULT_LAYERSETNAME = "alle Layer";
 
 	
 	/*
@@ -491,6 +494,14 @@ public class DesignsView
 							// System.out.println("Select Page im Modell");							
 							selectedDrawDocument.selectPage(page.getName()); 
 							selectedDrawDocument.setFocus();
+							
+							int scaleDenominator = page.getScaleDenominator();
+							if(scaleDenominator != 0)
+							{
+								MassstabShapeAdapter scaleAdapter = new MassstabShapeAdapter();
+								scaleAdapter.setScaleDenominator(scaleDenominator);
+								scaleAdapter.setScaleSettings(selectedDrawDocument);
+							}
 						}
 					}
 					
@@ -538,9 +549,6 @@ public class DesignsView
 							// System.out.println("Select Page im Modell");							
 							selectedDrawDocument.selectLayer(activeLayer.getName()); 
 							selectedDrawDocument.setFocus();
-							
-							// die Shapes diese Layers einlesen
-							//readLayerShapes(layer);
 						}
 					}
 				}
@@ -588,7 +596,7 @@ public class DesignsView
 		ECPUtil.getECPObserverBus().register(projectModelChangedObserver);
 		
 		// nach der Aktivierung dieses Parts muessen die Toolbaraktionen enablen
-		MPart part = partService.findPart(DesignsView.DESIGNSVIEW_ID);				
+		part = partService.findPart(DesignsView.DESIGNSVIEW_ID);				
 		partService.addPartListener(iPartListener);
 	}
 	
@@ -696,7 +704,28 @@ public class DesignsView
 			DesignGroup designGroup = DesignUtils.findProjectDesignGroup(selectedProject.getName());
 			if(designGroup != null)				
 				treeViewer.setSelection(new StructuredSelection(designGroup));
-		}			
+		}
+		
+		treeViewer.addDoubleClickListener(new IDoubleClickListener()
+		{			
+			@Override
+			public void doubleClick(DoubleClickEvent event)
+			{
+				IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+				Object selObject = selection.getFirstElement();
+				if (selObject instanceof Layer)
+				{
+					Layer layer = (Layer) selObject;
+					LayerAction labelAction = new LayerAction(part, layer);
+					labelAction.run();
+				}
+
+				else
+				{
+					System.out.println("DoubleClick");					
+				}
+			}
+		});
 	}
 
 	@Inject
@@ -753,7 +782,7 @@ public class DesignsView
 				pullDrawDocumentData();
 			
 				// nach dem Oeffnen wird die aktuelle Page des DrawDocuments auch entsprechend im TreeViewer selektiert
-				selectCurrentPage();	
+				//selectCurrentPage();	
 				
 				return;
 			}			
@@ -946,36 +975,52 @@ public class DesignsView
 			drawDocument.doShapeSelection(eventObject);
 	}
 	
+	/*
+	 * Der LayerRenderer hat den TableViewer fuer diesen Layer erzeugt.
+	 * Die Shapes werden ueber den zugeordneten Adapter eingelesen und im
+	 * Viewer angezeigt.
+	 * 
+	 * @param tableViewer
+	 */
 	@Inject
 	@Optional
 	public void handleLayerRenderer(@UIEventTopic(LayerRenderer.LAYERRENDERERTABLEVIEWER) TableViewer tableViewer)
 	{	
+		ILayerShapeAdapter layerShapeAdapter;
+		
 		DrawDocument drawDocument = openDrawDocumentMap.get(activeDesign);
 		if(drawDocument != null)
 		{
-			ILayerShapeFactory layerShapeFactory = layerShapeRepository.getLayerShapeFactory("Shapecounter");
-			if(layerShapeFactory != null)
-			{
-				ILayerShapeAdapter layerShapeAdapter = layerShapeFactory.createShapeAdapter();
-				layerShapeAdapter.init(drawDocument, activeLayer, tableViewer);
-			}
+			// zuegordneten Adapter laden oder Default
+			ILayerShapeFactory layerShapeFactory = layerShapeRepository.getLayerShapeFactory(activeLayer.getShapeFactoryName());
+			if(layerShapeFactory != null)			
+				layerShapeAdapter = layerShapeFactory.createShapeAdapter();
 			else
-			{
-				DefaultShapeAdapter shapeAdapter = new DefaultShapeAdapter();
-				shapeAdapter.init(drawDocument, activeLayer, tableViewer);
-			}			
-				
-		//Object obj = tableViewer.getData(LayerRenderer.LAYERRENDERERTABLEVIEWER);
-		
-		// die Realisierung erfolgt in @see doShapeSelection() 
-		//System.out.println("LayerRenderer: "+activeLayer.getName());
-		
-		//Object data = tableViewer.getData(key);
-		
-		// die Shapes diese Layers einlesen
-		//readLayerShapes(layer);
+				layerShapeAdapter = new DefaultShapeAdapter();
+			
+			// Shapes lesen und im Viewer anzeigen
+			String pageName = drawDocument.getCurrentPage();
+			layerShapeAdapter.pull(pageName, activeLayer, drawDocument);
+			layerShapeAdapter.showLayerContent(tableViewer);
+			
+			// Listener informiert ueber das selektierte Shape
+			tableViewer.addSelectionChangedListener(new ISelectionChangedListener()
+			{				
+				@Override
+				public void selectionChanged(SelectionChangedEvent event)
+				{
+					IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+					Object selObject = selection.getFirstElement();
+					if (selObject instanceof DrawShape)
+					{
+						// Layer entsperren und Shape selektieren
+						DrawShape drawShape = (DrawShape) selObject;
+						drawDocument.setLayerProperty(activeLayer.getName(), DrawDocumentUtils.LAYERLOCK, false);
+						drawDocument.selectShape(drawShape);						
+					}
+				}
+			});
 		}
-
 	}
 
 	
@@ -1276,7 +1321,15 @@ public class DesignsView
 			}
 		}
 	}
+
+	public Design getActiveDesign()
+	{
+		return activeDesign;
+	}
 	
+	
+
+	/*
 	private void readAllLayers()
 	{
 		boolean defaultLayerSet = false;
@@ -1325,5 +1378,8 @@ public class DesignsView
 			}
 		}
 	}
+	*/
+	
+	
 	
 }

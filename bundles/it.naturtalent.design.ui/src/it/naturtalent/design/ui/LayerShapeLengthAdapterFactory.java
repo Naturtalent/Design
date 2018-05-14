@@ -1,18 +1,18 @@
 package it.naturtalent.design.ui;
 
 
-public class LayerShapeCounterAdapterFactory implements ILayerShapeFactory
+public class LayerShapeLengthAdapterFactory implements ILayerShapeFactory
 {
 	@Override
 	public String getLabel()
 	{		
-		return "Zähler";
+		return "Längen";
 	}
 
 	@Override
 	public ILayerShapeAdapter createShapeAdapter()
 	{		
-		return new LayerShapeCounterAdapter();
+		return new LayerShapeLengthAdapter();
 	}
 
 }

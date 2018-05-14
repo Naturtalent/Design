@@ -6,7 +6,6 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.IWorkbench;
-import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.emf.ecp.view.internal.control.multireference.MultiReferenceSWTRenderer;
 import org.eclipse.emf.ecp.view.spi.context.ViewModelContext;
 import org.eclipse.emf.ecp.view.spi.model.VControl;
@@ -18,15 +17,20 @@ import org.eclipse.emfforms.spi.common.report.ReportService;
 import org.eclipse.emfforms.spi.core.services.databinding.EMFFormsDatabinding;
 import org.eclipse.emfforms.spi.core.services.label.EMFFormsLabelProvider;
 import org.eclipse.emfforms.spi.swt.core.layout.SWTGridCell;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+/**
+ * Der Renderer veroeffentlich den TableViewer fuer den Zugriff auf die Shapes.
+ * 
+ * @author dieter
+ *
+ */
 public class LayerRenderer extends MultiReferenceSWTRenderer
 {
 	public final static String LAYERRENDERERTABLEVIEWER = "layerrenderertabbleviewer";
 	
-	private ESelectionService eSelectionService;	
+	//private ESelectionService eSelectionService;	
 	private IEventBroker eventBroker;
 	
 	@Inject
@@ -41,7 +45,7 @@ public class LayerRenderer extends MultiReferenceSWTRenderer
 				emfFormsLabelProvider, vtViewTemplateProvider, imageRegistryService);
 		
 		MApplication currentApplication = E4Workbench.getServiceContext().get(IWorkbench.class).getApplication();
-		eSelectionService = currentApplication.getContext().get(ESelectionService.class);
+		//eSelectionService = currentApplication.getContext().get(ESelectionService.class);
 		eventBroker = currentApplication.getContext().get(IEventBroker.class);
 	}
 
@@ -50,16 +54,10 @@ public class LayerRenderer extends MultiReferenceSWTRenderer
 			throws NoRendererFoundException, NoPropertyDescriptorFoundExeption
 	{
 		Control control = super.renderMultiReferenceControl(cell, parent);
-		
-		TableViewer tableViewer = getTableViewer();
-		//tableViewer.setData(LAYERRENDERERTABLEVIEWER, parent);
-		Object object = tableViewer.getInput();
-		//System.out.println("Renderer: "+object);
-		
-		eventBroker.post(LAYERRENDERERTABLEVIEWER, tableViewer);
-		
+		eventBroker.post(LAYERRENDERERTABLEVIEWER, getTableViewer());		
 		return control;
 	}
+
 	
 	
 }

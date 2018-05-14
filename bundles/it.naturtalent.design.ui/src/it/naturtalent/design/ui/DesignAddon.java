@@ -40,6 +40,7 @@ public class DesignAddon
 			// diverse allgemeine ShapeAdapter registrieren
 			List<ILayerShapeFactory>layerLayoutFactories = layerShapeRepository.getLayerShapeFactories();
 			layerLayoutFactories.add(new LayerShapeCounterAdapterFactory());
+			layerLayoutFactories.add(new LayerShapeLengthAdapterFactory());
 		}
 		
 	}
