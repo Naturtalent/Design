@@ -27,6 +27,16 @@ public class PageMassstabRendererService implements EMFFormsDIRendererService<VC
 	{
 		this.databindingService = databindingService;
 	}
+	
+	/**
+	 * Called by the initializer to set the ReportService.
+	 *
+	 * @param reportService The ReportService
+	 */
+	protected void setReportService(ReportService reportService) {
+		this.reportService = reportService;
+		
+	}
 
 
 	@Override
