@@ -288,11 +288,26 @@ public class DesignProjectProperty implements INtProjectProperty
 		return null;
 	}
 
+	/*
 	@Override
 	public boolean importProperty(Object importData)
 	{
 		// TODO Auto-generated method stub
 		return false;
+	}
+	*/
+
+
+	@Override
+	public void exportProperty() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void importProperty() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/*

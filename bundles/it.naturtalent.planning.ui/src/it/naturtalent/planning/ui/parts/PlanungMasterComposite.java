@@ -926,7 +926,7 @@ public class PlanungMasterComposite extends Composite
 		//drawDocument.setMeasureUnit((short) 3);
 		
 		// Massstabdaten einlesen
-		drawDocument.pullScaleData();
+				//drawDocument.pullScaleData(); // muss wiederhergestellt werden
 		
 		// vorhandene Layer ermitteln
 		drawDocument.pullLayer();

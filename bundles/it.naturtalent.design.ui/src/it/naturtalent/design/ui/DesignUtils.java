@@ -33,6 +33,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecp.core.ECPProject;
+import org.eclipse.emf.ecp.core.ECPProvider;
+import org.eclipse.emf.ecp.core.exceptions.ECPProjectWithNameExistsException;
 import org.eclipse.emf.ecp.core.util.ECPUtil;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.ToolItem;
@@ -48,7 +50,6 @@ import it.naturtalent.design.model.design.DesignsPackage;
 import it.naturtalent.design.model.design.Page;
 import it.naturtalent.design.ui.parts.DesignsView;
 import it.naturtalent.e4.project.IProjectData;
-import it.naturtalent.emf.model.EMFModelUtils;
 
 
 /**
@@ -118,23 +119,41 @@ public class DesignUtils
 
 	/*
 	 * Das Modell, indem die Designdaten gespeichert werden. wird zurueckgegeben (ggf. neu erzeugt) 
-	 */
+	 */	
+	/*
 	public static ECPProject getDesignProject()
 	{
 		ECPProject designsProject = null; 
 				
 		designsProject = ECPUtil.getECPProjectManager().getProject(DesignsView.DESIGNPROJECTNAME);
 		if(designsProject == null)
-		{
-			designsProject = EMFModelUtils.createProject(DesignsView.DESIGNPROJECTNAME);
+		{			
+			designsProject = ECPUtil.getECPProjectManager().createProject(DesignsView.DESIGNPROJECTNAME);
 			if(designsProject == null)
 				log.error("es konnte kein ECPProject erzeugt werden");
 		}
 
 		return designsProject;
 	}
+	*/
+
+	public static ECPProject getDesignProject()
+	{
+		ECPProject designsProject = null; 
+				
+		designsProject = ECPUtil.getECPProjectManager().getProject(DesignsView.DESIGNPROJECTNAME);
+		if(designsProject == null)
+		{			
+			designsProject = createProject(DesignsView.DESIGNPROJECTNAME);
+			if(designsProject == null)
+				log.error("es konnte kein ECPProject erzeugt werden");
+		}
+
+		return designsProject;
+	}
+
 	
-	/*
+	
 	public static ECPProject createProject(String projectName)
 	{
 		ECPProject project = null;
@@ -164,7 +183,7 @@ public class DesignUtils
 		
 		return project;
 	}
-	*/
+	
 
 	
 	/**
