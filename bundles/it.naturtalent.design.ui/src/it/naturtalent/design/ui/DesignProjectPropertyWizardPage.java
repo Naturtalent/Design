@@ -40,8 +40,8 @@ public class DesignProjectPropertyWizardPage extends WizardPage
 	public DesignProjectPropertyWizardPage()
 	{
 		super("wizardPage");
-		setTitle("Zeichnungsgruppe");
-		setDescription("eine Zeichnungsgruppe bearbeiten");
+		setTitle("Zeichnungsmappe");
+		setDescription("eine Nappe mit Zeichnungen bearbeiten");
 	}
 	
 	@PostConstruct

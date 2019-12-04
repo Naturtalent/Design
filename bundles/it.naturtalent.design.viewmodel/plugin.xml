@@ -3,11 +3,17 @@
 <plugin>
    <extension
          point="org.eclipse.emf.ecp.view.model.provider.xmi.file">
-<file filePath="viewmodels/Shape.view"/>
+<file
+      filePath="viewmodels/DesignDetail.view">
+   <filter
+         key="detail"
+         value="true">
+   </filter>
+</file>
 
-<file filePath="viewmodels/Layer.view"/>
+<file filePath="viewmodels/DesignMasterTree.view"/>
 
-<file filePath="viewmodels/DesignGroup.view"/>
+<file filePath="viewmodels/DesignsMasterTree.view"/>
 
 <file
       filePath="viewmodels/DesignsDetail.view">
@@ -17,7 +23,6 @@
    </filter>
 </file>
 
-<file filePath="viewmodels/Designs.view"/>
 
 
 

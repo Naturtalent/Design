@@ -96,9 +96,10 @@ public class DesignProjectProperty implements INtProjectProperty
 		// das ContainerModell
 		Designs designs = DesignUtils.getDesigns();
 		
-		// die mit dem WizardPage bearbeitete DesignGroup
+		// die mit dem WizardPage bearbeitete Mappe
 		DesignGroup editedDesignGroup = designWizardPage.getWizardDesignGroup();
 		
+		// hat das Projekt eine Zeichnungsmappe
 		DesignGroup persistenceDesignGroup = DesignUtils.findProjectDesignGroup(ntProjectID);
 		
 		if(editedDesignGroup.getDesigns().size() == 0)
