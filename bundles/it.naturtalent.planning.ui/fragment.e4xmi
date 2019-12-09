@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_mlV9UIm0EeSmwsW8LHHWeg">
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_n0788Im0EeSmwsW8LHHWeg" featurename="children" parentElementId="it.naturtalent.e4.project.ui.partstack.1">
-    <elements xsi:type="basic:Part" xmi:id="_r6CKEIm0EeSmwsW8LHHWeg" elementId="it.naturtalent.telekom.planning" contributionURI="bundleclass://it.naturtalent.planning.ui/it.naturtalent.planning.ui.parts.PlanungView" label="Planung" closeable="true"/>
-  </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_1FiQUIm0EeSmwsW8LHHWeg" featurename="addons" parentElementId="it.naturtalent.e4.application">
-    <elements xsi:type="application:Addon" xmi:id="_4bBlcIm0EeSmwsW8LHHWeg" elementId="it.naturtalent.planning.ui.addon.0" contributionURI="bundleclass://it.naturtalent.planning.ui/it.naturtalent.planning.ui.PlanungAddon"/>
-  </fragments>
-</fragment:ModelFragments>
