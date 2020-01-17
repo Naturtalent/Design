@@ -12,7 +12,7 @@ public class Messages extends NLS
 
 	public static String DesignUtils_IvalidDrawFilePath;
 
-	public static String DesignUtils_NoEĆPProjectinstalled;
+	public static String DesignUtils_NoECPProjectinstalled;
 
 	public static String DesignUtils_NoEMFProvider;
 

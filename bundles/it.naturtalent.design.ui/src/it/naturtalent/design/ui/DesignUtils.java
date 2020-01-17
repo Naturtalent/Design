@@ -178,7 +178,7 @@ public class DesignUtils
 					.createProject(providers.get(0), projectName, ECPUtil.createProperties());
 		} catch (ECPProjectWithNameExistsException e)
 		{
-			log.error(Messages.DesignUtils_NoEĆPProjectinstalled); 
+			log.error(Messages.DesignUtils_NoECPProjectinstalled); 
 		}
 		
 		return project;
